@@ -2,7 +2,7 @@
 
 ## Result
 
-The game, formerly published as Jalan Dao and now named Boundless Cultivation, was copied from the published SiteGPT build into `JofferyJr/Cultivation` as a static, standalone GitHub Pages runtime.
+The game, formerly published as Boundless Cultivation and now named Boundless Cultivation, was copied from the published SiteGPT build into `JofferyJr/Cultivation` as a static, standalone GitHub Pages runtime.
 
 The actual production snapshot identifies the live game runtime as **8.1.4** with **saveVersion 29**. Earlier planning referenced 8.1.3 because that was the latest documented target before the production bundle itself became recoverable. The production bundle is authoritative for this migration because the user's requirement is to copy the published site itself.
 

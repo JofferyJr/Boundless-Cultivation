@@ -1,14 +1,14 @@
-# Jalan Dao Standalone GitHub Migration Implementation Plan
+# Boundless Cultivation Standalone GitHub Migration Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the current placeholder GitHub page with a fully standalone Jalan Dao game recovered from the v8.1 offline build, integrate the retained PGN assets, reconstruct approved 8.1.x changes, and publish the result through GitHub Pages with no SiteGPT runtime dependency.
+**Goal:** Replace the current placeholder GitHub page with a fully standalone Boundless Cultivation game recovered from the v8.1 offline build, integrate the retained PGN assets, reconstruct approved 8.1.x changes, and publish the result through GitHub Pages with no SiteGPT runtime dependency.
 
-**Architecture:** Treat the 71.8 MB `Jalan_Dao_v8.1_Offline.html` as the executable recovery base. First split its six inline scripts and two style blocks into external static files without changing execution order, then layer deterministic 8.1.x reconstruction patches and local asset manifests on top. Preserve browser-only storage and static hosting; use tooling and tests to verify extraction fidelity, runtime independence, asset completeness, save compatibility, and release parity.
+**Architecture:** Treat the 71.8 MB `Boundless_Cultivation_v8.1_Offline.html` as the executable recovery base. First split its six inline scripts and two style blocks into external static files without changing execution order, then layer deterministic 8.1.x reconstruction patches and local asset manifests on top. Preserve browser-only storage and static hosting; use tooling and tests to verify extraction fidelity, runtime independence, asset completeness, save compatibility, and release parity.
 
 **Tech Stack:** Static HTML/CSS/JavaScript, React bundle recovered from the offline build, Python 3 standard library for extraction/audit tooling, Node.js + Playwright for browser smoke tests, GitHub Actions + GitHub Pages.
 
-**Spec:** `docs/superpowers/specs/2026-09-23-jalan-dao-sitegpt-to-github-design.md`
+**Spec:** `docs/superpowers/specs/2026-09-23-boundless-sitegpt-to-github-design.md`
 
 ## Global Constraints
 
@@ -42,7 +42,7 @@
 - Create: `docs/migration/recovery-manifest.json`
 
 **Interfaces:**
-- Consumes: local recovery input `Jalan_Dao_v8.1_Offline.html`.
+- Consumes: local recovery input `Boundless_Cultivation_v8.1_Offline.html`.
 - Produces: `extract_offline(source: Path, output_root: Path) -> dict` and a JSON recovery manifest containing byte counts, SHA-256 hashes, script/style order, and extracted filenames.
 
 - [ ] **Step 1: Write the extraction-unit test**
@@ -126,7 +126,7 @@ The parser must:
 `docs/migration/source-inventory.md` must record these verified facts:
 
 ```text
-Jalan_Dao_v8.1_Offline.html
+Boundless_Cultivation_v8.1_Offline.html
 - size: 71,769,604 bytes
 - inline scripts: 6
 - inline styles: 2
@@ -154,7 +154,7 @@ Expected: PASS.
 
 ```bash
 git add tools tests docs/migration/source-inventory.md docs/migration/recovery-manifest.json
-git commit -m "build: add Jalan Dao recovery tooling"
+git commit -m "build: add Boundless Cultivation recovery tooling"
 ```
 
 ---
@@ -202,10 +202,10 @@ def test_index_loads_recovered_runtime_in_order():
 def test_recovered_contracts_exist():
     app = (ROOT / "js/recovered/app.bundle.js").read_text(encoding="utf-8")
     v81 = (ROOT / "js/recovered/v8.1.js").read_text(encoding="utf-8")
-    assert "jalan-dao-save" in app
+    assert "boundless-save" in app
     assert "Anak Pemimpin Sekte" in app
     assert "Bestiari" in app
-    assert "window.JalanDaoV81" in v81
+    assert "window.BoundlessCultivationV81" in v81
     assert "discoverBeast" in v81
 ```
 
@@ -224,7 +224,7 @@ Expected: FAIL because the recovered runtime files are not present.
 Run:
 
 ```bash
-python tools/extract_offline_build.py   --source /path/to/Jalan_Dao_v8.1_Offline.html   --output .
+python tools/extract_offline_build.py   --source /path/to/Boundless_Cultivation_v8.1_Offline.html   --output .
 ```
 
 The generated `index.html` replaces the temporary GitHub Edition landing page.
@@ -243,7 +243,7 @@ Expected checks:
 - all generated SHA-256 values match the extraction manifest;
 - no extracted file is empty;
 - `app.bundle.js` contains `saveVersion:19`;
-- `v8.1.js` exposes `window.JalanDaoV81`.
+- `v8.1.js` exposes `window.BoundlessCultivationV81`.
 
 - [ ] **Step 5: Run tests**
 
@@ -257,7 +257,7 @@ Expected: PASS.
 
 ```bash
 git add index.html css/recovered js/recovered docs/migration/recovery-manifest.json tests
-git commit -m "feat: recover Jalan Dao v8.1 runtime"
+git commit -m "feat: recover Boundless Cultivation v8.1 runtime"
 ```
 
 ---
@@ -307,7 +307,7 @@ The audit must scan runtime `.html`, `.css`, and `.js` files and reject:
 
 ```python
 FORBIDDEN = [
-    "jalan-dao-xianxia.jofferyjr.chatgpt.site",
+    "boundless-xianxia.jofferyjr.chatgpt.site",
     "<iframe",
     "http-equiv=\"refresh\"",
 ]
@@ -327,11 +327,11 @@ Use:
 ```html
 <!doctype html>
 <meta charset="utf-8">
-<title>Jalan Dao</title>
+<title>Boundless Cultivation</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <main>
   <h1>Halaman tidak ditemui</h1>
-  <p><a href="./">Kembali ke Jalan Dao</a></p>
+  <p><a href="./">Kembali ke Boundless Cultivation</a></p>
 </main>
 ```
 
@@ -439,7 +439,7 @@ Expected: PASS.
 
 ```bash
 git add tools/import_pgn_assets.py assets/items data/manifests/pgn-assets.json tests/test_pgn_assets.py docs/migration/asset-manifest.md
-git commit -m "feat: import Jalan Dao PGN assets"
+git commit -m "feat: import Boundless Cultivation PGN assets"
 ```
 
 ---
@@ -456,7 +456,7 @@ git commit -m "feat: import Jalan Dao PGN assets"
 
 **Interfaces:**
 - Consumes: recovered `js/recovered/app.bundle.js` plus exact patch anchors.
-- Produces: transformed `js/reconstructed/app.bundle.v813.js` and non-invasive runtime extension `window.JalanDaoGitHub813`.
+- Produces: transformed `js/reconstructed/app.bundle.v813.js` and non-invasive runtime extension `window.BoundlessCultivationGitHub813`.
 
 - [ ] **Step 1: Add one-match patch tests**
 
@@ -474,7 +474,7 @@ def test_every_patch_anchor_matches_once(tmp_path):
         ROOT / "patches/v8.1.3.json",
     )
     assert all(item["matches"] == 1 for item in report)
-    assert "JALAN_DAO_GITHUB_8_1_3" in result
+    assert "BOUNDLESS_GITHUB_8_1_3" in result
 ```
 
 - [ ] **Step 2: Create patch metadata with exact source anchors**
@@ -511,7 +511,7 @@ The patch tool must output:
 `js/reconstructed/v8.1.3-runtime.js` must expose:
 
 ```js
-window.JalanDaoGitHub813 = {
+window.BoundlessCultivationGitHub813 = {
   version: "8.1.3-reconstructed",
   maxTalents: 4,
   assetManifest: "./data/manifests/pgn-assets.json",
@@ -522,7 +522,7 @@ It must also:
 - attach PGN item-art paths after the base asset globals exist;
 - provide the portrait-gallery close-button behavior;
 - apply the approved sect-structure edit permission checks;
-- keep the existing `window.JalanDaoV81` API intact.
+- keep the existing `window.BoundlessCultivationV81` API intact.
 
 - [ ] **Step 5: Add reconstruction CSS**
 
@@ -565,7 +565,7 @@ Expected: PASS with every patch anchor reporting exactly one match.
 
 ```bash
 git add tools/patch_recovered_bundle.py patches js/reconstructed css/reconstructed index.html docs/migration/patch-report.json tests/test_v813_patch.py
-git commit -m "feat: reconstruct approved Jalan Dao 8.1.x changes"
+git commit -m "feat: reconstruct approved Boundless Cultivation 8.1.x changes"
 ```
 
 ---
@@ -676,7 +676,7 @@ Expected: PASS.
 
 ```bash
 git add patches js/reconstructed css/reconstructed data/manifests/feature-parity.json docs/migration/feature-parity.md tests/test_feature_parity.py
-git commit -m "feat: restore Jalan Dao 8.1.3 feature parity"
+git commit -m "feat: restore Boundless Cultivation 8.1.3 feature parity"
 ```
 
 ---
@@ -692,8 +692,8 @@ git commit -m "feat: restore Jalan Dao 8.1.3 feature parity"
 - Modify: `index.html`
 
 **Interfaces:**
-- Consumes: `jalan-dao-save`, `jalan-dao-life-points`, `jalan-dao-settings`, and later v8.1 state keys.
-- Produces: `window.JalanDaoSaveCompat.normalize(save)`.
+- Consumes: `boundless-save`, `boundless-life-points`, `boundless-settings`, and later v8.1 state keys.
+- Produces: `window.BoundlessCultivationSaveCompat.normalize(save)`.
 
 - [ ] **Step 1: Add save-contract tests**
 
@@ -706,9 +706,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_recovered_bundle_keeps_primary_save_key():
     app = (ROOT / "js/reconstructed/app.bundle.v813.js").read_text()
-    assert "jalan-dao-save" in app
-    assert "jalan-dao-life-points" in app
-    assert "jalan-dao-settings" in app
+    assert "boundless-save" in app
+    assert "boundless-life-points" in app
+    assert "boundless-settings" in app
 
 def test_v81_fixture_exists_and_is_valid_json():
     save = json.loads((ROOT / "tests/fixtures/save-v81.json").read_text())
@@ -751,7 +751,7 @@ Expected: PASS.
 
 ```bash
 git add js/reconstructed/save-compat.js index.html tests/fixtures tests/test_save_contract.py docs/migration/save-compatibility.md
-git commit -m "feat: preserve Jalan Dao save compatibility"
+git commit -m "feat: preserve Boundless Cultivation save compatibility"
 ```
 
 ---
@@ -761,7 +761,7 @@ git commit -m "feat: preserve Jalan Dao save compatibility"
 **Files:**
 - Create: `package.json`
 - Create: `playwright.config.js`
-- Create: `tests/e2e/jalan-dao.spec.js`
+- Create: `tests/e2e/boundless.spec.js`
 - Create: `tests/e2e/no-sitegpt.spec.js`
 
 **Interfaces:**
@@ -772,7 +772,7 @@ git commit -m "feat: preserve Jalan Dao save compatibility"
 
 ```json
 {
-  "name": "jalan-dao-github-tests",
+  "name": "boundless-github-tests",
   "private": true,
   "scripts": {
     "test:e2e": "playwright test"
@@ -805,9 +805,9 @@ export default defineConfig({
 ```js
 import { test, expect } from "@playwright/test";
 
-test("Jalan Dao character creation renders", async ({ page }) => {
+test("Boundless Cultivation character creation renders", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("body")).toContainText("Jalan Dao");
+  await expect(page.locator("body")).toContainText("Boundless Cultivation");
   await expect(page.locator("#root")).toBeVisible();
   await expect(page.locator("body")).toContainText("Spiritual Root");
   await expect(page.locator("body")).toContainText("Masuki Dunia Kultivasi");
@@ -821,10 +821,10 @@ import { test, expect } from "@playwright/test";
 
 test("game loads with SiteGPT blocked", async ({ page }) => {
   await page.route("**/*.chatgpt.site/**", route => route.abort());
-  await page.route("https://jalan-dao-xianxia.jofferyjr.chatgpt.site/**", route => route.abort());
+  await page.route("https://boundless-xianxia.jofferyjr.chatgpt.site/**", route => route.abort());
   await page.goto("/");
   await expect(page.locator("#root")).toBeVisible();
-  await expect(page.locator("body")).toContainText("Jalan Dao");
+  await expect(page.locator("body")).toContainText("Boundless Cultivation");
 });
 ```
 
@@ -849,7 +849,7 @@ Expected: all tests PASS.
 
 ```bash
 git add package.json package-lock.json playwright.config.js tests/e2e
-git commit -m "test: add standalone Jalan Dao browser smoke tests"
+git commit -m "test: add standalone Boundless Cultivation browser smoke tests"
 ```
 
 ---
@@ -873,7 +873,7 @@ git commit -m "test: add standalone Jalan Dao browser smoke tests"
 `.github/workflows/verify.yml` must run on pushes and pull requests:
 
 ```yaml
-name: Verify Jalan Dao
+name: Verify Boundless Cultivation
 on:
   push:
     branches: ["main"]
@@ -929,14 +929,14 @@ The document must separate:
 Only if `release_audit.py` exits 0 and every critical parity item passes, update the visible game/version copy to:
 
 ```text
-Jalan Dao · Dunia Xianxia
+Boundless Cultivation · Dunia Xianxia
 Versi 8.1.3 · GitHub Standalone Reconstruction
 ```
 
 If the audit does not pass, use:
 
 ```text
-Jalan Dao · Dunia Xianxia
+Boundless Cultivation · Dunia Xianxia
 GitHub Reconstruction Preview
 ```
 
@@ -955,7 +955,7 @@ Expected: PASS before version promotion.
 ```bash
 git add .github tools/release_audit.py docs/migration/release-audit.md README.md index.html
 git rm .github/workflows/static.yml
-git commit -m "ci: gate standalone Jalan Dao Pages release"
+git commit -m "ci: gate standalone Boundless Cultivation Pages release"
 ```
 
 ---
@@ -984,8 +984,8 @@ Expected: zero forbidden SiteGPT runtime references and release audit PASS.
 - [ ] **Step 2: Verify GitHub Actions**
 
 Confirm both workflows:
-- `Verify Jalan Dao` passes;
-- `Deploy Jalan Dao to GitHub Pages` passes.
+- `Verify Boundless Cultivation` passes;
+- `Deploy Boundless Cultivation to GitHub Pages` passes.
 
 - [ ] **Step 3: Verify live static URL**
 
@@ -1011,7 +1011,7 @@ Verify:
 Block:
 
 ```text
-jalan-dao-xianxia.jofferyjr.chatgpt.site
+boundless-xianxia.jofferyjr.chatgpt.site
 ```
 
 Reload the GitHub Pages URL.
@@ -1026,7 +1026,7 @@ Add the final deployment commit SHA and the date of verification to `docs/migrat
 
 ```bash
 git add docs/migration/release-audit.md
-git commit -m "docs: certify standalone Jalan Dao migration"
+git commit -m "docs: certify standalone Boundless Cultivation migration"
 ```
 
 ## Self-Review Result

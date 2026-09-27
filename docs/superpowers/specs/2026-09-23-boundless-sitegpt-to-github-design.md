@@ -1,14 +1,14 @@
-# Jalan Dao SiteGPT → GitHub Standalone Migration Design
+# Boundless Cultivation SiteGPT → GitHub Standalone Migration Design
 
 Date: 2026-09-23  
 Status: Design approved in chat; awaiting written-spec review  
 Target repository: `JofferyJr/Cultivation`  
 Deployment target: GitHub Pages, Static HTML  
-Target game identity: Jalan Dao · Dunia Xianxia
+Target game identity: Boundless Cultivation · Dunia Xianxia
 
 ## 1. Goal
 
-Move Jalan Dao from its SiteGPT-hosted form into GitHub as a real, self-contained web game.
+Move Boundless Cultivation from its SiteGPT-hosted form into GitHub as a real, self-contained web game.
 
 The GitHub build must run from files stored in `JofferyJr/Cultivation`. It must not embed, redirect to, proxy, synchronize with, or fetch the old SiteGPT game at runtime.
 
@@ -28,10 +28,10 @@ This migration will not:
 
 The following local/project inputs are currently available:
 
-1. `Jalan_Dao_v8.1_Offline.html`
+1. `Boundless_Cultivation_v8.1_Offline.html`
    - approximately 71.8 MB;
    - self-contained offline HTML;
-   - title identifies it as Jalan Dao v8.1;
+   - title identifies it as Boundless Cultivation v8.1;
    - contains embedded scripts, styles, and hundreds of embedded image data references.
 
 2. `PGN.zip`
@@ -39,12 +39,12 @@ The following local/project inputs are currently available:
    - 44 PNG runtime/source visual assets plus its directory entry;
    - includes herbs, ores, weapons, artifacts, Bestiary art, Portal Laut fragments, and related game visuals.
 
-3. `Jalan_Dao_v8.0_Draft_Package.zip`
+3. `Boundless_Cultivation_v8.0_Draft_Package.zip`
    - contains the v8.0 offline HTML, README, and an asset-audit JSON;
    - useful as a migration/audit reference, not as the final target build.
 
 4. Existing project records and Site projection
-   - preserve text and requirements from later Jalan Dao revisions;
+   - preserve text and requirements from later Boundless Cultivation revisions;
    - can be used to identify later behavior and UI changes;
    - are not treated as an exportable production source bundle.
 
@@ -314,4 +314,4 @@ The GitHub edition is ready to replace the current placeholder page only when:
 - GitHub Pages deployment succeeds;
 - the old SiteGPT domain can be blocked without breaking the GitHub game.
 
-Only after these checks pass may the repository describe the game as the standalone migrated Jalan Dao build.
+Only after these checks pass may the repository describe the game as the standalone migrated Boundless Cultivation build.

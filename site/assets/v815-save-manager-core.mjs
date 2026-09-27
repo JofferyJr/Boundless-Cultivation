@@ -1,5 +1,5 @@
 export const MAX_SAVE_SLOTS = 5;
-export const LEGACY_SAVE_KEY = "jalan-dao-save";
+export const BOUNDLESS_SAVE_KEY = "boundless-save";
 export const SLOT_PREFIX = "boundless-cultivation-save-slot-";
 export const SLOT_FORMAT = "boundless-cultivation-slot-v1";
 export const SINGLE_EXPORT_FORMAT = "boundless-cultivation-save-export-v1";

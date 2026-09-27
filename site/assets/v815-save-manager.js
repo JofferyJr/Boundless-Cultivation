@@ -1,6 +1,6 @@
 import {
   MAX_SAVE_SLOTS,
-  LEGACY_SAVE_KEY,
+  BOUNDLESS_SAVE_KEY,
   slotKey,
   isGameSave,
   makeSlotRecord,
@@ -12,6 +12,7 @@ import {
 } from "./v815-save-manager-core.mjs";
 
 const $ = (selector, root = document) => root.querySelector(selector);
+const GAME_SAVE_KEY = "boundless-save";
 const PENDING_LOAD_KEY = "boundless-cultivation-pending-load";
 
 function readJson(key) {
@@ -21,8 +22,18 @@ function readJson(key) {
 }
 
 function readActiveSave() {
-  const value = readJson(LEGACY_SAVE_KEY);
-  return isGameSave(value) ? value : null;
+  // The live game uses "boundless-save"; the legacy key remains for
+  // backwards compatibility with older saves and the migration layer.
+  const live = readJson(GAME_SAVE_KEY);
+  if (isGameSave(live)) return live;
+  const legacy = readJson(BOUNDLESS_SAVE_KEY);
+  return isGameSave(legacy) ? legacy : null;
+}
+
+function writeActiveSave(save) {
+  const payload = JSON.stringify(save);
+  localStorage.setItem(GAME_SAVE_KEY, payload);
+  localStorage.setItem(BOUNDLESS_SAVE_KEY, payload);
 }
 
 function readSlot(slot) {
@@ -173,9 +184,10 @@ function bindManager(root) {
       const record = readSlot(slot);
       if (!record) return;
       if (!confirm(`Muat Slot ${slot}? Kemajuan aktif yang belum disimpan boleh hilang.`)) return;
-      localStorage.setItem(LEGACY_SAVE_KEY, JSON.stringify(record.save));
+      writeActiveSave(record.save);
       if (typeof window.__boundlessLoadCurrent === "function") {
         window.__boundlessLoadCurrent();
+        restoreSavedView(record.save);
         setStatus(root, `Slot ${slot} dimuat ke keadaan terakhir.`, "ok");
       } else {
         localStorage.setItem(PENDING_LOAD_KEY, JSON.stringify({ slot, requestedAt: Date.now() }));
@@ -301,6 +313,28 @@ function findAndMount() {
   if (host) mountIntoSettings(host);
 }
 
+
+function restoreSavedView(save) {
+  const activeTab = String(save?.activeTab || "").trim().toLowerCase();
+  if (!activeTab) return;
+  const tabNames = {
+    inventory: /inventori/i,
+    world: /^dunia$/i,
+    cultivation: /kultivasi/i,
+    character: /watak|karakter/i,
+    sect: /sekte/i
+  };
+  const pattern = tabNames[activeTab];
+  if (!pattern) return;
+  const apply = () => {
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
+    const tab = tabs.find((el) => pattern.test((el.textContent || "").trim()));
+    if (tab && tab.getAttribute("aria-selected") !== "true") tab.click();
+    if (typeof window.__boundlessRefreshView === "function") window.__boundlessRefreshView();
+  };
+  apply();
+  [50, 150, 300].forEach((delay) => setTimeout(apply, delay));
+}
 
 function restorePendingLoad() {
   if (!localStorage.getItem(PENDING_LOAD_KEY)) return;
