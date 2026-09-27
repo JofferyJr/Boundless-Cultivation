@@ -12,6 +12,7 @@ import {
 } from "./v815-save-manager-core.mjs";
 
 const $ = (selector, root = document) => root.querySelector(selector);
+const GAME_SAVE_KEY = "boundless-save";
 const PENDING_LOAD_KEY = "boundless-cultivation-pending-load";
 
 function readJson(key) {
@@ -21,8 +22,18 @@ function readJson(key) {
 }
 
 function readActiveSave() {
-  const value = readJson(LEGACY_SAVE_KEY);
-  return isGameSave(value) ? value : null;
+  // The live game uses "boundless-save"; the legacy key remains for
+  // backwards compatibility with older saves and the migration layer.
+  const live = readJson(GAME_SAVE_KEY);
+  if (isGameSave(live)) return live;
+  const legacy = readJson(LEGACY_SAVE_KEY);
+  return isGameSave(legacy) ? legacy : null;
+}
+
+function writeActiveSave(save) {
+  const payload = JSON.stringify(save);
+  localStorage.setItem(GAME_SAVE_KEY, payload);
+  localStorage.setItem(LEGACY_SAVE_KEY, payload);
 }
 
 function readSlot(slot) {
@@ -173,7 +184,7 @@ function bindManager(root) {
       const record = readSlot(slot);
       if (!record) return;
       if (!confirm(`Muat Slot ${slot}? Kemajuan aktif yang belum disimpan boleh hilang.`)) return;
-      localStorage.setItem(LEGACY_SAVE_KEY, JSON.stringify(record.save));
+      writeActiveSave(record.save);
       if (typeof window.__boundlessLoadCurrent === "function") {
         window.__boundlessLoadCurrent();
         restoreSavedView(record.save);
