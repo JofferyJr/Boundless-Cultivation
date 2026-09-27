@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 test('save manager lives inside Settings and supports slots, export and import', async ({ page }) => {
-  await page.goto('/Cultivation/', { waitUntil: 'networkidle' });
+  await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
     localStorage.setItem('jalan-dao-save', JSON.stringify({
       saveVersion: 29,
@@ -59,7 +59,7 @@ test('save manager lives inside Settings and supports slots, export and import',
 
 test('loading a slot restores the saved active tab and map view', async ({ page }) => {
   page.on('dialog', dialog => dialog.accept());
-  await page.goto('/Cultivation/', { waitUntil: 'networkidle' });
+  await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
 
   await page.evaluate(() => {
     localStorage.setItem('jalan-dao-save', JSON.stringify({
