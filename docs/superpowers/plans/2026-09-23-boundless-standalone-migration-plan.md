@@ -474,7 +474,7 @@ def test_every_patch_anchor_matches_once(tmp_path):
         ROOT / "patches/v8.1.3.json",
     )
     assert all(item["matches"] == 1 for item in report)
-    assert "JALAN_DAO_GITHUB_8_1_3" in result
+    assert "BOUNDLESS_GITHUB_8_1_3" in result
 ```
 
 - [ ] **Step 2: Create patch metadata with exact source anchors**
