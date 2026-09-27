@@ -12,9 +12,9 @@ import {
   parseImportPayload
 } from "../site/assets/v815-save-manager-core.mjs";
 
-test("defines five manual save slots without replacing the legacy active-save key", () => {
+test("defines five manual save slots using the Boundless active-save key", () => {
   assert.equal(MAX_SAVE_SLOTS, 5);
-  assert.equal(BOUNDLESS_SAVE_KEY, "jalan-dao-save");
+  assert.equal(BOUNDLESS_SAVE_KEY, "boundless-save");
   assert.equal(slotKey(1), "boundless-cultivation-save-slot-1");
   assert.equal(slotKey(5), "boundless-cultivation-save-slot-5");
   assert.throws(() => slotKey(0));
@@ -64,7 +64,7 @@ test("exports and imports all occupied slots as one bundle", () => {
   assert.deepEqual(parsed.records.map(r => r.slot), [1, 3]);
 });
 
-test("accepts a legacy raw save export and rejects malformed input", () => {
+test("accepts a raw save export and rejects malformed input", () => {
   const raw = { saveVersion: 29, gameVersion: "8.1.4", name: "Raw Save" };
   const parsed = parseImportPayload(JSON.stringify(raw), 4);
   assert.equal(parsed.kind, "single");
