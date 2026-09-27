@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 test('save manager lives inside Settings and supports slots, export and import', async ({ page }) => {
   await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('jalan-dao-save', JSON.stringify({
+    localStorage.setItem('boundless-save', JSON.stringify({
       saveVersion: 29,
       gameVersion: '8.1.4',
       name: 'Li Yun',
@@ -62,7 +62,7 @@ test('loading a slot restores the saved active tab and map view', async ({ page 
   await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
 
   await page.evaluate(() => {
-    localStorage.setItem('jalan-dao-save', JSON.stringify({
+    localStorage.setItem('boundless-save', JSON.stringify({
       saveVersion: 30,
       gameVersion: '8.1.5',
       name: 'Li Yun',
