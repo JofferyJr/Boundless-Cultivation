@@ -7,7 +7,7 @@ function selectedLabel(grid){const selected=grid?.querySelector('[aria-checked="
 function ensurePaper(){
  let overlay=document.getElementById("bc-portrait-paper-overlay");if(overlay)return overlay;
  overlay=document.createElement("div");overlay.id="bc-portrait-paper-overlay";overlay.hidden=true;
- overlay.innerHTML='<section id="bc-portrait-paper" class="bc-portrait-paper" role="dialog" aria-modal="true" aria-labelledby="bc-portrait-paper-title"><header class="bc-portrait-paper-head"><div><small>Boundless Cultivation · v8.1.5</small><h2 id="bc-portrait-paper-title">Kertas Pemilihan Muka</h2><p>Pilih muka daripada koleksi yang sesuai. Kertas kekal terbuka selepas pilihan.</p></div><button type="button" class="bc-portrait-paper-close" aria-label="Tutup Kertas Pemilihan Muka">×</button></header><div class="bc-portrait-paper-groups"></div></section>';
+ overlay.innerHTML='<section id="bc-portrait-paper" class="bc-portrait-paper" role="dialog" aria-modal="true" aria-labelledby="bc-portrait-paper-title"><header class="bc-portrait-paper-head"><div><small>Boundless Cultivation · v8.1.6</small><h2 id="bc-portrait-paper-title">Kertas Pemilihan Muka</h2><p>Pilih muka daripada koleksi yang sesuai. Kertas kekal terbuka selepas pilihan.</p></div><button type="button" class="bc-portrait-paper-close" aria-label="Tutup Kertas Pemilihan Muka">×</button></header><div class="bc-portrait-paper-groups"></div></section>';
  document.body.appendChild(overlay);
  overlay.querySelector(".bc-portrait-paper-close").addEventListener("click",closePaper);
  overlay.addEventListener("pointerdown",event=>{if(event.target===overlay)event.preventDefault();});
