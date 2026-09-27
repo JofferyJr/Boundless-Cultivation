@@ -3,7 +3,7 @@ import test from "node:test";
 
 import {
   MAX_SAVE_SLOTS,
-  LEGACY_SAVE_KEY,
+  BOUNDLESS_SAVE_KEY,
   slotKey,
   makeSlotRecord,
   summarizeSave,
@@ -14,7 +14,7 @@ import {
 
 test("defines five manual save slots without replacing the legacy active-save key", () => {
   assert.equal(MAX_SAVE_SLOTS, 5);
-  assert.equal(LEGACY_SAVE_KEY, "jalan-dao-save");
+  assert.equal(BOUNDLESS_SAVE_KEY, "jalan-dao-save");
   assert.equal(slotKey(1), "boundless-cultivation-save-slot-1");
   assert.equal(slotKey(5), "boundless-cultivation-save-slot-5");
   assert.throws(() => slotKey(0));
