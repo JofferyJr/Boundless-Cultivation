@@ -6,7 +6,7 @@ test('v8.1.5 talents, True Love and portrait paper remain responsive', async ({ 
   page.on('pageerror', error => console.log('PAGEERROR', error.message, error.stack || ''));
   page.on('console', msg => { if (msg.type() === 'error') console.log('CONSOLE_ERROR', msg.text()); });
   await page.setViewportSize({ width: 1366, height: 900 });
-  await page.goto('/Cultivation/', { waitUntil: 'networkidle' });
+  await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
   await expect(page.getByText('Versi 8.1.5').first()).toBeVisible();
   const creationShellWidth = await page.locator('.bc-creation-shell').evaluate(el => el.getBoundingClientRect().width);
   expect(creationShellWidth).toBeGreaterThan(1200);
@@ -86,7 +86,7 @@ test('built-in background music asset and settings option are available', async 
   expect(response.ok()).toBe(true);
   expect((await response.body()).length).toBeGreaterThan(5000);
 
-  await page.goto('/Cultivation/', { waitUntil: 'networkidle' });
+  await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Tetapan' }).first().click();
   const settings = page.getByRole('dialog');
   await settings.getByRole('tab', { name: /Permainan/ }).click();
