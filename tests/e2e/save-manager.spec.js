@@ -75,8 +75,13 @@ test('loading a slot restores the saved active tab and map view', async ({ page 
       mapView: 'world',
       activeTab: 'inventory'
     }));
-    window.__boundlessLoadCurrent();
   });
+
+  // The creation screen has no game tabs yet. Enter the game first, then
+  // restore the saved state so activeTab can be applied to a real tab.
+  await page.getByRole('button', { name: /Masuki Dunia Kultivasi/ }).click();
+  await page.getByRole('tab', { name: /Inventori/ }).waitFor();
+  await page.evaluate(() => window.__boundlessLoadCurrent());
 
   const inventoryTab = page.getByRole('tab', { name: /Inventori/ });
   const worldTab = page.getByRole('tab', { name: 'Dunia', exact: true });
