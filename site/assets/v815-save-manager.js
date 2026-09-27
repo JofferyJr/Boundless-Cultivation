@@ -1,6 +1,6 @@
 import {
   MAX_SAVE_SLOTS,
-  LEGACY_SAVE_KEY,
+  BOUNDLESS_SAVE_KEY,
   slotKey,
   isGameSave,
   makeSlotRecord,
@@ -26,14 +26,14 @@ function readActiveSave() {
   // backwards compatibility with older saves and the migration layer.
   const live = readJson(GAME_SAVE_KEY);
   if (isGameSave(live)) return live;
-  const legacy = readJson(LEGACY_SAVE_KEY);
+  const legacy = readJson(BOUNDLESS_SAVE_KEY);
   return isGameSave(legacy) ? legacy : null;
 }
 
 function writeActiveSave(save) {
   const payload = JSON.stringify(save);
   localStorage.setItem(GAME_SAVE_KEY, payload);
-  localStorage.setItem(LEGACY_SAVE_KEY, payload);
+  localStorage.setItem(BOUNDLESS_SAVE_KEY, payload);
 }
 
 function readSlot(slot) {
