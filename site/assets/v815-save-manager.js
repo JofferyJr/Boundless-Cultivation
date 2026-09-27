@@ -176,6 +176,7 @@ function bindManager(root) {
       localStorage.setItem(LEGACY_SAVE_KEY, JSON.stringify(record.save));
       if (typeof window.__boundlessLoadCurrent === "function") {
         window.__boundlessLoadCurrent();
+        restoreSavedView(record.save);
         setStatus(root, `Slot ${slot} dimuat ke keadaan terakhir.`, "ok");
       } else {
         localStorage.setItem(PENDING_LOAD_KEY, JSON.stringify({ slot, requestedAt: Date.now() }));
@@ -301,6 +302,28 @@ function findAndMount() {
   if (host) mountIntoSettings(host);
 }
 
+
+function restoreSavedView(save) {
+  const activeTab = String(save?.activeTab || "").trim().toLowerCase();
+  if (!activeTab) return;
+  const tabNames = {
+    inventory: /inventori/i,
+    world: /^dunia$/i,
+    cultivation: /kultivasi/i,
+    character: /watak|karakter/i,
+    sect: /sekte/i
+  };
+  const pattern = tabNames[activeTab];
+  if (!pattern) return;
+  const apply = () => {
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
+    const tab = tabs.find((el) => pattern.test((el.textContent || "").trim()));
+    if (tab && tab.getAttribute("aria-selected") !== "true") tab.click();
+    if (typeof window.__boundlessRefreshView === "function") window.__boundlessRefreshView();
+  };
+  apply();
+  [50, 150, 300].forEach((delay) => setTimeout(apply, delay));
+}
 
 function restorePendingLoad() {
   if (!localStorage.getItem(PENDING_LOAD_KEY)) return;
