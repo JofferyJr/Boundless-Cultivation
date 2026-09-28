@@ -368,6 +368,7 @@ function injectSaveSettingsItem(){
       list.appendChild(b);
     }
   }
+  if(typeof window.__boundlessArrangeSettingsSlots==="function") window.__boundlessArrangeSettingsSlots();
   list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
     if(b.dataset.boundlessSaveNativeHook)return;
     b.dataset.boundlessSaveNativeHook="1";
