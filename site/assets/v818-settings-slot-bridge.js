@@ -62,10 +62,8 @@
     } else {
       b.disabled = false;
       b.removeAttribute("aria-disabled");
-      b.addEventListener("pointerdown", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-      }, { passive: false });
+      // Do not cancel pointerdown: cancelling it can suppress the browser's native click event.
+      // The click handler below is sufficient to isolate these utility buttons from Radix tabs.
       b.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
