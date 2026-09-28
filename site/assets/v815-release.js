@@ -39,7 +39,17 @@ function createSummary(mode,grid){
 function refreshSummaries(){
  for(const mode of ["player","true-love"]){const grid=sourceGrid(mode);if(!grid)continue;grid.classList.add("bc-v815-hidden-portrait-grid");const parent=grid.parentElement;let summary=parent?.querySelector('.bc-portrait-summary[data-mode="'+mode+'"]');if(!summary)summary=createSummary(mode,grid);const current=summary.querySelector(".bc-portrait-current");if(current)current.textContent=selectedLabel(grid);}
 }
-function boot(){\n  refreshSummaries();\n  document.addEventListener("click",event=>{\n    if(!event.target.closest?.(".player-portrait-picker,.true-love-face-picker"))return;\n    setTimeout(refreshSummaries,50);\n  },true);\n  document.addEventListener("change",event=>{\n    if(!event.target.closest?.(".player-portrait-picker,.true-love-face-picker"))return;\n    setTimeout(refreshSummaries,50);\n  },true);\n}
+function boot(){
+  refreshSummaries();
+  document.addEventListener("click",event=>{
+    if(!event.target.closest?.(".player-portrait-picker,.true-love-face-picker"))return;
+    setTimeout(refreshSummaries,50);
+  },true);
+  document.addEventListener("change",event=>{
+    if(!event.target.closest?.(".player-portrait-picker,.true-love-face-picker"))return;
+    setTimeout(refreshSummaries,50);
+  },true);
+}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
 
 /* Boundless staged restoration · Stage 1
