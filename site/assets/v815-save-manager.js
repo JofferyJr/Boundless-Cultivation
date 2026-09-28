@@ -322,13 +322,10 @@ function getSettingsDialog() {
 }
 
 function getSaveSettingsSurface(){
-  const dialogs=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")].filter(e=>{
-    const s=getComputedStyle(e),r=e.getBoundingClientRect();
-    return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0;
-  });
-  const dialog=dialogs.at(-1); if(!dialog) return null;
-  const tabs=dialog.querySelector(".bc-settings-tabs"); if(!tabs) return null;
-  return {dialog,tabs,root:tabs.parentElement};
+  const tabs=[...document.querySelectorAll(".bc-settings-tabs")].find(visibleElement);
+  if(!tabs) return null;
+  const root=tabs.parentElement;
+  return {dialog:tabs.closest("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")||root,tabs,root};
 }
 
 function closeSaveManager(){
