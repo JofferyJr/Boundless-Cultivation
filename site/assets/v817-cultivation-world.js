@@ -295,40 +295,26 @@
     }
   }
   function openAIControl(){
-    if(aiPanelOpen){
-      const existing=document.getElementById("boundless-ai-control-center");
-      if(existing){existing.scrollTop=0;existing.focus();return;}
-    }
     registerAIs();
+    const settings=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")]
+      .filter(e=>{
+        const s=getComputedStyle(e),r=e.getBoundingClientRect();
+        return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0;
+      }).at(-1);
+    if(!settings)return;
+
     aiPanelOpen=true;
     let r=document.getElementById("boundless-ai-control-center");
     if(!r){
-      r=document.createElement("aside");
+      r=document.createElement("section");
       r.id="boundless-ai-control-center";
-      r.setAttribute("role","dialog");
-      r.setAttribute("aria-modal","true");
       r.setAttribute("aria-label","AI Control Center");
       r.tabIndex=-1;
-      document.body.appendChild(r);
+      const anchor=settings.querySelector("[data-ai-open]");
+      (anchor?.parentElement||settings).appendChild(r);
     }
-    r.innerHTML='<div class="bai-backdrop" data-ai-backdrop></div><div class="bai-dialog"><div class="bai-head"><b>🧠 AI Control Center</b><button type="button" data-close aria-label="Tutup AI Control Center">×</button></div><p class="bai-note">Setiap kategori entiti mempunyai AI tersendiri.</p>'+renderAIWorldSection()+'<div class="bai-grid">'+Object.values(aiState).map(a=>'<div class="bai-card"><b>'+a.name+'</b><small>'+((AI_TYPES.find(x=>x[0]===a.type)||[])[1]||a.type)+'</small><small>Keputusan: '+a.decisions+'</small><label><input type="checkbox" data-en="'+a.id+'" '+(a.enabled?"checked":"")+'> AI aktif</label><label>Autonomi '+a.autonomy+'%<input type="range" min="0" max="100" value="'+a.autonomy+'" data-au="'+a.id+'"></label></div>').join("")+'</div></div>';
+    r.innerHTML='<div class="bai-inline"><div class="bai-head"><b>🧠 AI Control Center</b></div><p class="bai-note">Setiap kategori entiti mempunyai AI tersendiri.</p>'+renderAIWorldSection()+'<div class="bai-grid">'+Object.values(aiState).map(a=>'<div class="bai-card"><b>'+a.name+'</b><small>'+((AI_TYPES.find(x=>x[0]===a.type)||[])[1]||a.type)+'</small><small>Keputusan: '+a.decisions+'</small><label><input type="checkbox" data-en="'+a.id+'" '+(a.enabled?"checked":"")+'> AI aktif</label><label>Autonomi '+a.autonomy+'%<input type="range" min="0" max="100" value="'+a.autonomy+'" data-au="'+a.id+'"></label></div>').join("")+'</div></div>';
 
-    const close=()=>closeAIControl();
-    r.onclick=e=>{
-      const target=e.target;
-      if(target && (target.closest("[data-close]") || target.closest("[data-ai-backdrop]"))){
-        e.preventDefault();
-        e.stopPropagation();
-        close();
-      }
-    };
-    r.onpointerdown=e=>{
-      const target=e.target;
-      if(target && (target.closest("[data-close]") || target.closest("[data-ai-backdrop]"))){
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
     r.querySelectorAll("[data-en]").forEach(x=>x.onchange=()=>{
       aiState[x.dataset.en].enabled=x.checked;
       localStorage.setItem(AI_KEY,JSON.stringify(aiState));
@@ -339,7 +325,6 @@
       localStorage.setItem(AI_KEY,JSON.stringify(aiState));
       x.parentNode.childNodes[0].textContent="Autonomi "+x.value+"%";
     });
-    document.addEventListener("keydown",aiEscapeHandler,true);
     requestAnimationFrame(()=>r.focus());
   }
   function hookAISettings(){
@@ -350,7 +335,7 @@
       x.textContent="🧠 AI Control Center";
       x.setAttribute("aria-label","Buka AI Control Center");
       x.setAttribute("data-slot","settings-item");
-      x.onclick=e=>{e.preventDefault();e.stopPropagation();openAIControl();};
+      x.onclick=e=>{e.preventDefault();e.stopPropagation();if(document.getElementById("boundless-ai-control-center")) closeAIControl(); else openAIControl();};
       if(template){
         // Reuse the real Settings item's visual classes so AI is a native row,
         // not a separately pasted-looking control.
@@ -405,7 +390,7 @@
     const s=document.createElement("style");
     s.id="bai-style";
     s.textContent=
-      '#boundless-ai-control-center{position:fixed;inset:0;z-index:2147483647;pointer-events:auto}'+
+      +
       '#boundless-ai-control-center .bai-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);pointer-events:auto}'+
       '#boundless-ai-control-center .bai-dialog{position:absolute;inset:5vh 5vw;max-height:90vh;overflow:auto;z-index:1;pointer-events:auto;background:#09120f;color:#f4ead1;border:1px solid #806936;border-radius:16px;padding:18px;box-shadow:0 20px 70px #000;font:13px/1.45 system-ui,sans-serif}'+
       '#boundless-ai-control-center .bai-head{display:flex;justify-content:space-between;align-items:center;font-size:18px}'+
