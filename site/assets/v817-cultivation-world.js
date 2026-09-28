@@ -277,7 +277,8 @@
   const AI_KEY="boundless-entity-ai-v818", AI_TYPES=[["player","Pemain","Strategi"],["npc","NPC","Keperibadian"],["companion","Pasangan / Pengikut","Kesetiaan"],["sect","Sekte","Politik dan sumber"],["clan","Klan / Keluarga","Warisan dan hubungan"],["beast","Binatang Roh","Wilayah dan ancaman"],["merchant","Pedagang","Harga dan stok"],["faction","Puak","Diplomasi dan konflik"],["world","Dunia","Event dan perubahan"]];
   const aiState=(()=>{try{return JSON.parse(localStorage.getItem(AI_KEY))||{}}catch(_){return {}}})();
   const ensureAI=(type,id,name)=>aiState[id]||(aiState[id]={id,type,name:name||type,enabled:true,autonomy:70,decisions:0,lastDecision:"Menunggu keputusan"});
-  let lastAIEntityScan=0;\n  function registerAIs(force=false){ensureAI("player","player","Pemain");AI_TYPES.slice(3).forEach(x=>ensureAI(x[0],"ai-"+x[0],x[1]));const now=Date.now();if(!force&&now-lastAIEntityScan<10000)return;lastAIEntityScan=now;document.querySelectorAll("[data-npc-id],[data-character-id],[data-beast-id],[data-faction-id]").forEach(e=>{const id=e.dataset.npcId||e.dataset.characterId||e.dataset.beastId||e.dataset.factionId;const type=e.dataset.beastId?"beast":e.dataset.factionId?"faction":"npc";ensureAI(type,id,e.dataset.name||e.textContent?.trim().slice(0,40))});localStorage.setItem(AI_KEY,JSON.stringify(aiState))}
+  let lastAIEntityScan=0;
+  function registerAIs(force=false){ensureAI("player","player","Pemain");AI_TYPES.slice(3).forEach(x=>ensureAI(x[0],"ai-"+x[0],x[1]));const now=Date.now();if(!force&&now-lastAIEntityScan<10000)return;lastAIEntityScan=now;document.querySelectorAll("[data-npc-id],[data-character-id],[data-beast-id],[data-faction-id]").forEach(e=>{const id=e.dataset.npcId||e.dataset.characterId||e.dataset.beastId||e.dataset.factionId;const type=e.dataset.beastId?"beast":e.dataset.factionId?"faction":"npc";ensureAI(type,id,e.dataset.name||e.textContent?.trim().slice(0,40))});localStorage.setItem(AI_KEY,JSON.stringify(aiState))}
   function runAIs(){registerAIs();Object.values(aiState).forEach(a=>{if(a.enabled&&Math.random()<a.autonomy/100*.35){a.decisions++;a.lastDecision=a.autonomy>70?"Menjalankan objektif sendiri":"Menunggu keadaan"}});localStorage.setItem(AI_KEY,JSON.stringify(aiState))}
   function renderAIWorldSection(){const active=state.conflicts.filter(x=>x.status==="active");const npcCount=Object.values(aiState).filter(a=>a.type==="npc"&&a.enabled).length;const news=state.news.slice(0,7).map(n=>'<div>Hari '+n.day+' — '+n.text+'</div>').join("")||'<div>Belum ada berita AI.</div>';return '<section class="bai-world"><div class="bai-world-title"><div><b>🧠 Dunia AI Boundless</b><small>v'+VERSION+' · Dunia berjalan secara autonomi</small></div></div><div class="bai-world-meta"><span><b>Tahun '+state.year+'</b> · Hari '+state.day+'/31</span><span>Jianghu · Hutan Moyan</span><small>Markas utama · Event boleh berlaku di wilayah rawak</small></div><div class="bai-world-status">'+(active.length?'Event AI sedang berjalan: '+active.length:'Tiada event Jianghu aktif.')+'</div><h4>Berita AI</h4><div class="bai-news">'+news+'</div><div class="bai-world-footer"><b>'+npcCount+' NPC AI aktif</b><span> · '+active.length+' event berjalan</span></div></section>';}
   let aiPanelOpen=false;
@@ -356,7 +357,9 @@
   window.__boundlessOpenAIControl=openAIControl;
 
   let aiSettingsHooked=false;
-  function hookAISettings(){\n    if(aiSettingsHooked)return;\n    aiSettingsHooked=true;
+  function hookAISettings(){
+    if(aiSettingsHooked)return;
+    aiSettingsHooked=true;
     const inject=()=>{
       const surface=getSettingsSurface();
       if(!surface) return;
