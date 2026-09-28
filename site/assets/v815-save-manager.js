@@ -308,10 +308,137 @@ function mountIntoSettings(host) {
   render(root);
 }
 
+function visibleElement(element) {
+  if (!element) return false;
+  const style = getComputedStyle(element);
+  const rect = element.getBoundingClientRect();
+  return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+}
+
+function getSettingsDialog() {
+  return [...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")]
+    .filter(visibleElement)
+    .at(-1) || null;
+}
+
+function openSaveManager() {
+  const existing = document.getElementById("bc-save-manager-overlay");
+  if (existing) {
+    existing.hidden = false;
+    return;
+  }
+
+  const overlay = document.createElement("div");
+  overlay.id = "bc-save-manager-overlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", "Simpan & Export");
+  overlay.innerHTML = `
+    <div class="bc-save-backdrop" data-save-close></div>
+    <div class="bc-save-dialog">
+      <header class="bc-save-dialog-head">
+        <strong>💾 Simpan & Export</strong>
+        <button type="button" class="bc-save-close" data-save-close aria-label="Tutup">×</button>
+      </header>
+      <div class="bc-save-dialog-body"><div id="bc-save-manager-modal-mount"></div></div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const source = document.getElementById("bc-save-manager-mount");
+  const host = document.getElementById("bc-save-manager-modal-mount");
+  if (source && host) {
+    // Move the existing mount out of Settings/Permainan so that Permainan
+    // contains music only. The save UI lives exclusively in this modal.
+    host.appendChild(source);
+    source.style.display = "";
+  } else if (host) {
+    const created = document.createElement("div");
+    created.id = "bc-save-manager-mount";
+    host.appendChild(created);
+    mountIntoSettings(created);
+  }
+
+  overlay.addEventListener("click", (event) => {
+    if (event.target.closest("[data-save-close]")) closeSaveManager();
+  });
+  document.addEventListener("keydown", onSaveEscape);
+}
+
+function closeSaveManager() {
+  const overlay = document.getElementById("bc-save-manager-overlay");
+  if (overlay) overlay.hidden = true;
+  document.removeEventListener("keydown", onSaveEscape);
+}
+
+function onSaveEscape(event) {
+  if (event.key === "Escape") closeSaveManager();
+}
+
+function injectSaveSettingsItem() {
+  const dialog = getSettingsDialog();
+  if (!dialog || dialog.querySelector("[data-save-open]")) return;
+
+  const controls = [...dialog.querySelectorAll("button,[role=button]")].filter(visibleElement);
+  const target = controls.find((button) =>
+    /paparan|permainan|tips|muzik|simpan/i.test((button.textContent || "").trim())
+  );
+  if (!target || !target.parentElement) return;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.saveOpen = "1";
+  button.dataset.slot = "settings-item";
+  button.textContent = "💾 Simpan & Export";
+  button.setAttribute("aria-label", "Buka Simpan & Export");
+
+  // Copy the native Settings row presentation instead of adding a custom
+  // panel to the list.
+  button.className = target.className || "";
+  for (const name of ["data-variant", "data-size"]) {
+    if (target.hasAttribute(name)) button.setAttribute(name, target.getAttribute(name));
+  }
+  button.style.cssText = target.style.cssText;
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openSaveManager();
+  });
+
+  target.parentElement.insertBefore(button, target);
+}
+
+function hookSaveSettings() {
+  const scan = () => {
+    injectSaveSettingsItem();
+    const settingsTriggers = [...document.querySelectorAll("button")].filter((button) =>
+      /tetapan|settings/i.test(button.textContent || "")
+    );
+    settingsTriggers.forEach((trigger) => {
+      if (trigger.dataset.saveHook) return;
+      trigger.dataset.saveHook = "1";
+      trigger.addEventListener("click", () => [80, 180, 350, 700].forEach((delay) =>
+        setTimeout(injectSaveSettingsItem, delay)
+      ));
+    });
+  };
+  scan();
+  new MutationObserver(scan).observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["data-state", "aria-expanded"]
+  });
+}
+
 function findAndMount() {
   const host = document.getElementById("bc-save-manager-mount");
-  if (host) mountIntoSettings(host);
+  // Do not render the save panel inside Settings/Permainan. It is opened
+  // from its own native Settings row and mounted into the save modal.
+  if (host && !document.getElementById("bc-save-manager-overlay")) host.style.display = "none";
 }
+
+
 
 
 function restoreSavedView(save) {
@@ -351,7 +478,25 @@ function restorePendingLoad() {
   tryLoad();
 }
 
+function injectSaveStyle() {
+  if (document.getElementById("bc-save-modal-style")) return;
+  const style = document.createElement("style");
+  style.id = "bc-save-modal-style";
+  style.textContent =
+    '#bc-save-manager-overlay{position:fixed;inset:0;z-index:2147483647;pointer-events:auto}' +
+    '#bc-save-manager-overlay[hidden]{display:none!important}' +
+    '#bc-save-manager-overlay .bc-save-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55)}' +
+    '#bc-save-manager-overlay .bc-save-dialog{position:absolute;inset:5vh 5vw;max-height:90vh;overflow:auto;background:#09120f;color:#f4ead1;border:1px solid #806936;border-radius:16px;box-shadow:0 20px 70px #000}' +
+    '#bc-save-manager-overlay .bc-save-dialog-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #29443a;font:600 18px/1.3 system-ui,sans-serif}' +
+    '#bc-save-manager-overlay .bc-save-close{appearance:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;width:42px!important;height:38px!important;padding:0!important;border:1px solid #806936!important;border-radius:8px!important;background:#111b16!important;color:#e5c77d!important;font-size:24px!important;line-height:1!important;cursor:pointer!important;z-index:2!important}' +
+    '#bc-save-manager-overlay .bc-save-dialog-body{padding:18px}' +
+    '#bc-save-manager-overlay #bc-save-manager-mount{display:block!important}';
+  document.head.appendChild(style);
+}
+
 function buildUi() {
+  injectSaveStyle();
+  hookSaveSettings();
   findAndMount();
   restorePendingLoad();
   const observer = new MutationObserver(() => findAndMount());
