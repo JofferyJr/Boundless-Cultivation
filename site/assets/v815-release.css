@@ -22,8 +22,8 @@
 .bc-creation-shell .choice-card{padding:.85rem 1rem!important}
 .bc-settings-sheet{width:min(96vw,1440px)!important;max-width:min(96vw,1440px)!important;overflow-x:hidden!important}
 .bc-settings-sheet>*{min-width:0}
-.bc-settings-tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important;min-width:0;grid-auto-flow:row!important}
-.bc-settings-tabs [role="tab"]{min-width:0;white-space:normal;line-height:1.2;padding-inline:.55rem}
+.bc-settings-tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:repeat(2,minmax(58px,auto))!important;min-width:0;grid-auto-flow:row!important}
+.bc-settings-tabs [role="tab"]{min-width:0;white-space:normal;line-height:1.15;padding:.45rem .35rem;font-size:.82rem}
 #bc-music-manager-mount,#bc-save-manager-mount{min-width:0;max-width:100%}
 @media(max-width:1180px){
   .bc-creation-shell{grid-template-columns:1fr!important;width:min(94vw,1120px)!important}
