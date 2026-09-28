@@ -1,14 +1,17 @@
-/* Boundless Settings Slot Bridge v2
+/* Boundless Settings Slot Bridge v3
  * Owns the eight-slot Settings tab strip and survives React/Radix rerenders.
  */
 (() => {
   "use strict";
+
   const SLOT_COUNT = 8;
   const CUSTOM = "data-boundless-custom-tab";
+  const SLOT_ATTR = "data-boundless-settings-slot";
 
   const visible = (el) => {
     if (!el) return false;
-    const s = getComputedStyle(el), r = el.getBoundingClientRect();
+    const s = getComputedStyle(el);
+    const r = el.getBoundingClientRect();
     return s.display !== "none" && s.visibility !== "hidden" && r.width > 0 && r.height > 0;
   };
 
@@ -29,29 +32,54 @@
     b.style.setProperty("min-height", "96px", "important");
     b.style.setProperty("width", "100%", "important");
     b.style.setProperty("box-sizing", "border-box", "important");
-    b.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    b.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       handler();
     });
     return b;
+  }
+
+  function nativeTabs(list) {
+    return [...list.querySelectorAll('[role="tab"]')]
+      .filter((el) => !el.hasAttribute(CUSTOM));
+  }
+
+  function sameOrder(list, ordered) {
+    const children = [...list.children];
+    return ordered.every((el, index) => children[index] === el)
+      && children.length === ordered.length;
   }
 
   function ensure() {
     const list = findTabs();
     if (!list) return false;
 
-    // React can recreate the native buttons. Always derive them from the current DOM.
-    const all = [...list.querySelectorAll('[role="tab"]')];
-    const native = all.filter(el => !el.hasAttribute(CUSTOM)).slice(0, 4);
+    const native = nativeTabs(list).slice(0, 4);
+    // Native Settings currently exposes exactly:
+    // Paparan, Permainan, Help & Tips, Dev.
     if (native.length !== 4) return false;
 
     const template = native[0];
     let save = list.querySelector('[data-boundless-custom-tab="save"]');
-    if (!save) save = makeButton("💾 Simpan & Export", "save", () => window.__boundlessOpenSaveManager?.(), template);
+    if (!save) {
+      save = makeButton(
+        "💾 Simpan & Export",
+        "save",
+        () => window.__boundlessOpenSaveManager?.(),
+        template
+      );
+    }
 
     let ai = list.querySelector('[data-boundless-custom-tab="ai"]');
-    if (!ai) ai = makeButton("🧠 AI Control Center", "ai", () => window.__boundlessOpenAIControl?.(), template);
+    if (!ai) {
+      ai = makeButton(
+        "🧠 AI Control Center",
+        "ai",
+        () => window.__boundlessOpenAIControl?.(),
+        template
+      );
+    }
 
     let empties = [...list.querySelectorAll('[data-boundless-empty-slot]')];
     while (empties.length < 2) {
@@ -61,14 +89,22 @@
       empty.setAttribute("aria-label", "Slot kosong");
       empties.push(empty);
     }
-    if (empties.length > 2) empties.slice(2).forEach(x => x.remove());
+    if (empties.length > 2) empties.slice(2).forEach((el) => el.remove());
     empties = empties.slice(0, 2);
 
     const ordered = [native[0], native[1], native[2], native[3], save, ai, empties[0], empties[1]];
-    ordered.forEach((el, i) => {
-      el.dataset.boundlessSettingsSlot = String(i + 1);
-      list.appendChild(el);
+
+    ordered.forEach((el, index) => {
+      el.dataset[SLOT_ATTR] = String(index + 1);
     });
+
+    // Avoid appendChild() when the order is already correct. This prevents
+    // our own MutationObserver from creating a permanent mutation loop.
+    if (!sameOrder(list, ordered)) {
+      const fragment = document.createDocumentFragment();
+      ordered.forEach((el) => fragment.appendChild(el));
+      list.appendChild(fragment);
+    }
 
     list.style.setProperty("display", "grid", "important");
     list.style.setProperty("grid-template-columns", "repeat(4, minmax(0, 1fr))", "important");
@@ -86,29 +122,40 @@
       el.style.setProperty("box-sizing", "border-box", "important");
       el.style.setProperty("white-space", "normal", "important");
     });
-    return list.querySelectorAll('[role="tab"]').length >= SLOT_COUNT;
+
+    return sameOrder(list, ordered);
   }
 
   let scheduled = false;
   function schedule() {
     if (scheduled) return;
     scheduled = true;
-    requestAnimationFrame(() => { scheduled = false; ensure(); });
+    requestAnimationFrame(() => {
+      scheduled = false;
+      ensure();
+    });
   }
 
   function start() {
     const observer = new MutationObserver((records) => {
-      for (const r of records) {
-        if (r.type === "childList" || r.type === "attributes") {
-          if (r.target.closest?.(".bc-settings-tabs") || r.target.closest?.("[role=dialog]") || r.addedNodes?.length) {
+      for (const record of records) {
+        if (record.type === "childList" || record.type === "attributes") {
+          if (
+            record.target.closest?.(".bc-settings-tabs")
+            || record.target.closest?.("[role=dialog]")
+            || record.addedNodes?.length
+          ) {
             schedule();
             break;
           }
         }
       }
     });
+
     observer.observe(document.body, {
-      childList: true, subtree: true, attributes: true,
+      childList: true,
+      subtree: true,
+      attributes: true,
       attributeFilter: ["data-state", "aria-expanded", "class", "style", "role", "aria-selected"]
     });
 
@@ -122,6 +169,9 @@
     window.__boundlessEnsureSettingsSlots = ensure;
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
-  else start();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
 })();
