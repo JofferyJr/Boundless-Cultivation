@@ -295,15 +295,13 @@
     }
   }
   function getSettingsSurface(){
-    const dialogs=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")].filter(e=>{
-      const s=getComputedStyle(e),r=e.getBoundingClientRect();
-      return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0;
-    });
-    const dialog=dialogs.at(-1);
-    if(!dialog) return null;
-    const tabs=dialog.querySelector(".bc-settings-tabs");
+    const tabs=[...document.querySelectorAll(".bc-settings-tabs")].find(t=>{
+      const s=getComputedStyle(t);
+      return s.display!=="none" && s.visibility!=="hidden";
+    }) || document.querySelector(".bc-settings-tabs");
     if(!tabs) return null;
-    return {dialog,tabs,root:tabs.parentElement};
+    const root=tabs.parentElement;
+    return {dialog:tabs.closest("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")||root,tabs,root};
   }
 
   function closeCustomSettingsPages(){
@@ -374,10 +372,12 @@
       list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
         if(b.dataset.boundlessNativeHook)return;
         b.dataset.boundlessNativeHook="1";
-        b.addEventListener("click",()=>{ if(document.getElementById("boundless-ai-control-center")) closeAIControl(); if(document.getElementById("bc-save-manager-inline")) document.getElementById("bc-save-manager-inline").remove(); });
+        b.addEventListener("click",()=>{ closeCustomSettingsPages(); surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=false;p.style.display="";}); });
       });
     };
     inject();
+    let tries=0;
+    const timer=setInterval(()=>{ inject(); if(++tries>=120) clearInterval(timer); },250);
     new MutationObserver(inject).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-state","aria-expanded"]});
   }
   function injectAIStyle(){
