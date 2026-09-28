@@ -94,6 +94,27 @@
     });
   }
 
+  function restoreNativeSettingsOnClick(list, native) {
+    native.forEach((tab) => {
+      if (tab.dataset.boundlessRestoreHook === "1") return;
+      tab.dataset.boundlessRestoreHook = "1";
+      tab.addEventListener("click", () => {
+        const parent = list.parentElement;
+        if (!parent) return;
+        // A custom Settings page temporarily hides the native tab panel.
+        // Restore the native surface BEFORE React/Radix processes this click.
+        parent.removeAttribute("data-boundless-custom-open");
+        parent.querySelectorAll("[data-boundless-custom-panel]").forEach((panel) => panel.remove());
+        document.getElementById("boundless-ai-control-center")?.remove();
+        document.getElementById("bc-save-manager-inline")?.remove();
+        parent.querySelectorAll("[data-boundless-custom-tab]").forEach((button) => {
+          button.setAttribute("aria-selected", "false");
+          button.dataset.state = "inactive";
+        });
+      }, true);
+    });
+  }
+
   function buildExtraRow(list, native) {
     const parent = list.parentElement;
     if (!parent) return null;
@@ -191,6 +212,7 @@
     if (native.length !== 4) return false;
 
     applyNativeLayout(list);
+    restoreNativeSettingsOnClick(list, native);
     const extra = buildExtraRow(list, native);
     cleanOrphans(list);
 
