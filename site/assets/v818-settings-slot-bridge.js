@@ -29,7 +29,7 @@
     b.setAttribute("aria-selected", "false");
     b.dataset.state = "inactive";
     b.className = template?.className || "dao-tab justify-center";
-    b.style.setProperty("min-height", "96px", "important");
+    b.style.setProperty("min-height", "58px", "important");
     b.style.setProperty("width", "100%", "important");
     b.style.setProperty("box-sizing", "border-box", "important");
     b.addEventListener("click", (event) => {
@@ -58,9 +58,16 @@
     const native = nativeTabs(list).slice(0, 4);
     // Native Settings currently exposes exactly:
     // Paparan, Permainan, Help & Tips, Dev.
-    if (native.length !== 4) return false;
+    if (native.length < 3) return false;
 
     const template = native[0];
+    // Reserve the fourth position when Dev is locked/not rendered yet.
+    let devSlot = native[3];
+    if (!devSlot) {
+      devSlot = makeButton("🔒 Dev", "dev-placeholder", () => {}, template);
+      devSlot.disabled = true;
+      devSlot.dataset.boundlessDevPlaceholder = "1";
+    }
     let save = list.querySelector('[data-boundless-custom-tab="save"]');
     if (!save) {
       save = makeButton(
@@ -92,7 +99,7 @@
     if (empties.length > 2) empties.slice(2).forEach((el) => el.remove());
     empties = empties.slice(0, 2);
 
-    const ordered = [native[0], native[1], native[2], native[3], save, ai, empties[0], empties[1]];
+    const ordered = [native[0], native[1], native[2], devSlot, save, ai, empties[0], empties[1]];
 
     ordered.forEach((el, index) => {
       el.dataset[SLOT_ATTR] = String(index + 1);
@@ -108,7 +115,7 @@
 
     list.style.setProperty("display", "grid", "important");
     list.style.setProperty("grid-template-columns", "repeat(4, minmax(0, 1fr))", "important");
-    list.style.setProperty("grid-template-rows", "repeat(2, minmax(96px, auto))", "important");
+    list.style.setProperty("grid-template-rows", "repeat(2, minmax(58px, auto))", "important");
     list.style.setProperty("grid-auto-flow", "row", "important");
     list.style.setProperty("gap", "12px", "important");
     list.style.setProperty("width", "100%", "important");
@@ -116,11 +123,13 @@
     list.style.setProperty("box-sizing", "border-box", "important");
 
     ordered.forEach((el) => {
-      el.style.setProperty("min-height", "96px", "important");
+      el.style.setProperty("min-height", "58px", "important");
       el.style.setProperty("width", "100%", "important");
       el.style.setProperty("max-width", "none", "important");
       el.style.setProperty("box-sizing", "border-box", "important");
       el.style.setProperty("white-space", "normal", "important");
+      el.style.setProperty("font-size", "0.82rem", "important");
+      el.style.setProperty("padding", "0.45rem 0.35rem", "important");
     });
 
     return sameOrder(list, ordered);
