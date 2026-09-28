@@ -56,19 +56,26 @@
     if (!list) return false;
 
     const native = nativeTabs(list).slice(0, 4);
-    // Native Settings currently exposes exactly:
-    // Paparan, Permainan, Help & Tips, Dev.
-    if (native.length < 3) return false;
+    if (native.length < 1) return false;
+
+    // React/Radix owns the native tab list. Do NOT move native children:
+    // doing so can make React immediately restore the original four tabs.
+    // Instead, keep the native four untouched and add a second, persistent
+    // four-slot row directly beside/below it.
+    let extra = document.querySelector(".boundless-extra-settings-slots");
+    const parent = list.parentElement;
+    if (!parent) return false;
+
+    if (!extra) {
+      extra = document.createElement("div");
+      extra.className = "boundless-extra-settings-slots";
+      extra.setAttribute("aria-label", "Boundless additional Settings");
+      parent.appendChild(extra);
+    }
 
     const template = native[0];
-    // Reserve the fourth position when Dev is locked/not rendered yet.
-    let devSlot = native[3];
-    if (!devSlot) {
-      devSlot = makeButton("🔒 Dev", "dev-placeholder", () => {}, template);
-      devSlot.disabled = true;
-      devSlot.dataset.boundlessDevPlaceholder = "1";
-    }
-    let save = list.querySelector('[data-boundless-custom-tab="save"]');
+
+    let save = extra.querySelector('[data-boundless-custom-tab="save"]');
     if (!save) {
       save = makeButton(
         "💾 Simpan & Export",
@@ -76,9 +83,10 @@
         () => window.__boundlessOpenSaveManager?.(),
         template
       );
+      extra.appendChild(save);
     }
 
-    let ai = list.querySelector('[data-boundless-custom-tab="ai"]');
+    let ai = extra.querySelector('[data-boundless-custom-tab="ai"]');
     if (!ai) {
       ai = makeButton(
         "🧠 AI Control Center",
@@ -86,43 +94,39 @@
         () => window.__boundlessOpenAIControl?.(),
         template
       );
+      extra.appendChild(ai);
     }
 
-    let empties = [...list.querySelectorAll('[data-boundless-empty-slot]')];
+    let empties = [...extra.querySelectorAll("[data-boundless-empty-slot]")];
     while (empties.length < 2) {
       const empty = makeButton("Slot akan datang", "empty", () => {}, template);
       empty.dataset.boundlessEmptySlot = "1";
       empty.disabled = true;
       empty.setAttribute("aria-label", "Slot kosong");
+      extra.appendChild(empty);
       empties.push(empty);
     }
     if (empties.length > 2) empties.slice(2).forEach((el) => el.remove());
-    empties = empties.slice(0, 2);
 
-    const ordered = [native[0], native[1], native[2], devSlot, save, ai, empties[0], empties[1]];
-
-    ordered.forEach((el, index) => {
-      el.dataset[SLOT_ATTR] = String(index + 1);
+    const extras = [save, ai, empties[0], empties[1]];
+    extras.forEach((el, index) => {
+      el.dataset[SLOT_ATTR] = String(native.length + index + 1);
+      el.style.setProperty("min-height", "58px", "important");
+      el.style.setProperty("width", "100%", "important");
+      el.style.setProperty("box-sizing", "border-box", "important");
+      el.style.setProperty("font-size", "0.82rem", "important");
+      el.style.setProperty("padding", "0.45rem 0.35rem", "important");
     });
 
-    // Avoid appendChild() when the order is already correct. This prevents
-    // our own MutationObserver from creating a permanent mutation loop.
-    if (!sameOrder(list, ordered)) {
-      const fragment = document.createDocumentFragment();
-      ordered.forEach((el) => fragment.appendChild(el));
-      list.appendChild(fragment);
-    }
-
+    // Keep the native row compact as well, without changing its children/order.
     list.style.setProperty("display", "grid", "important");
     list.style.setProperty("grid-template-columns", "repeat(4, minmax(0, 1fr))", "important");
-    list.style.setProperty("grid-template-rows", "repeat(2, minmax(58px, auto))", "important");
     list.style.setProperty("grid-auto-flow", "row", "important");
     list.style.setProperty("gap", "12px", "important");
     list.style.setProperty("width", "100%", "important");
-    list.style.setProperty("min-width", "0", "important");
     list.style.setProperty("box-sizing", "border-box", "important");
 
-    ordered.forEach((el) => {
+    [...list.children].filter((el) => el.matches?.('[role="tab"]')).forEach((el) => {
       el.style.setProperty("min-height", "58px", "important");
       el.style.setProperty("width", "100%", "important");
       el.style.setProperty("max-width", "none", "important");
@@ -132,8 +136,9 @@
       el.style.setProperty("padding", "0.45rem 0.35rem", "important");
     });
 
-    return sameOrder(list, ordered);
+    return extras.every((el) => extra.contains(el));
   }
+
 
   let scheduled = false;
   function schedule() {
