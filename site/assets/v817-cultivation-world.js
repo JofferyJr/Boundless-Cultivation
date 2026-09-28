@@ -343,14 +343,25 @@
     requestAnimationFrame(()=>r.focus());
   }
   function hookAISettings(){
-    const makeButton=()=>{
+    const makeButton=(template)=>{
       const x=document.createElement("button");
       x.dataset.aiOpen="1";
       x.type="button";
       x.textContent="🧠 AI Control Center";
-      x.className="bai-settings-slot";
       x.setAttribute("aria-label","Buka AI Control Center");
+      x.setAttribute("data-slot","settings-item");
       x.onclick=e=>{e.preventDefault();e.stopPropagation();openAIControl();};
+      if(template){
+        // Reuse the real Settings item's visual classes so AI is a native row,
+        // not a separately pasted-looking control.
+        x.className=template.className||"";
+        for(const name of ["data-variant","data-size"]){
+          if(template.hasAttribute(name)) x.setAttribute(name,template.getAttribute(name));
+        }
+        x.style.cssText=template.style.cssText;
+      }else{
+        x.className="bai-settings-slot";
+      }
       return x;
     };
     const visible=e=>{
@@ -360,23 +371,23 @@
     };
     const inject=()=>{
       const dialogs=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")].filter(visible);
-      let d=dialogs[dialogs.length-1];
+      const d=dialogs[dialogs.length-1];
       if(!d)return;
-      // AI Control Center belongs in the main Settings list, not inside
-      // individual sections such as Paparan, Permainan, or Tips.
-      const sectionText=[...d.querySelectorAll("button,[role=button]")].map(x=>(x.textContent||"").trim());
+
       const existing=d.querySelector("[data-ai-open]");
-      if(existing && existing.parentElement!==d){
-        existing.remove();
-      }
-      if(!d.querySelector("[data-ai-open]")){
-        const x=makeButton();
-        const controls=[...d.querySelectorAll("button,[role=button]")];
-        const settingsSections=controls.filter(b=>/paparan|permainan|tips|muzik|simpan|slot/i.test(b.textContent||""));
-        const first=settingsSections[0]||controls[0];
-        if(first&&first.parentElement===d) d.insertBefore(x,first);
-        else d.prepend(x);
-      }
+      if(existing) return;
+
+      // Find the actual Settings list row containing Paparan/Permainan/Tips.
+      // Insert AI beside those rows, using the same parent and the same button
+      // classes. This keeps hierarchy, spacing and hover treatment identical.
+      const controls=[...d.querySelectorAll("button,[role=button]")].filter(visible);
+      const target=controls.find(b=>/paparan|permainan|tips|muzik|simpan|slot/i.test((b.textContent||"").trim()));
+      if(!target)return;
+
+      const parent=target.parentElement;
+      if(!parent)return;
+      const ai=makeButton(target);
+      parent.insertBefore(ai,target);
     };
     const scan=()=>{
       document.querySelectorAll("button").forEach(b=>{
