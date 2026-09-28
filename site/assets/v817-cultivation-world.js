@@ -379,6 +379,35 @@
         }
         }
       }
+      // Force the complete eight-slot layout: four columns × two rows.
+      // Order is always: 4 native tabs, Save, AI, then 2 reserved slots.
+      const nativeTabs=[...list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])')].slice(0,4);
+      const saveTab=list.querySelector('[data-save-open]');
+      const aiTab=list.querySelector('[data-ai-open]');
+      let emptyTabs=[...list.querySelectorAll('[data-boundless-empty-slot]')].slice(0,2);
+      while(emptyTabs.length<2){
+        const empty=document.createElement("button");
+        empty.type="button";
+        empty.disabled=true;
+        empty.dataset.boundlessEmptySlot="1";
+        empty.setAttribute("aria-label","Slot kosong");
+        empty.textContent="Slot akan datang";
+        empty.className=nativeTabs[0]?.className||"dao-tab justify-center";
+        list.appendChild(empty);
+        emptyTabs.push(empty);
+      }
+      const ordered=[...nativeTabs];
+      if(saveTab) ordered.push(saveTab);
+      if(aiTab) ordered.push(aiTab);
+      ordered.push(...emptyTabs);
+      ordered.forEach((item,index)=>{
+        item.dataset.boundlessSettingsSlot=String(index+1);
+        list.appendChild(item);
+      });
+      list.style.display="grid";
+      list.style.gridTemplateColumns="repeat(4,minmax(0,1fr))";
+      list.style.gridAutoFlow="row";
+      list.style.gap="12px";
       list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
         if(b.dataset.boundlessNativeHook)return;
         b.dataset.boundlessNativeHook="1";
