@@ -322,7 +322,10 @@ function getSettingsDialog() {
 }
 
 function getSaveSettingsSurface(){
-  const tabs=[...document.querySelectorAll(".bc-settings-tabs")].find(visibleElement);
+  const tabs=[...document.querySelectorAll(".bc-settings-tabs")].find(t=>{
+    const s=getComputedStyle(t);
+    return s.display!=="none" && s.visibility!=="hidden";
+  }) || document.querySelector(".bc-settings-tabs");
   if(!tabs) return null;
   const root=tabs.parentElement;
   return {dialog:tabs.closest("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")||root,tabs,root};
@@ -368,13 +371,15 @@ function injectSaveSettingsItem(){
   list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
     if(b.dataset.boundlessSaveNativeHook)return;
     b.dataset.boundlessSaveNativeHook="1";
-    b.addEventListener("click",()=>{document.getElementById("bc-save-manager-inline")?.remove();});
+    b.addEventListener("click",()=>{document.getElementById("bc-save-manager-inline")?.remove();surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=false;p.style.display="";});surface.root.querySelectorAll("[data-boundless-custom-tab]").forEach(x=>{x.setAttribute("aria-selected","false");x.dataset.state="inactive";});});
   });
 }
 
 function hookSaveSettings(){
   const scan=()=>injectSaveSettingsItem();
   scan();
+  let tries=0;
+  const timer=setInterval(()=>{ scan(); if(++tries>=120) clearInterval(timer); },250);
   new MutationObserver(scan).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-state","aria-expanded"]});
 }
 
