@@ -18,7 +18,7 @@ class BrandingTests(unittest.TestCase):
         self.assertIn("/Cultivation/assets/v817-cultivation-world.js?v=8.1.13-expert", html)
         self.assertIn("/Cultivation/assets/v818-settings-slot-bridge.js?v=8.1.13-expert", html)
         self.assertIn("/Cultivation/assets/v815-save-manager.js?v=8.1.13-expert", html)
-        self.assertIn("/Cultivation/assets/v815-release.js?v=8.1.11-aligned", html)
+        self.assertIn("/Cultivation/assets/v815-release.js?v=8.1.13-expert", html)
         self.assertNotIn("/Cultivation/assets/v816-ai-world.js", html)
 
     def test_internal_save_key_remains_compatible(self):
