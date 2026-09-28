@@ -49,13 +49,23 @@
       "white-space:normal",
       "text-align:center",
       "cursor:" + (empty ? "default" : "pointer"),
-      "touch-action:manipulation"
+      "touch-action:manipulation",
+      "position:relative",
+      "z-index:9999",
+      "pointer-events:auto",
+      "user-select:none"
     ].join(";");
     if (empty) {
       b.disabled = true;
       b.style.opacity = ".45";
       b.style.pointerEvents = "none";
     } else {
+      b.disabled = false;
+      b.removeAttribute("aria-disabled");
+      b.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }, { passive: false });
       b.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -112,6 +122,9 @@
     extra.style.setProperty("width", "100%", "important");
     extra.style.setProperty("margin-top", "12px", "important");
     extra.style.setProperty("box-sizing", "border-box", "important");
+    extra.style.setProperty("position", "relative", "important");
+    extra.style.setProperty("z-index", "9998", "important");
+    extra.style.setProperty("pointer-events", "auto", "important");
 
     const template = native[0];
 
