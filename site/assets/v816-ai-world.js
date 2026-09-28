@@ -120,7 +120,7 @@
 
     syncFromGameSave() {
       const candidates = [];
-      const keys = ["jalan-dao-save"];
+      const keys = ["boundless-save"];
       for (const k of keys) {
         try { const v=JSON.parse(localStorage.getItem(k)||"null"); if(v) candidates.push(v); } catch {}
       }
