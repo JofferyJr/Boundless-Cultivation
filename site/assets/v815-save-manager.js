@@ -321,135 +321,82 @@ function getSettingsDialog() {
     .at(-1) || null;
 }
 
-function openSaveManager() {
-  const dialog = getSettingsDialog();
-  if (!dialog) return;
-  const row = dialog.querySelector("[data-save-open]");
-  if (!row) return;
-
-  let panel = document.getElementById("bc-save-manager-inline");
-  if (panel) {
-    panel.remove();
-    return;
-  }
-
-  panel = document.createElement("section");
-  panel.id = "bc-save-manager-inline";
-  panel.setAttribute("aria-label", "Simpan & Export");
-  row.parentElement?.insertBefore(panel, row.nextSibling);
-
-  const source = document.getElementById("bc-save-manager-mount");
-  if (source) {
-    panel.appendChild(source);
-    source.style.display = "";
-  } else {
-    const host = document.createElement("div");
-    host.id = "bc-save-manager-mount";
-    panel.appendChild(host);
-    mountIntoSettings(host);
-  }
+function getSaveSettingsSurface(){
+  const dialogs=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")].filter(e=>{
+    const s=getComputedStyle(e),r=e.getBoundingClientRect();
+    return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0;
+  });
+  const dialog=dialogs.at(-1); if(!dialog) return null;
+  const tabs=dialog.querySelector(".bc-settings-tabs"); if(!tabs) return null;
+  return {dialog,tabs,root:tabs.parentElement};
 }
 
-function closeSaveManager() {
+function closeSaveManager(){
   document.getElementById("bc-save-manager-inline")?.remove();
+  const surface=getSaveSettingsSurface();
+  surface?.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=false;p.style.display="";});
+  surface?.root.querySelectorAll("[data-boundless-custom-tab]").forEach(b=>{b.setAttribute("aria-selected","false");b.dataset.state="inactive";});
 }
 
-function onSaveEscape(event) {
-  if (event.key === "Escape") closeSaveManager();
+function openSaveManager(){
+  const surface=getSaveSettingsSurface();
+  if(!surface) return;
+  if(document.getElementById("bc-save-manager-inline")){closeSaveManager();return;}
+  document.getElementById("boundless-ai-control-center")?.remove();
+  surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=true;p.style.display="none";});
+  surface.root.querySelectorAll("[data-boundless-custom-panel]").forEach(p=>p.remove());
+  const panel=document.createElement("section");
+  panel.id="bc-save-manager-inline"; panel.dataset.boundlessCustomPanel="1";
+  panel.setAttribute("aria-label","Simpan & Export");
+  surface.root.appendChild(panel);
+  const source=document.getElementById("bc-save-manager-mount");
+  if(source){panel.appendChild(source);source.style.display="";}
+  else{const host=document.createElement("div");host.id="bc-save-manager-mount";panel.appendChild(host);mountIntoSettings(host);}
 }
 
-function injectSaveSettingsItem() {
-  const dialog = getSettingsDialog();
-  if (!dialog || dialog.querySelector("[data-save-open]")) return;
-
-  const controls = [...dialog.querySelectorAll("button,[role=button]")].filter(visibleElement);
-  const target = controls.find((button) =>
-    /paparan|permainan|tips|muzik/i.test((button.textContent || "").trim())
-  );
-  if (!target || !target.parentElement) return;
-
-  const button = document.createElement("button");
-  button.type = "button";
-  button.dataset.saveOpen = "1";
-  button.dataset.slot = "settings-item";
-  button.textContent = "💾 Simpan & Export";
-  button.setAttribute("aria-label", "Buka Simpan & Export");
-
-  button.className = target.className || "";
-  for (const name of ["data-variant", "data-size"]) {
-    if (target.hasAttribute(name)) button.setAttribute(name, target.getAttribute(name));
+function injectSaveSettingsItem(){
+  const surface=getSaveSettingsSurface(); if(!surface) return;
+  const list=surface.tabs;
+  if(!list.querySelector("[data-save-open]")){
+    const target=list.querySelector('[role="tab"]');
+    if(target){
+      const b=document.createElement("button");
+      b.type="button";b.role="tab";b.dataset.saveOpen="1";b.dataset.boundlessCustomTab="save";
+      b.textContent="💾 Simpan & Export";b.setAttribute("aria-selected","false");b.dataset.state="inactive";
+      b.className=target.className||"dao-tab justify-center";
+      b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();openSaveManager();});
+      list.appendChild(b);
+    }
   }
-  button.style.cssText = target.style.cssText;
-  button.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    openSaveManager();
+  list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
+    if(b.dataset.boundlessSaveNativeHook)return;
+    b.dataset.boundlessSaveNativeHook="1";
+    b.addEventListener("click",()=>{document.getElementById("bc-save-manager-inline")?.remove();});
   });
-
-  target.parentElement.insertBefore(button, target);
 }
 
-function hookSaveSettings() {
-  const scan = () => {
-    injectSaveSettingsItem();
-    const settingsTriggers = [...document.querySelectorAll("button")].filter((button) =>
-      /tetapan|settings/i.test(button.textContent || "")
-    );
-    settingsTriggers.forEach((trigger) => {
-      if (trigger.dataset.saveHook) return;
-      trigger.dataset.saveHook = "1";
-      trigger.addEventListener("click", () => [80, 180, 350, 700].forEach((delay) =>
-        setTimeout(injectSaveSettingsItem, delay)
-      ));
-    });
-  };
+function hookSaveSettings(){
+  const scan=()=>injectSaveSettingsItem();
   scan();
-  new MutationObserver(scan).observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ["data-state", "aria-expanded"]
-  });
+  new MutationObserver(scan).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-state","aria-expanded"]});
 }
 
-function findAndMount() {
-  const host = document.getElementById("bc-save-manager-mount");
-  // Keep the host hidden until the native Settings Save row is selected.
-  if (host && !document.getElementById("bc-save-manager-inline")) host.style.display = "none";
+function findAndMount(){
+  const host=document.getElementById("bc-save-manager-mount");
+  if(host && !document.getElementById("bc-save-manager-inline")) host.style.display="none";
 }
 
-function hookSaveSettings() {
-  const scan = () => {
-    injectSaveSettingsItem();
-    const settingsTriggers = [...document.querySelectorAll("button")].filter((button) =>
-      /tetapan|settings/i.test(button.textContent || "")
-    );
-    settingsTriggers.forEach((trigger) => {
-      if (trigger.dataset.saveHook) return;
-      trigger.dataset.saveHook = "1";
-      trigger.addEventListener("click", () => [80, 180, 350, 700].forEach((delay) =>
-        setTimeout(injectSaveSettingsItem, delay)
-      ));
-    });
-  };
-  scan();
-  new MutationObserver(scan).observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ["data-state", "aria-expanded"]
-  });
+function injectSaveStyle(){
+  if(document.getElementById("bc-save-modal-style"))return;
+  const style=document.createElement("style");style.id="bc-save-modal-style";
+  style.textContent='#bc-save-manager-inline{display:block;width:100%;margin:0;padding-top:12px;border-top:1px solid #29443a}#bc-save-manager-inline #bc-save-manager-mount{display:block!important}#bc-save-manager-inline .bc-save-panel{margin-top:0} .bc-settings-tabs{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))!important}';
+  document.head.appendChild(style);
 }
 
-function findAndMount() {
-  const host = document.getElementById("bc-save-manager-mount");
-  // Do not render the save panel inside Settings/Permainan. It is opened
-  // from its own native Settings row and mounted into the save modal.
-  if (host && !document.getElementById("bc-save-manager-overlay")) host.style.display = "none";
+function buildUi(){
+  injectSaveStyle();hookSaveSettings();findAndMount();restorePendingLoad();
+  new MutationObserver(findAndMount).observe(document.documentElement,{childList:true,subtree:true});
 }
-
-
-
 
 function restoreSavedView(save) {
   const activeTab = String(save?.activeTab || "").trim().toLowerCase();
