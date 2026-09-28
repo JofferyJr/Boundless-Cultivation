@@ -294,27 +294,54 @@
       closeAIControl();
     }
   }
+  function getSettingsSurface(){
+    const dialogs=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")].filter(e=>{
+      const s=getComputedStyle(e),r=e.getBoundingClientRect();
+      return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0;
+    });
+    const dialog=dialogs.at(-1);
+    if(!dialog) return null;
+    const tabs=dialog.querySelector(".bc-settings-tabs");
+    if(!tabs) return null;
+    return {dialog,tabs,root:tabs.parentElement};
+  }
+
+  function closeCustomSettingsPages(){
+    document.getElementById("boundless-ai-control-center")?.remove();
+    document.getElementById("bc-save-manager-inline")?.remove();
+    const surface=getSettingsSurface();
+    if(!surface) return;
+    surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=false;p.style.display="";});
+    surface.root.querySelectorAll("[data-boundless-custom-tab]").forEach(b=>{
+      b.setAttribute("aria-selected","false");
+      b.dataset.state="inactive";
+    });
+  }
+
+  function showExclusiveSettingsPage(panel){
+    const surface=getSettingsSurface();
+    if(!surface) return null;
+    surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=true;p.style.display="none";});
+    surface.root.querySelectorAll("[data-boundless-custom-panel]").forEach(p=>p.remove());
+    surface.root.appendChild(panel);
+    return surface;
+  }
+
   function openAIControl(){
     registerAIs();
-    const settings=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")]
-      .filter(e=>{
-        const s=getComputedStyle(e),r=e.getBoundingClientRect();
-        return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0;
-      }).at(-1);
-    if(!settings)return;
-
+    const surface=getSettingsSurface();
+    if(!surface) return;
+    const old=document.getElementById("boundless-ai-control-center");
+    if(old){ closeAIControl(); return; }
+    document.getElementById("bc-save-manager-inline")?.remove();
     aiPanelOpen=true;
-    let r=document.getElementById("boundless-ai-control-center");
-    if(!r){
-      r=document.createElement("section");
-      r.id="boundless-ai-control-center";
-      r.setAttribute("aria-label","AI Control Center");
-      r.tabIndex=-1;
-      const anchor=settings.querySelector("[data-ai-open]");
-      (anchor?.parentElement||settings).appendChild(r);
-    }
+    const r=document.createElement("section");
+    r.id="boundless-ai-control-center";
+    r.dataset.boundlessCustomPanel="1";
+    r.setAttribute("aria-label","AI Control Center");
+    r.tabIndex=-1;
     r.innerHTML='<div class="bai-inline"><div class="bai-head"><b>🧠 AI Control Center</b></div><p class="bai-note">Setiap kategori entiti mempunyai AI tersendiri.</p>'+renderAIWorldSection()+'<div class="bai-grid">'+Object.values(aiState).map(a=>'<div class="bai-card"><b>'+a.name+'</b><small>'+((AI_TYPES.find(x=>x[0]===a.type)||[])[1]||a.type)+'</small><small>Keputusan: '+a.decisions+'</small><label><input type="checkbox" data-en="'+a.id+'" '+(a.enabled?"checked":"")+'> AI aktif</label><label>Autonomi '+a.autonomy+'%<input type="range" min="0" max="100" value="'+a.autonomy+'" data-au="'+a.id+'"></label></div>').join("")+'</div></div>';
-
+    showExclusiveSettingsPage(r);
     r.querySelectorAll("[data-en]").forEach(x=>x.onchange=()=>{
       aiState[x.dataset.en].enabled=x.checked;
       localStorage.setItem(AI_KEY,JSON.stringify(aiState));
@@ -327,63 +354,31 @@
     });
     requestAnimationFrame(()=>r.focus());
   }
+
   function hookAISettings(){
-    const makeButton=(template)=>{
-      const x=document.createElement("button");
-      x.dataset.aiOpen="1";
-      x.type="button";
-      x.textContent="🧠 AI Control Center";
-      x.setAttribute("aria-label","Buka AI Control Center");
-      x.setAttribute("data-slot","settings-item");
-      x.onclick=e=>{e.preventDefault();e.stopPropagation();if(document.getElementById("boundless-ai-control-center")) closeAIControl(); else openAIControl();};
-      if(template){
-        // Reuse the real Settings item's visual classes so AI is a native row,
-        // not a separately pasted-looking control.
-        x.className=template.className||"";
-        for(const name of ["data-variant","data-size"]){
-          if(template.hasAttribute(name)) x.setAttribute(name,template.getAttribute(name));
-        }
-        x.style.cssText=template.style.cssText;
-      }else{
-        x.className="bai-settings-slot";
-      }
-      return x;
-    };
-    const visible=e=>{
-      if(!e)return false;
-      const s=getComputedStyle(e),r=e.getBoundingClientRect();
-      return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0;
-    };
     const inject=()=>{
-      const dialogs=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")].filter(visible);
-      const d=dialogs[dialogs.length-1];
-      if(!d)return;
-
-      const existing=d.querySelector("[data-ai-open]");
-      if(existing) return;
-
-      // Find the actual Settings list row containing Paparan/Permainan/Tips.
-      // Insert AI beside those rows, using the same parent and the same button
-      // classes. This keeps hierarchy, spacing and hover treatment identical.
-      const controls=[...d.querySelectorAll("button,[role=button]")].filter(visible);
-      const target=controls.find(b=>/paparan|permainan|tips|muzik|simpan|slot/i.test((b.textContent||"").trim()));
-      if(!target)return;
-
-      const parent=target.parentElement;
-      if(!parent)return;
-      const ai=makeButton(target);
-      parent.insertBefore(ai,target);
-    };
-    const scan=()=>{
-      document.querySelectorAll("button").forEach(b=>{
-        if(!/tetapan|settings/i.test(b.textContent||"")||b.dataset.aiHook)return;
-        b.dataset.aiHook="1";
-        b.addEventListener("click",()=>[80,180,350,700].forEach(t=>setTimeout(inject,t)));
+      const surface=getSettingsSurface();
+      if(!surface) return;
+      const list=surface.tabs;
+      if(!list.querySelector("[data-ai-open]")){
+        const target=list.querySelector('[role="tab"]');
+        if(target){
+          const b=document.createElement("button");
+          b.type="button"; b.role="tab"; b.dataset.aiOpen="1"; b.dataset.boundlessCustomTab="ai";
+          b.textContent="🧠 AI Control Center"; b.setAttribute("aria-selected","false"); b.dataset.state="inactive";
+          b.className=target.className||"dao-tab justify-center";
+          b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();openAIControl();});
+          list.appendChild(b);
+        }
+      }
+      list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
+        if(b.dataset.boundlessNativeHook)return;
+        b.dataset.boundlessNativeHook="1";
+        b.addEventListener("click",()=>{ if(document.getElementById("boundless-ai-control-center")) closeAIControl(); if(document.getElementById("bc-save-manager-inline")) document.getElementById("bc-save-manager-inline").remove(); });
       });
-      inject();
     };
-    scan();
-    new MutationObserver(scan).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-state","aria-expanded"]});
+    inject();
+    new MutationObserver(inject).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-state","aria-expanded"]});
   }
   function injectAIStyle(){
     if(document.getElementById("bai-style"))return;
@@ -397,7 +392,7 @@
       '#boundless-ai-control-center .bai-head{display:flex;justify-content:space-between;align-items:center;font-size:18px;padding:0 0 10px}'+
       '#boundless-ai-control-center .bai-head button{appearance:none!important;-webkit-appearance:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;background:#111b16!important;border:1px solid #806936!important;border-radius:8px!important;color:#e5c77d!important;font-size:24px!important;line-height:1!important;width:42px!important;height:38px!important;padding:0!important;margin:0!important;pointer-events:auto!important;position:relative!important;z-index:10!important;cursor:pointer!important;touch-action:manipulation!important}'+
       '#boundless-ai-control-center .bai-head button:hover{background:#20271c!important;color:#f3dda0!important}'+
-      '.bai-note{color:#9fb4a8}.bai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.bai-card{padding:12px;border:1px solid #29443a;border-radius:10px;background:#0c1914}.bai-card small{display:block;color:#9fb4a8;margin:4px 0}.bai-card label{display:block;margin-top:8px}.bai-card input[type=range]{width:100%}.bai-settings-slot{display:flex!important;width:100%;align-items:center;justify-content:flex-start;gap:8px;margin:0 0 10px;padding:10px 12px;border:1px solid #806936;border-radius:8px;background:#111b16;color:#e5c77d;font:600 13px system-ui,sans-serif;cursor:pointer}.bai-settings-slot:hover{background:#20271c;color:#f3dda0}';
+      '.bc-settings-tabs{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))!important}.bai-note{color:#9fb4a8}.bai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.bai-card{padding:12px;border:1px solid #29443a;border-radius:10px;background:#0c1914}.bai-card small{display:block;color:#9fb4a8;margin:4px 0}.bai-card label{display:block;margin-top:8px}.bai-card input[type=range]{width:100%}.bai-settings-slot{display:flex!important;width:100%;align-items:center;justify-content:flex-start;gap:8px;margin:0 0 10px;padding:10px 12px;border:1px solid #806936;border-radius:8px;background:#111b16;color:#e5c77d;font:600 13px system-ui,sans-serif;cursor:pointer}.bai-settings-slot:hover{background:#20271c;color:#f3dda0}';
     document.head.appendChild(s);
   }
 
