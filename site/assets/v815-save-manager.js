@@ -356,27 +356,7 @@ function openSaveManager(){
 
 window.__boundlessOpenSaveManager = openSaveManager;
 
-function injectSaveSettingsItem(){
-  const surface=getSaveSettingsSurface(); if(!surface) return;
-  const list=surface.tabs;
-  if(!list.querySelector("[data-save-open]")){
-    const target=list.querySelector('[role="tab"]');
-    if(target){
-      const b=document.createElement("button");
-      b.type="button";b.role="tab";b.dataset.saveOpen="1";b.dataset.boundlessCustomTab="save";
-      b.textContent="💾 Simpan & Export";b.setAttribute("aria-selected","false");b.dataset.state="inactive";
-      b.className=target.className||"dao-tab justify-center";
-      b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();openSaveManager();});
-      list.appendChild(b);
-    }
-  }
-  if(typeof window.__boundlessArrangeSettingsSlots==="function") window.__boundlessArrangeSettingsSlots();
-  list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
-    if(b.dataset.boundlessSaveNativeHook)return;
-    b.dataset.boundlessSaveNativeHook="1";
-    b.addEventListener("click",()=>{document.getElementById("bc-save-manager-inline")?.remove();surface.root.removeAttribute("data-boundless-custom-open");surface.root.querySelectorAll("[data-boundless-custom-tab]").forEach(x=>{x.setAttribute("aria-selected","false");x.dataset.state="inactive";});});
-  });
-}
+function injectSaveSettingsItem(){ /* Settings v2 bridge owns the tab strip. */ }
 
 function hookSaveSettings(){
   const scan=()=>injectSaveSettingsItem();
