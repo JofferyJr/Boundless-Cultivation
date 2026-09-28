@@ -354,7 +354,9 @@ function openSaveManager(){
   else{const host=document.createElement("div");host.id="bc-save-manager-mount";panel.appendChild(host);mountIntoSettings(host);}
 }
 
-window.__boundlessOpenSaveManager = openSaveManager;\n\nfunction injectSaveSettingsItem(){
+window.__boundlessOpenSaveManager = openSaveManager;
+
+function injectSaveSettingsItem(){
   const surface=getSaveSettingsSurface(); if(!surface) return;
   const list=surface.tabs;
   if(!list.querySelector("[data-save-open]")){
