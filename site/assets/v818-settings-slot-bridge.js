@@ -74,6 +74,13 @@
     }
 
     const template = native[0];
+    extra.style.setProperty("display", "grid", "important");
+    extra.style.setProperty("grid-template-columns", "repeat(4, minmax(0, 1fr))", "important");
+    extra.style.setProperty("gap", "12px", "important");
+    extra.style.setProperty("width", "100%", "important");
+    extra.style.setProperty("margin-top", "12px", "important");
+    extra.style.setProperty("box-sizing", "border-box", "important");
+
 
     let save = extra.querySelector('[data-boundless-custom-tab="save"]');
     if (!save) {
