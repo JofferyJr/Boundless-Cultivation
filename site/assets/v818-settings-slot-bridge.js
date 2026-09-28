@@ -142,8 +142,10 @@
     extra.style.setProperty("margin-top", "12px", "important");
     extra.style.setProperty("box-sizing", "border-box", "important");
     extra.style.setProperty("position", "relative", "important");
-    extra.style.setProperty("z-index", "9998", "important");
+    extra.style.setProperty("z-index", "2147483646", "important");
     extra.style.setProperty("pointer-events", "auto", "important");
+    extra.style.setProperty("isolation", "isolate", "important");
+    extra.style.setProperty("overflow", "visible", "important");
 
     const template = native[0];
 
@@ -203,6 +205,7 @@
   }
 
   function ensure() {
+    installUtilityCapture();
     const list = findTabs();
     if (!list) return false;
 
@@ -219,6 +222,34 @@
       extra.querySelector('[data-boundless-custom-tab="ai"]') &&
       extra.querySelector('[data-boundless-custom-tab="empty-1"]') &&
       extra.querySelector('[data-boundless-custom-tab="empty-2"]');
+  }
+
+  // Global capture fallback: React/Radix can stop bubbling events on the Settings surface.
+  // Handling the utility slots at document capture guarantees their actions still run
+  // when the slot itself receives the pointer event.
+  let utilityCaptureInstalled = false;
+  function installUtilityCapture() {
+    if (utilityCaptureInstalled) return;
+    utilityCaptureInstalled = true;
+    document.addEventListener("click", (event) => {
+      const button = event.target?.closest?.('[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"]');
+      if (!button || button.disabled) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (button.dataset.boundlessBusy === "1") return;
+      button.dataset.boundlessBusy = "1";
+      try {
+        if (button.dataset.boundlessCustomTab === "save") {
+          if (typeof window.__boundlessOpenSaveManager === "function") window.__boundlessOpenSaveManager();
+        } else if (typeof window.__boundlessOpenAIControl === "function") {
+          window.__boundlessOpenAIControl();
+        }
+      } catch (error) {
+        console.error("[Boundless Settings] utility action", error);
+      } finally {
+        setTimeout(() => { button.dataset.boundlessBusy = "0"; }, 0);
+      }
+    }, true);
   }
 
   let scheduled = false;
