@@ -357,75 +357,8 @@
   window.__boundlessOpenAIControl=openAIControl;
 
   let aiSettingsHooked=false;
-  function hookAISettings(){
-    if(aiSettingsHooked)return;
-    aiSettingsHooked=true;
-    const inject=()=>{
-      const surface=getSettingsSurface();
-      if(!surface) return;
-      const list=surface.tabs;
-      if(!list.querySelector("[data-ai-open]")){
-        const target=list.querySelector('[role="tab"]');
-        if(target){
-          const b=document.createElement("button");
-          b.type="button"; b.role="tab"; b.dataset.aiOpen="1"; b.dataset.boundlessCustomTab="ai";
-          b.textContent="🧠 AI Control Center"; b.setAttribute("aria-selected","false"); b.dataset.state="inactive";
-          b.className=target.className||"dao-tab justify-center";
-          b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();openAIControl();});
-          list.appendChild(b);
-      }
-      if(!list.querySelector("[data-boundless-empty-slot]")){
-        const target=list.querySelector('[role="tab"]');
-        for(let i=0;i<2;i++){
-          const empty=document.createElement("button");
-          empty.type="button"; empty.dataset.boundlessEmptySlot="1";
-          empty.setAttribute("aria-label","Slot kosong"); empty.disabled=true;
-          empty.className=target?.className||"dao-tab justify-center";
-          list.appendChild(empty);
-        }
-        }
-      }
-      // Force the complete eight-slot layout: four columns × two rows.
-      // Order is always: 4 native tabs, Save, AI, then 2 reserved slots.
-      const nativeTabs=[...list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])')].slice(0,4);
-      const saveTab=list.querySelector('[data-save-open]');
-      const aiTab=list.querySelector('[data-ai-open]');
-      let emptyTabs=[...list.querySelectorAll('[data-boundless-empty-slot]')].slice(0,2);
-      while(emptyTabs.length<2){
-        const empty=document.createElement("button");
-        empty.type="button";
-        empty.disabled=true;
-        empty.dataset.boundlessEmptySlot="1";
-        empty.setAttribute("aria-label","Slot kosong");
-        empty.textContent="Slot akan datang";
-        empty.className=nativeTabs[0]?.className||"dao-tab justify-center";
-        list.appendChild(empty);
-        emptyTabs.push(empty);
-      }
-      const ordered=[...nativeTabs];
-      if(saveTab) ordered.push(saveTab);
-      if(aiTab) ordered.push(aiTab);
-      ordered.push(...emptyTabs);
-      ordered.forEach((item,index)=>{
-        item.dataset.boundlessSettingsSlot=String(index+1);
-        list.appendChild(item);
-      });
-      list.style.display="grid";
-      list.style.gridTemplateColumns="repeat(4,minmax(0,1fr))";
-      list.style.gridAutoFlow="row";
-      list.style.gap="12px";
-      window.__boundlessArrangeSettingsSlots=inject;
-      list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
-        if(b.dataset.boundlessNativeHook)return;
-        b.dataset.boundlessNativeHook="1";
-        b.addEventListener("click",()=>{ closeCustomSettingsPages(); surface.root.removeAttribute("data-boundless-custom-open"); });
-      });
-    };
-    inject();
-    let tries=0;
-    const timer=setInterval(()=>{ inject(); if(++tries>=120) clearInterval(timer); },250);
-    new MutationObserver(inject).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-state","aria-expanded"]});
-  }
+  function hookAISettings(){ /* Settings v2 bridge owns the tab strip. */ }
+
   function injectAIStyle(){
     if(document.getElementById("bai-style"))return;
     const s=document.createElement("style");
