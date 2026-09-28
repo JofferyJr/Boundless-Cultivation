@@ -342,7 +342,53 @@
     document.addEventListener("keydown",aiEscapeHandler,true);
     requestAnimationFrame(()=>r.focus());
   }
-  function hookAISettings(){const makeButton=()=>{const x=document.createElement("button");x.dataset.aiOpen="1";x.type="button";x.textContent="🧠 AI Control Center";x.className="bai-settings-slot";x.setAttribute("aria-label","Buka AI Control Center");x.onclick=openAIControl;return x};const visible=e=>{if(!e)return false;const s=getComputedStyle(e),r=e.getBoundingClientRect();return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0};const inject=()=>{const dialogs=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")].filter(visible);let d=dialogs[dialogs.length-1];if(!d){d=[...document.querySelectorAll("body *")].filter(e=>visible(e)&&/muzik|simpan|slot|tetapan|settings/i.test((e.textContent||"").slice(0,1200))).sort((a,b)=>a.textContent.length-b.textContent.length)[0];}if(d&&!d.querySelector("[data-ai-open]")){const x=makeButton();const first=d.querySelector("button,input,select,[role=tab]");if(first&&first.parentElement)first.parentElement.insertBefore(x,first);else d.prepend(x);}};const scan=()=>{document.querySelectorAll("button").forEach(b=>{if(!/tetapan|settings/i.test(b.textContent||"")||b.dataset.aiHook)return;b.dataset.aiHook="1";b.addEventListener("click",()=>{[80,180,350,700].forEach(t=>setTimeout(inject,t))})});inject()};scan();new MutationObserver(scan).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-state","aria-expanded"]});}
+  function hookAISettings(){
+    const makeButton=()=>{
+      const x=document.createElement("button");
+      x.dataset.aiOpen="1";
+      x.type="button";
+      x.textContent="🧠 AI Control Center";
+      x.className="bai-settings-slot";
+      x.setAttribute("aria-label","Buka AI Control Center");
+      x.onclick=e=>{e.preventDefault();e.stopPropagation();openAIControl();};
+      return x;
+    };
+    const visible=e=>{
+      if(!e)return false;
+      const s=getComputedStyle(e),r=e.getBoundingClientRect();
+      return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0;
+    };
+    const inject=()=>{
+      const dialogs=[...document.querySelectorAll("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]")].filter(visible);
+      let d=dialogs[dialogs.length-1];
+      if(!d)return;
+      // AI Control Center belongs in the main Settings list, not inside
+      // individual sections such as Paparan, Permainan, or Tips.
+      const sectionText=[...d.querySelectorAll("button,[role=button]")].map(x=>(x.textContent||"").trim());
+      const existing=d.querySelector("[data-ai-open]");
+      if(existing && existing.parentElement!==d){
+        existing.remove();
+      }
+      if(!d.querySelector("[data-ai-open]")){
+        const x=makeButton();
+        const controls=[...d.querySelectorAll("button,[role=button]")];
+        const settingsSections=controls.filter(b=>/paparan|permainan|tips|muzik|simpan|slot/i.test(b.textContent||""));
+        const first=settingsSections[0]||controls[0];
+        if(first&&first.parentElement===d) d.insertBefore(x,first);
+        else d.prepend(x);
+      }
+    };
+    const scan=()=>{
+      document.querySelectorAll("button").forEach(b=>{
+        if(!/tetapan|settings/i.test(b.textContent||"")||b.dataset.aiHook)return;
+        b.dataset.aiHook="1";
+        b.addEventListener("click",()=>[80,180,350,700].forEach(t=>setTimeout(inject,t)));
+      });
+      inject();
+    };
+    scan();
+    new MutationObserver(scan).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-state","aria-expanded"]});
+  }
   function injectAIStyle(){
     if(document.getElementById("bai-style"))return;
     const s=document.createElement("style");
