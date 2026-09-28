@@ -408,6 +408,7 @@
       list.style.gridTemplateColumns="repeat(4,minmax(0,1fr))";
       list.style.gridAutoFlow="row";
       list.style.gap="12px";
+      window.__boundlessArrangeSettingsSlots=inject;
       list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
         if(b.dataset.boundlessNativeHook)return;
         b.dataset.boundlessNativeHook="1";
