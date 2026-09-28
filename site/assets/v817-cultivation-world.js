@@ -309,7 +309,7 @@
     document.getElementById("bc-save-manager-inline")?.remove();
     const surface=getSettingsSurface();
     if(!surface) return;
-    surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=false;p.style.display="";});
+    surface.root.removeAttribute("data-boundless-custom-open");
     surface.root.querySelectorAll("[data-boundless-custom-tab]").forEach(b=>{
       b.setAttribute("aria-selected","false");
       b.dataset.state="inactive";
@@ -319,7 +319,7 @@
   function showExclusiveSettingsPage(panel){
     const surface=getSettingsSurface();
     if(!surface) return null;
-    surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=true;p.style.display="none";});
+    surface.root.setAttribute("data-boundless-custom-open","1");
     surface.root.querySelectorAll("[data-boundless-custom-panel]").forEach(p=>p.remove());
     surface.root.appendChild(panel);
     return surface;
@@ -367,12 +367,22 @@
           b.className=target.className||"dao-tab justify-center";
           b.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();openAIControl();});
           list.appendChild(b);
+      }
+      if(!list.querySelector("[data-boundless-empty-slot]")){
+        const target=list.querySelector('[role="tab"]');
+        for(let i=0;i<2;i++){
+          const empty=document.createElement("button");
+          empty.type="button"; empty.dataset.boundlessEmptySlot="1";
+          empty.setAttribute("aria-label","Slot kosong"); empty.disabled=true;
+          empty.className=target?.className||"dao-tab justify-center";
+          list.appendChild(empty);
+        }
         }
       }
       list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
         if(b.dataset.boundlessNativeHook)return;
         b.dataset.boundlessNativeHook="1";
-        b.addEventListener("click",()=>{ closeCustomSettingsPages(); surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=false;p.style.display="";}); });
+        b.addEventListener("click",()=>{ closeCustomSettingsPages(); surface.root.removeAttribute("data-boundless-custom-open"); });
       });
     };
     inject();
@@ -392,7 +402,7 @@
       '#boundless-ai-control-center .bai-head{display:flex;justify-content:space-between;align-items:center;font-size:18px;padding:0 0 10px}'+
       '#boundless-ai-control-center .bai-head button{appearance:none!important;-webkit-appearance:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;background:#111b16!important;border:1px solid #806936!important;border-radius:8px!important;color:#e5c77d!important;font-size:24px!important;line-height:1!important;width:42px!important;height:38px!important;padding:0!important;margin:0!important;pointer-events:auto!important;position:relative!important;z-index:10!important;cursor:pointer!important;touch-action:manipulation!important}'+
       '#boundless-ai-control-center .bai-head button:hover{background:#20271c!important;color:#f3dda0!important}'+
-      '.bc-settings-tabs{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))!important}.bai-note{color:#9fb4a8}.bai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.bai-card{padding:12px;border:1px solid #29443a;border-radius:10px;background:#0c1914}.bai-card small{display:block;color:#9fb4a8;margin:4px 0}.bai-card label{display:block;margin-top:8px}.bai-card input[type=range]{width:100%}.bai-settings-slot{display:flex!important;width:100%;align-items:center;justify-content:flex-start;gap:8px;margin:0 0 10px;padding:10px 12px;border:1px solid #806936;border-radius:8px;background:#111b16;color:#e5c77d;font:600 13px system-ui,sans-serif;cursor:pointer}.bai-settings-slot:hover{background:#20271c;color:#f3dda0}';
+      '.bc-settings-tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;width:100%!important;box-sizing:border-box!important}.bc-settings-tabs>[role="tab"]{min-height:96px!important;width:100%!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:18px!important;border:1px solid #806936!important;border-radius:12px!important;background:#111b16!important;color:#e5c77d!important;font:600 15px/1.25 system-ui,sans-serif!important}.bc-settings-tabs>[role="tab"]:hover{background:#20271c!important;color:#f3dda0!important}.bc-settings-tabs>[role="tab"][data-state="active"],.bc-settings-tabs>[role="tab"][aria-selected="true"]{border-color:#b29452!important;background:#20271c!important}.bc-settings-tabs>[data-boundless-empty-slot]{min-height:96px!important;opacity:.55!important;cursor:default!important;pointer-events:none!important;background:transparent!important;border:1px dashed #806936!important}.bc-settings-tabs[data-boundless-custom-open="1"]~[role="tabpanel"],[data-boundless-custom-open="1"] [role="tabpanel"]{display:none!important}.bai-note{color:#9fb4a8}.bai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.bai-card{padding:12px;border:1px solid #29443a;border-radius:10px;background:#0c1914}.bai-card small{display:block;color:#9fb4a8;margin:4px 0}.bai-card label{display:block;margin-top:8px}.bai-card input[type=range]{width:100%}.bai-settings-slot{display:flex!important;width:100%!important;min-height:96px!important;box-sizing:border-box!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:18px!important;border:1px solid #806936!important;border-radius:12px!important;background:#111b16!important;color:#e5c77d!important;font:600 15px/1.25 system-ui,sans-serif!important;cursor:pointer!important}.bai-settings-slot:hover{background:#20271c;color:#f3dda0}';
     document.head.appendChild(s);
   }
 
