@@ -374,7 +374,7 @@ function findAndMount(){
 function injectSaveStyle(){
   if(document.getElementById("bc-save-modal-style"))return;
   const style=document.createElement("style");style.id="bc-save-modal-style";
-  style.textContent='#bc-save-manager-inline{display:block;width:100%;margin:0;padding-top:12px;border-top:1px solid #29443a}#bc-save-manager-inline #bc-save-manager-mount{display:block!important}#bc-save-manager-inline .bc-save-panel{margin-top:0} .bc-settings-tabs{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))!important}';
+  style.textContent='#bc-save-manager-inline{display:block;width:100%;margin:0;padding-top:12px;border-top:1px solid #29443a}#bc-save-manager-inline #bc-save-manager-mount{display:block!important}#bc-save-manager-inline .bc-save-panel{margin-top:0}';
   document.head.appendChild(style);
 }
 
