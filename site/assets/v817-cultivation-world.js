@@ -353,7 +353,10 @@
     requestAnimationFrame(()=>r.focus());
   }
 
-  window.__boundlessOpenAIControl=openAIControl;\n\n  let aiSettingsHooked=false;\n  function hookAISettings(){\n    if(aiSettingsHooked)return;\n    aiSettingsHooked=true;
+  window.__boundlessOpenAIControl=openAIControl;
+
+  let aiSettingsHooked=false;
+  function hookAISettings(){\n    if(aiSettingsHooked)return;\n    aiSettingsHooked=true;
     const inject=()=>{
       const surface=getSettingsSurface();
       if(!surface) return;
