@@ -114,13 +114,14 @@
   }
 
   function buildExtraRow(list, native) {
-    const parent = list.parentElement;
+    // The native tab panel can be positioned above the tab-list parent. Mount the
+    // utility row at the dialog/sheet level so it cannot sit underneath a tabpanel.
+    const dialog = list.closest("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]");
+    const parent = dialog || list.parentElement;
     if (!parent) return null;
 
     // If React recreated the native tab list, discard a stale utility row.
-    const stale = [...parent.children].filter((el) =>
-      el.classList?.contains("boundless-extra-settings-slots") && el !== list
-    );
+    const stale = [...parent.children].filter((el) => el.classList?.contains("boundless-extra-settings-slots"));
     // Never remove a current row; only rows outside this parent are cleaned below.
     stale.forEach((el) => el.remove());
 
@@ -144,6 +145,8 @@
     extra.style.setProperty("position", "relative", "important");
     extra.style.setProperty("z-index", "2147483646", "important");
     extra.style.setProperty("pointer-events", "auto", "important");
+    extra.style.setProperty("isolation", "isolate", "important");
+    extra.style.setProperty("overflow", "visible", "important");
     extra.style.setProperty("isolation", "isolate", "important");
     extra.style.setProperty("overflow", "visible", "important");
 
@@ -200,7 +203,9 @@
 
   function cleanOrphans(currentList) {
     document.querySelectorAll(".boundless-extra-settings-slots").forEach((row) => {
-      if (row.parentElement !== currentList?.parentElement) row.remove();
+      const dialog = currentList?.closest?.("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]");
+      const expected = dialog || currentList?.parentElement;
+      if (row.parentElement !== expected) row.remove();
     });
   }
 
