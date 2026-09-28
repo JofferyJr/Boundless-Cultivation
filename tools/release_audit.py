@@ -19,6 +19,9 @@ def _runtime_text(site: Path) -> str:
 CURRENT_GAME_VERSION = '8.1.11'
 
 
+CURRENT_GAME_VERSION = '8.1.11'
+
+
 def audit_release(root: Path) -> dict:
     site = root / 'site'
     manifest_path = root / 'docs/migration/live-snapshot-manifest.json'
