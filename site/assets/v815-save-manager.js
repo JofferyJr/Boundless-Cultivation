@@ -445,7 +445,9 @@ function injectSaveStyle() {
     '#bc-save-manager-inline{width:100%;margin:0 0 12px}' +
     '#bc-save-manager-inline #bc-save-manager-mount{display:block!important}' +
     '#bc-save-manager-inline .bc-save-panel{margin-top:8px}';
-  document.head.appendChild(style);
+  
+    if(!document.getElementById("boundless-settings-slot-grid-style")){const st=document.createElement("style");st.id="boundless-settings-slot-grid-style";st.textContent='.bc-settings-tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-flow:row!important;gap:12px!important;width:100%!important;box-sizing:border-box!important}.bc-settings-tabs>[role="tab"]{min-height:96px!important;width:100%!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:18px!important;border:1px solid #806936!important;border-radius:12px!important;background:#111b16!important;color:#e5c77d!important;font:600 15px/1.25 system-ui,sans-serif!important}.bc-settings-tabs>[role="tab"]:hover{background:#20271c!important;color:#f3dda0!important}.bc-settings-tabs>[role="tab"][data-state="active"],.bc-settings-tabs>[role="tab"][aria-selected="true"]{border-color:#b29452!important;background:#20271c!important}.bc-settings-tabs>[data-boundless-empty-slot]{min-height:96px!important;opacity:.55!important;cursor:default!important;pointer-events:none!important;background:transparent!important;border:1px dashed #806936!important}';document.head.appendChild(st)}
+document.head.appendChild(style);
 }
 
 function buildUi() {
