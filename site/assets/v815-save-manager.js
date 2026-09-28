@@ -334,7 +334,7 @@ function getSaveSettingsSurface(){
 function closeSaveManager(){
   document.getElementById("bc-save-manager-inline")?.remove();
   const surface=getSaveSettingsSurface();
-  surface?.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=false;p.style.display="";});
+  surface?.root.removeAttribute("data-boundless-custom-open");
   surface?.root.querySelectorAll("[data-boundless-custom-tab]").forEach(b=>{b.setAttribute("aria-selected","false");b.dataset.state="inactive";});
 }
 
@@ -343,7 +343,7 @@ function openSaveManager(){
   if(!surface) return;
   if(document.getElementById("bc-save-manager-inline")){closeSaveManager();return;}
   document.getElementById("boundless-ai-control-center")?.remove();
-  surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=true;p.style.display="none";});
+  surface.root.setAttribute("data-boundless-custom-open","1");
   surface.root.querySelectorAll("[data-boundless-custom-panel]").forEach(p=>p.remove());
   const panel=document.createElement("section");
   panel.id="bc-save-manager-inline"; panel.dataset.boundlessCustomPanel="1";
@@ -371,7 +371,7 @@ function injectSaveSettingsItem(){
   list.querySelectorAll('[role="tab"]:not([data-boundless-custom-tab])').forEach(b=>{
     if(b.dataset.boundlessSaveNativeHook)return;
     b.dataset.boundlessSaveNativeHook="1";
-    b.addEventListener("click",()=>{document.getElementById("bc-save-manager-inline")?.remove();surface.root.querySelectorAll('[role="tabpanel"]').forEach(p=>{p.hidden=false;p.style.display="";});surface.root.querySelectorAll("[data-boundless-custom-tab]").forEach(x=>{x.setAttribute("aria-selected","false");x.dataset.state="inactive";});});
+    b.addEventListener("click",()=>{document.getElementById("bc-save-manager-inline")?.remove();surface.root.removeAttribute("data-boundless-custom-open");surface.root.querySelectorAll("[data-boundless-custom-tab]").forEach(x=>{x.setAttribute("aria-selected","false");x.dataset.state="inactive";});});
   });
 }
 
