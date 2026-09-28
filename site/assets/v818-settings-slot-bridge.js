@@ -113,21 +113,40 @@
     });
   }
 
+  function getActiveTabPanel(list) {
+    const root = list.parentElement;
+    if (!root) return null;
+
+    // Radix keeps each tab's content in its own tabpanel. The utility row must
+    // belong to the ACTIVE panel so it naturally moves with that tab's content,
+    // including when Help & Tips/Dev becomes much taller than Permainan.
+    const active = [...root.querySelectorAll('[role="tabpanel"]')].find((panel) => {
+      const state = panel.getAttribute("data-state");
+      return state === "active" || (state == null && visible(panel));
+    });
+    return active || null;
+  }
+
   function buildExtraRow(list, native) {
-    // The native tab panel can be positioned above the tab-list parent. Mount the
-    // utility row at the dialog/sheet level so it cannot sit underneath a tabpanel.
+    // Mount the four utility slots inside the currently active tabpanel.
+    // This makes the row part of the tab's normal document flow rather than a
+    // fixed row attached to the Settings dialog.
+    const activePanel = getActiveTabPanel(list);
     const dialog = list.closest("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]");
-    const parent = dialog || list.parentElement;
+    const parent = activePanel || dialog || list.parentElement;
     if (!parent) return null;
 
-    // If React recreated the native tab list, discard a stale utility row.
-    const stale = [...parent.children].filter((el) => el.classList?.contains("boundless-extra-settings-slots"));
-    // Never remove a current row; only rows outside this parent are cleaned below.
-    stale.forEach((el) => el.remove());
+    // If the active tab changed, move the existing utility row into that panel.
+    const rows = [...document.querySelectorAll(".boundless-extra-settings-slots")];
+    let extra = rows.find((el) => el.parentElement === parent) || null;
+    rows.filter((el) => el !== extra).forEach((el) => el.remove());
 
-    let extra = [...parent.children].find((el) =>
-      el.classList?.contains("boundless-extra-settings-slots")
-    );
+    if (!extra) {
+      extra = document.createElement("div");
+      extra.className = "boundless-extra-settings-slots";
+      extra.setAttribute("aria-label", "Slot tambahan Boundless");
+      parent.appendChild(extra);
+    }
 
     if (!extra) {
       extra = document.createElement("div");
@@ -202,9 +221,10 @@
   }
 
   function cleanOrphans(currentList) {
+    const activePanel = currentList ? getActiveTabPanel(currentList) : null;
+    const dialog = currentList?.closest?.("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]");
+    const expected = activePanel || dialog || currentList?.parentElement;
     document.querySelectorAll(".boundless-extra-settings-slots").forEach((row) => {
-      const dialog = currentList?.closest?.("[role=dialog],[data-slot=sheet-content],[data-slot=dialog-content]");
-      const expected = dialog || currentList?.parentElement;
       if (row.parentElement !== expected) row.remove();
     });
   }
