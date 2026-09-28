@@ -16,6 +16,9 @@ def _runtime_text(site: Path) -> str:
             parts.append(path.read_text(encoding='utf-8', errors='replace'))
     return '\n'.join(parts)
 
+CURRENT_GAME_VERSION = '8.1.11'
+
+
 def audit_release(root: Path) -> dict:
     site = root / 'site'
     manifest_path = root / 'docs/migration/live-snapshot-manifest.json'
@@ -37,7 +40,7 @@ def audit_release(root: Path) -> dict:
             if manifest.get('external_references'): errors.append(f'external runtime references: {len(manifest["external_references"])}')
             if int(manifest.get('downloaded', 0)) < 1: errors.append('snapshot downloaded zero files')
     runtime = _runtime_text(site) if site.exists() else ''
-    version_815 = '8.1.6' in runtime
+    version_current = f'gameVersion:{CURRENT_GAME_VERSION}' in runtime or f'gameVersion:`{CURRENT_GAME_VERSION}`' in runtime or f'`{CURRENT_GAME_VERSION}`' in runtime
     save_version_30 = 'saveVersion:30' in runtime or 'saveVersion":30' in runtime
     features = {
         'multi_talent': 'function BC815TalentGroup' in runtime and '/4 dipilih' in runtime,
@@ -45,20 +48,20 @@ def audit_release(root: Path) -> dict:
         'inventory_hydration': 'function BC815HydrateItem' in runtime,
         'width_fix': 'portrait-paper-grid' in runtime and 'min-width:0' in runtime,
     }
-    if not version_815: errors.append('required game version 8.1.6 marker not found')
+    if not version_current: errors.append(f'required game version {CURRENT_GAME_VERSION} marker not found')
     if not save_version_30: errors.append('required saveVersion 30 marker not found')
     for feature, ok in features.items():
         if not ok: errors.append(f'required v8.1.6 feature marker missing: {feature}')
-    return {'errors': errors, 'static_errors': static_errors, 'version_8_1_5': version_815, 'save_version_30': save_version_30, 'features': features, 'downloaded': manifest.get('downloaded', 0) if manifest else 0}
+    return {'errors': errors, 'static_errors': static_errors, 'version_current': version_current, 'save_version_30': save_version_30, 'features': features, 'downloaded': manifest.get('downloaded', 0) if manifest else 0}
 
 def write_markdown(result: dict, path: Path) -> None:
     status = 'PASS' if not result['errors'] else 'FAIL'
-    lines = ['# Boundless Cultivation GitHub Release Audit','',f'**Status:** {status}','',f'- Snapshot files downloaded: {result["downloaded"]}',f'- Version 8.1.6 marker: {"yes" if result["version_8_1_5"] else "no"}',f'- saveVersion 30 marker: {"yes" if result["save_version_30"] else "no"}',f'- Static independence errors: {len(result["static_errors"])}']
+    lines = ['# Boundless Cultivation GitHub Release Audit','',f'**Status:** {status}','',f'- Snapshot files downloaded: {result["downloaded"]}',f'- Current game version {CURRENT_GAME_VERSION} marker: {"yes" if result["version_current"] else "no"}',f'- saveVersion 30 marker: {"yes" if result["save_version_30"] else "no"}',f'- Static independence errors: {len(result["static_errors"])}']
     for feature, ok in result['features'].items(): lines.append(f'- {feature}: {"yes" if ok else "no"}')
     if result['errors']:
         lines.extend(['', '## Errors', ''])
         lines.extend(f'- {error}' for error in result['errors'])
-    else: lines.extend(['', 'The GitHub runtime is self-contained and the v8.1.6 release markers are present.'])
+    else: lines.extend(['', 'The GitHub runtime is self-contained and the current Boundless release markers are present.'])
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
