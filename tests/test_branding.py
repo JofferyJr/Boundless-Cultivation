@@ -12,7 +12,16 @@ class BrandingTests(unittest.TestCase):
         self.assertIn("Peta Dunia Boundless Cultivation", bundle)
         self.assertIn("Almanak Boundless Cultivation", bundle)
 
-    def test_runtime_scripts_are_single_and_boundless(self):\n        html = (ROOT / "site/index.html").read_text(encoding="utf-8")\n        self.assertEqual(html.count("/Cultivation/assets/v815-music.js"), 1)\n        self.assertIn("/Cultivation/assets/v817-cultivation-world.js?v=8.1.11-aligned", html)\n        self.assertIn("/Cultivation/assets/v815-save-manager.js?v=8.1.11-aligned", html)\n        self.assertIn("/Cultivation/assets/v815-release.js?v=8.1.11-aligned", html)\n        self.assertNotIn("/Cultivation/assets/v816-ai-world.js", html)\n\n    def test_internal_save_key_remains_compatible(self):
+    def test_runtime_scripts_are_single_and_boundless(self):
+        html = (ROOT / "site/index.html").read_text(encoding="utf-8")
+        self.assertEqual(html.count("/Cultivation/assets/v815-music.js"), 1)
+        self.assertIn("/Cultivation/assets/v817-cultivation-world.js?v=8.1.12-settings-expert", html)
+        self.assertIn("/Cultivation/assets/v818-settings-slot-bridge.js?v=8.1.12-settings-expert", html)
+        self.assertIn("/Cultivation/assets/v815-save-manager.js?v=8.1.12-settings-expert", html)
+        self.assertIn("/Cultivation/assets/v815-release.js?v=8.1.11-aligned", html)
+        self.assertNotIn("/Cultivation/assets/v816-ai-world.js", html)
+
+    def test_internal_save_key_remains_compatible(self):
         bundle = (ROOT / "site/assets/page-B87MruAb.js").read_text(encoding="utf-8")
         self.assertIn("boundless-save", bundle)
 
