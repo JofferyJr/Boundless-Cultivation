@@ -11,7 +11,7 @@ class V815ReleaseTests(unittest.TestCase):
         self.base_css = (ROOT / 'site/assets/index-BCMgbAyj.css').read_text(encoding='utf-8')
 
     def test_version_and_save_format(self):
-        self.assertIn('var x_=`8.1.5`', self.bundle)
+        self.assertIn('var x_=`8.1.11`', self.bundle)
         self.assertIn('saveVersion:30,gameVersion:x_', self.bundle)
         self.assertIn('talents:L,background:he', self.bundle)
         self.assertNotIn('talent:L,background:he', self.bundle)
