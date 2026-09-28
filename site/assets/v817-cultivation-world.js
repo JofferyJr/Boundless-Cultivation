@@ -255,8 +255,26 @@
     getState:()=>clone(state)
   };
 
+  function createLauncher() {
+    if (!document.body || document.getElementById("boundless-cultivation-world-launcher")) return;
+    const button=document.createElement("button");
+    button.id="boundless-cultivation-world-launcher";
+    button.type="button";
+    button.textContent="⚔ Dunia Kultivasi";
+    button.title="Buka sistem dunia kultivasi";
+    button.addEventListener("click",open);
+    Object.assign(button.style,{
+      position:"fixed", right:"18px", bottom:"18px", zIndex:"99998",
+      border:"1px solid #806936", borderRadius:"10px", padding:"9px 12px",
+      background:"#111b16", color:"#e5c77d", cursor:"pointer",
+      boxShadow:"0 8px 24px rgba(0,0,0,.3)", font:"600 12px system-ui,sans-serif"
+    });
+    document.body.appendChild(button);
+  }
+
   function boot() {
     injectStyle();
+    createLauncher();
     const existing=window.BoundlessAI;
     if (existing) {
       const originalSetDate=existing.setDate;
