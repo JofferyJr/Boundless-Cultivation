@@ -22,7 +22,7 @@
 .bc-creation-shell .choice-card{padding:.85rem 1rem!important}
 .bc-settings-sheet{width:min(96vw,1440px)!important;max-width:min(96vw,1440px)!important;overflow-x:hidden!important}
 .bc-settings-sheet>*{min-width:0}
-.bc-settings-tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important;min-width:0}
+.bc-settings-tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important;min-width:0;grid-auto-flow:row!important}
 .bc-settings-tabs [role="tab"]{min-width:0;white-space:normal;line-height:1.2;padding-inline:.55rem}
 #bc-music-manager-mount,#bc-save-manager-mount{min-width:0;max-width:100%}
 @media(max-width:1180px){
@@ -31,7 +31,8 @@
 }
 @media(max-width:640px){
   .bc-settings-sheet{width:100vw!important;max-width:100vw!important}
-  .bc-settings-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .bc-settings-tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-flow:row!important;overflow-x:auto!important;overflow-y:visible!important}
+
   .bc-settings-tabs [role="tab"]{min-height:42px}
   .bc-settings-sheet .settings-card{min-width:0;overflow-wrap:anywhere}
   .bc-settings-sheet .settings-card.flex{flex-wrap:wrap}
