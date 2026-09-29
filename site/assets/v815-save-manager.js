@@ -361,35 +361,13 @@ function hookSaveSettings(){
 }
 
 function findAndMount(){
-  // Save & Export belongs to the native Settings -> Permainan panel.
-  // Mount the existing manager directly inside that real panel; no custom overlay.
-  const tab=[...document.querySelectorAll('[role="tab"]')].find(el=>/permainan/i.test((el.textContent||"").trim()));
-  if(!tab) return;
-  const controls=tab.getAttribute("aria-controls");
-  const panel=controls ? document.getElementById(controls) : null;
-  if(!panel) return;
-  let host=panel.querySelector("#bc-save-manager-mount");
-  if(!host){
-    const stray=document.getElementById("bc-save-manager-mount");
-    host=stray || document.createElement("div");
-    host.id="bc-save-manager-mount";
-    if(host.parentElement!==panel) panel.appendChild(host);
-  }
-  host.style.display="block";
+  // The React Settings -> Permainan panel already owns this exact mount point.
+  // Never move or hide it: Radix controls the panel visibility itself.
+  const host=document.getElementById("bc-save-manager-mount");
+  if(!host) return;
   host.hidden=false;
+  host.style.removeProperty("display");
   if(host.dataset.boundlessSaveMounted!=="true") mountIntoSettings(host);
-}
-
-function injectSaveStyle(){
-  if(document.getElementById("bc-save-modal-style"))return;
-  const style=document.createElement("style");style.id="bc-save-modal-style";
-  style.textContent='#bc-save-manager-inline{display:block;width:100%;margin:0;padding-top:12px;border-top:1px solid #29443a}#bc-save-manager-inline #bc-save-manager-mount{display:block!important}#bc-save-manager-inline .bc-save-panel{margin-top:0}';
-  document.head.appendChild(style);
-}
-
-function buildUi(){
-  injectSaveStyle();hookSaveSettings();findAndMount();restorePendingLoad();
-  new MutationObserver(findAndMount).observe(document.documentElement,{childList:true,subtree:true});
 }
 
 function restoreSavedView(save) {
