@@ -339,19 +339,13 @@ function closeSaveManager(){
 }
 
 function openSaveManager(){
-  const surface=getSaveSettingsSurface();
-  if(!surface) return;
-  if(document.getElementById("bc-save-manager-inline")){closeSaveManager();return;}
-  document.getElementById("boundless-ai-control-center")?.remove();
-  surface.root.setAttribute("data-boundless-custom-open","1");
-  surface.root.querySelectorAll("[data-boundless-custom-panel]").forEach(p=>p.remove());
-  const panel=document.createElement("section");
-  panel.id="bc-save-manager-inline"; panel.dataset.boundlessCustomPanel="1";
-  panel.setAttribute("aria-label","Simpan & Export");
-  surface.root.appendChild(panel);
-  const source=document.getElementById("bc-save-manager-mount");
-  if(source){panel.appendChild(source);source.style.display="";}
-  else{const host=document.createElement("div");host.id="bc-save-manager-mount";panel.appendChild(host);mountIntoSettings(host);}
+  // Compatibility entry point: activate the native Permainan tab instead of
+  // moving the old Save/Export panel into a custom overlay.
+  const tab=[...document.querySelectorAll('[role="tab"]')]
+    .find(el=>/permainan/i.test((el.textContent||"").trim()));
+  if(tab && tab.getAttribute("aria-selected")!=="true") tab.click();
+  const host=document.getElementById("bc-save-manager-mount");
+  if(host) host.style.display="";
 }
 
 window.__boundlessOpenSaveManager = openSaveManager;
@@ -368,7 +362,18 @@ function hookSaveSettings(){
 
 function findAndMount(){
   const host=document.getElementById("bc-save-manager-mount");
-  if(host && !document.getElementById("bc-save-manager-inline")) host.style.display="none";
+  if(!host || document.getElementById("bc-save-manager-inline")) return;
+  // The original Save/Export UI belongs to the native Permainan tab.
+  // Keep it there; do not hide it behind the custom utility-slot bridge.
+  const tab=[...document.querySelectorAll('[role="tab"]')]
+    .find(el=>/permainan/i.test((el.textContent||"").trim()));
+  const panel=tab?.getAttribute("aria-controls")
+    ? document.getElementById(tab.getAttribute("aria-controls"))
+    : null;
+  const permainanActive=tab?.getAttribute("aria-selected")==="true" ||
+    tab?.dataset.state==="active" || !!panel?.querySelector("#bc-save-manager-mount");
+  if(permainanActive || !tab) host.style.display="";
+  else host.style.display="none";
 }
 
 function injectSaveStyle(){
