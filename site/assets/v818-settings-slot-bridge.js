@@ -293,16 +293,28 @@
     if (utilityCaptureInstalled) return;
     utilityCaptureInstalled = true;
 
-    document.addEventListener("click", (event) => {
+    // Capture at WINDOW on pointerup so React/Radix root delegation cannot
+    // swallow the utility action. We intentionally do not preventDefault().
+    const resolve = (event) => {
       const direct = event.target?.closest?.(
         '[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"]'
       );
-      const button = direct || utilityAtPoint(event.clientX, event.clientY);
-      if (!button || button.disabled) return;
+      return direct || utilityAtPoint(event.clientX, event.clientY);
+    };
 
-      event.preventDefault();
-      event.stopPropagation();
+    window.addEventListener("pointerup", (event) => {
+      const button = resolve(event);
+      if (!button || button.disabled) return;
       runUtilityAction(button);
+    }, true);
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const active = document.activeElement?.closest?.(
+        '[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"]'
+      );
+      if (!active || active.disabled) return;
+      runUtilityAction(active);
     }, true);
   }
 
