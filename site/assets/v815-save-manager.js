@@ -361,19 +361,23 @@ function hookSaveSettings(){
 }
 
 function findAndMount(){
-  const host=document.getElementById("bc-save-manager-mount");
-  if(!host || document.getElementById("bc-save-manager-inline")) return;
-  // The original Save/Export UI belongs to the native Permainan tab.
-  // Keep it there; do not hide it behind the custom utility-slot bridge.
-  const tab=[...document.querySelectorAll('[role="tab"]')]
-    .find(el=>/permainan/i.test((el.textContent||"").trim()));
-  const panel=tab?.getAttribute("aria-controls")
-    ? document.getElementById(tab.getAttribute("aria-controls"))
-    : null;
-  const permainanActive=tab?.getAttribute("aria-selected")==="true" ||
-    tab?.dataset.state==="active" || !!panel?.querySelector("#bc-save-manager-mount");
-  if(permainanActive || !tab) host.style.display="";
-  else host.style.display="none";
+  // Save & Export belongs to the native Settings -> Permainan panel.
+  // Mount the existing manager directly inside that real panel; no custom overlay.
+  const tab=[...document.querySelectorAll('[role="tab"]')].find(el=>/permainan/i.test((el.textContent||"").trim()));
+  if(!tab) return;
+  const controls=tab.getAttribute("aria-controls");
+  const panel=controls ? document.getElementById(controls) : null;
+  if(!panel) return;
+  let host=panel.querySelector("#bc-save-manager-mount");
+  if(!host){
+    const stray=document.getElementById("bc-save-manager-mount");
+    host=stray || document.createElement("div");
+    host.id="bc-save-manager-mount";
+    if(host.parentElement!==panel) panel.appendChild(host);
+  }
+  host.style.display="block";
+  host.hidden=false;
+  if(host.dataset.boundlessSaveMounted!=="true") mountIntoSettings(host);
 }
 
 function injectSaveStyle(){
