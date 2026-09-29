@@ -67,6 +67,10 @@
       b.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
+        // The document capture handler owns utility-button activation.
+        // Avoid firing a second time (which previously opened then immediately
+        // closed the Save/Export panel).
+        if (b.dataset.boundlessBusy === "1") return;
         try { handler(); } catch (error) { console.error("[Boundless Settings]", error); }
       });
     }
