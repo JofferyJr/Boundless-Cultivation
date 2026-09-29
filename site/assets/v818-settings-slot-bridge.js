@@ -177,23 +177,8 @@
 
     const get = (key) => extra.querySelector(`[${CUSTOM}="${key}"]`);
 
-    let save = get("save");
-    if (!save) {
-      save = makeUtilityButton(
-        "💾 Simpan & Export",
-        "save",
-        () => {
-          if (typeof window.__boundlessOpenSaveManager !== "function") {
-            console.warn("[Boundless Settings] Save Manager belum tersedia.");
-            return;
-          }
-          window.__boundlessOpenSaveManager();
-        },
-        template
-      );
-      extra.appendChild(save);
-    }
-
+    // Save & Export is intentionally NOT a utility slot anymore.
+    // It is the original native panel inside Settings -> Permainan.
     let ai = get("ai");
     if (!ai) {
       ai = makeUtilityButton(
@@ -211,12 +196,12 @@
       extra.appendChild(ai);
     }
 
-    for (const key of ["empty-1", "empty-2"]) {
+    for (const key of ["empty-1", "empty-2", "empty-3"]) {
       if (!get(key)) extra.appendChild(makeUtilityButton("Slot Akan Datang", key, () => {}, template, true));
     }
 
-    // Hard order: Save, AI, Empty, Empty.
-    const ordered = ["save", "ai", "empty-1", "empty-2"]
+    // Hard order: AI, Empty, Empty, Empty.
+    const ordered = ["ai", "empty-1", "empty-2", "empty-3"]
       .map(get)
       .filter(Boolean);
     ordered.forEach((el) => extra.appendChild(el));
@@ -247,10 +232,10 @@
     cleanOrphans(list);
 
     return !!extra &&
-      extra.querySelector('[data-boundless-custom-tab="save"]') &&
       extra.querySelector('[data-boundless-custom-tab="ai"]') &&
       extra.querySelector('[data-boundless-custom-tab="empty-1"]') &&
-      extra.querySelector('[data-boundless-custom-tab="empty-2"]');
+      extra.querySelector('[data-boundless-custom-tab="empty-2"]') &&
+      extra.querySelector('[data-boundless-custom-tab="empty-3"]');
   }
 
   // Global hit-test fallback:
