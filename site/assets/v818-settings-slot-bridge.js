@@ -253,31 +253,56 @@
       extra.querySelector('[data-boundless-custom-tab="empty-2"]');
   }
 
-  // Global capture fallback: React/Radix can stop bubbling events on the Settings surface.
-  // Handling the utility slots at document capture guarantees their actions still run
-  // when the slot itself receives the pointer event.
+  // Global hit-test fallback:
+  // Some React/Radix layers can sit above the utility row in the stacking
+  // context. In that case the browser's event target is the overlay instead
+  // of the visible Save/Export button. Match the pointer coordinates against
+  // the visible utility button so the action still works.
   let utilityCaptureInstalled = false;
+  function runUtilityAction(button) {
+    if (!button || button.disabled || button.dataset.boundlessBusy === "1") return;
+    button.dataset.boundlessBusy = "1";
+    try {
+      if (button.dataset.boundlessCustomTab === "save") {
+        if (typeof window.__boundlessOpenSaveManager === "function") {
+          window.__boundlessOpenSaveManager();
+        }
+      } else if (button.dataset.boundlessCustomTab === "ai") {
+        if (typeof window.__boundlessOpenAIControl === "function") {
+          window.__boundlessOpenAIControl();
+        }
+      }
+    } catch (error) {
+      console.error("[Boundless Settings] utility action", error);
+    } finally {
+      setTimeout(() => { button.dataset.boundlessBusy = "0"; }, 0);
+    }
+  }
+
+  function utilityAtPoint(x, y) {
+    const buttons = [...document.querySelectorAll(
+      '[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"]'
+    )].filter((button) => visible(button) && !button.disabled);
+    return buttons.find((button) => {
+      const r = button.getBoundingClientRect();
+      return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+    }) || null;
+  }
+
   function installUtilityCapture() {
     if (utilityCaptureInstalled) return;
     utilityCaptureInstalled = true;
+
     document.addEventListener("click", (event) => {
-      const button = event.target?.closest?.('[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"]');
+      const direct = event.target?.closest?.(
+        '[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"]'
+      );
+      const button = direct || utilityAtPoint(event.clientX, event.clientY);
       if (!button || button.disabled) return;
+
       event.preventDefault();
       event.stopPropagation();
-      if (button.dataset.boundlessBusy === "1") return;
-      button.dataset.boundlessBusy = "1";
-      try {
-        if (button.dataset.boundlessCustomTab === "save") {
-          if (typeof window.__boundlessOpenSaveManager === "function") window.__boundlessOpenSaveManager();
-        } else if (typeof window.__boundlessOpenAIControl === "function") {
-          window.__boundlessOpenAIControl();
-        }
-      } catch (error) {
-        console.error("[Boundless Settings] utility action", error);
-      } finally {
-        setTimeout(() => { button.dataset.boundlessBusy = "0"; }, 0);
-      }
+      runUtilityAction(button);
     }, true);
   }
 
