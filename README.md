@@ -134,6 +134,25 @@ Tetapan Boundless mengandungi fungsi seperti:
 - Sistem save/export
 - Refresh paparan versi
 
+## Dev Mode · Cultivation Realm Editor
+
+Apabila **Dev Mode** Boundless telah diaktifkan, tab **Dev** menyediakan **Cultivation Realm Editor** untuk ujian development.
+
+Ranah yang boleh ditukar:
+1. Body Refinement
+2. Qi Condensation — 13 lapisan
+3. Foundation Establishment
+4. Core Formation
+5. Nascent Soul
+6. Soul Transformation
+7. Void Refinement
+8. Dao Integration
+9. Tribulation Transcendence
+10. Immortal Ascension
+
+Editor juga membenarkan pemilihan **Tahap Awal, Tahap Pertengahan, Tahap Akhir** atau **Kesempurnaan Agung**, serta lapisan Qi untuk ujian Qi Condensation.
+
+Perubahan dibuat pada save pemain semasa dan dimuatkan semula melalui loader save native supaya UI permainan menggunakan state yang sama.
 ## Aset Penting
 
 - `site/assets/` — runtime dan aset permainan.
