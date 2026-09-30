@@ -74,6 +74,40 @@ Akar yang serasi termasuk:
 
 Apabila watak ini mempunyai **Akar Kayu**, bonus khusus latar belakang ialah **+45% Cultivation Speed**. Bonus tersebut hanya aktif apabila jenis akar yang dipilih ialah Akar Kayu.
 
+## Weapon System · Expert
+
+Boundless kini mempunyai sistem senjata berlapis yang menggunakan prefix item **WPN-** dan boleh diakses melalui **Tetapan → ⚔️ Weapon Forge**.
+
+### Lapisan Senjata
+
+- **10 jenis senjata:** Pedang, Saber, Tombak, Busur, Tongkat, Kipas, Guandao, Palu, Belati dan Orb.
+- **6 grade:** Mortal, Spiritual, Earth, Heaven, Immortal dan Divine.
+- **Core Material:** menentukan asas Attack, Defense, Stability dan affix.
+- **Catalyst / Soul:** memberikan elemen dan skill khas.
+- **Karma:** Orthodox, Neutral atau Asura/Demonic.
+- **Quality:** 1–5.
+- **Purity & Stability:** mempengaruhi hasil forging.
+- **Dao Tribulation:** risiko meningkat pada grade Earth ke atas.
+- **Refinement:** peningkatan kuasa dengan risiko kegagalan dan kehilangan durability.
+- **Tempering:** sehingga tahap 10 dengan kemungkinan backlash.
+- **Dao Rune Matrix:** Sword Qi, Kilat, Api, Ais, Angin, Ilusi, Pertahanan, Ruang dan Jiwa.
+- **Affixes:** kesan sekunder seperti Kukuh, Spirit Flow, Flame Edge, Void Rend dan Astral.
+- **Durability:** senjata boleh rosak dan dibaiki.
+- **Mastery:** latihan senjata meningkatkan penguasaan.
+- **Weapon Intent:** Kesedaran Senjata → Jiwa Senjata → Roh Senjata → Dewa Senjata.
+- **Soul Resonance:** berkembang melalui penggunaan dan latihan.
+- **Permanent identity:** setiap senjata mempunyai ID unik `WPN-...` dan boleh dinamakan semula.
+- **Arsenal persistence:** data senjata disimpan sebagai JSON dalam runtime tempatan.
+
+### Aliran Forging
+
+**Furnace → Core Material → Catalyst/Soul → Purity/Stability → Shape → Dao Runes → Tribulation → Weapon Intent**
+
+Sistem ini berdiri sebagai modul runtime tersendiri supaya senjata boleh diperluaskan kemudian tanpa perlu mengubah bundle utama permainan.
+
+### Material & Grade
+
+Grade lebih tinggi mempunyai multiplier kuasa yang lebih besar dan risiko tribulation yang lebih tinggi. Material seperti **Spirit Steel, Cold Jade, Thunderstone, Phoenix Metal, Void Ore** dan **Star Iron** mempunyai ciri asas yang berbeza.
 ## Save & Export
 
 Sistem save berada di **Tetapan → Permainan**.
