@@ -47,8 +47,9 @@ function build(list){
  const get=k=>row.querySelector("["+CUSTOM+'="'+k+'"]');
  let ai=get("ai");
  if(!ai){ai=button("🧠 AI Control Center","ai",openAI);row.appendChild(ai)}
- for(const k of ["empty-1","empty-2","empty-3"])if(!get(k))row.appendChild(button("Slot Akan Datang",k,()=>{},true));
- for(const k of ["ai","empty-1","empty-2","empty-3"]){const x=get(k);if(x&&x.parentElement===row)row.appendChild(x)}
+ if(!get("dev-realm"))row.appendChild(button("🛠 DEV · Ranah Awal","dev-realm",()=>{},false));
+ for(const k of ["empty-1","empty-2"])if(!get(k))row.appendChild(button("Slot Akan Datang",k,()=>{},true));
+ for(const k of ["ai","dev-realm","empty-1","empty-2"]){const x=get(k);if(x&&x.parentElement===row)row.appendChild(x)}
  return ai;
 }
 function ensure(){const l=tabs();if(!l)return false;const n=nativeTabs(l);if(n.length!==4)return false;return !!build(l)}
