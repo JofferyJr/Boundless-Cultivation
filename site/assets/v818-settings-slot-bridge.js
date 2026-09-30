@@ -267,7 +267,7 @@
         if (typeof window.__boundlessOpenSaveManager === "function") {
           window.__boundlessOpenSaveManager();
         }
-      } else if (button.dataset.boundlessCustomTab === "ai" || button.dataset.boundlessCustomTab === "weapon") {
+      } else if (button.dataset.boundlessCustomTab === "ai") {
         if (typeof window.__boundlessOpenAIControl === "function") {
           window.__boundlessOpenAIControl();
         }
@@ -285,7 +285,7 @@
 
   function utilityAtPoint(x, y) {
     const buttons = [...document.querySelectorAll(
-      '[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"],[data-boundless-custom-tab="weapon"],[data-boundless-custom-tab="weapon"]'
+      '[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"],[data-boundless-custom-tab="weapon"]'
     )].filter((button) => visible(button) && !button.disabled);
     return buttons.find((button) => {
       const r = button.getBoundingClientRect();
