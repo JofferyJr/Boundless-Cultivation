@@ -43,20 +43,33 @@ function armStartHook(){
 
 function render(){
  if(!unlocked()||!creation()){remove();return}
- let host=document.querySelector(".bc-creation-shell");
- if(!host)host=document.querySelector(".bc-creation-header");
- if(!host)return;
+ // Keep the DEV panel outside the main creation grid. The previous commit inserted it
+ // as a grid child, which changed the whole character-creation layout.
+ const host=document.querySelector(".bc-character-creation");
+ const shell=document.querySelector(".bc-creation-shell");
+ if(!host||!shell)return;
  let box=document.getElementById("bc-dev-realm-editor");
  if(!box){
    box=document.createElement("section");box.id="bc-dev-realm-editor";
-   box.innerHTML='<div class="bc-dev-head"><b>🛠 DEV · Tetapan Ranah Awal</b><small>DEV aktif · hanya muncul dalam Penciptaan Watak</small></div><p class="bc-dev-note">Tetapkan ranah yang akan digunakan selepas watak memasuki dunia. Panel ini tidak muncul selepas masuk ke permainan.</p><div class="bc-dev-grid"><label>Ranah<select id="bc-dev-realm">'+REALMS.map((x,i)=>'<option value="'+i+'">'+(i+1)+". "+x+"</option>").join("")+'</select></label><label>Tahap<select id="bc-dev-phase">'+PHASES.map((x,i)=>'<option value="'+i+'">'+x+"</option>").join("")+'</select></label><label>Lapisan Qi<input id="bc-dev-layer" type="number" min="1" max="13" value="1"></label></div><div class="bc-dev-actions"><button type="button" id="bc-dev-arm">✓ Tetapkan Ranah DEV</button></div><small id="bc-dev-realm-status" class="bc-dev-status">Belum ditetapkan.</small>';
-   host.prepend(box);
+   box.innerHTML='<div class="bc-dev-head"><b>🛠 DEV · Tetapan Ranah Awal</b><small>DEV aktif · hanya muncul dalam Penciptaan Watak</small></div><p class="bc-dev-note">Tetapkan ranah yang akan digunakan selepas watak memasuki dunia. Panel ini tidak muncul selepas masuk ke permainan.</p><div class="bc-dev-grid"><label>Ranah<select id="bc-dev-realm">'+REALMS.map((x,i)=>'<option value="'+i+'">'+(i+1)+". "+x+"</option>").join("")+'</select></label><label>Tahap<select id="bc-dev-phase">'+PHASES.map((x,i)=>'<option value="'+i+'">'+x+"</option>").join("")+'</select></label><label id="bc-dev-layer-wrap">Lapisan Qi<input id="bc-dev-layer" type="number" min="1" max="13" value="1"></label></div><div class="bc-dev-actions"><button type="button" id="bc-dev-arm">✓ Tetapkan Ranah DEV</button></div><small id="bc-dev-realm-status" class="bc-dev-status">Belum ditetapkan.</small>';
+   shell.insertAdjacentElement("beforebegin",box);
    box.querySelector("#bc-dev-arm").onclick=()=>{
-     const p={realm:Number(box.querySelector("#bc-dev-realm").value),phase:Number(box.querySelector("#bc-dev-phase").value),layer:Number(box.querySelector("#bc-dev-layer").value)};
+     const realm=Number(box.querySelector("#bc-dev-realm").value);
+     const phase=Number(box.querySelector("#bc-dev-phase").value);
+     const layer=realm===1?Math.max(1,Math.min(13,Number(box.querySelector("#bc-dev-layer").value)||1)):1;
+     const p={realm,phase,layer};
      setPending(p);
-     box.querySelector("#bc-dev-realm-status").textContent="✓ "+REALMS[p.realm]+" · "+PHASES[p.phase]+" · Lapisan "+p.layer+" — akan digunakan apabila masuk dunia.";
+     box.querySelector("#bc-dev-realm-status").textContent="✓ "+REALMS[p.realm]+" · "+PHASES[p.phase]+(p.realm===1?" · Lapisan "+p.layer:"")+" — akan digunakan apabila masuk dunia.";
    };
  }
+ const realmEl=box.querySelector("#bc-dev-realm");
+ const layerWrap=box.querySelector("#bc-dev-layer-wrap");
+ const layerEl=box.querySelector("#bc-dev-layer");
+ // Qi Condensation (index 1) is the only realm with Qi Layers 1–13.
+ const isQi=Number(realmEl.value)===1;
+ layerWrap.hidden=!isQi;
+ layerEl.disabled=!isQi;
+ if(!isQi) layerEl.value="1";
  const p=pending();
  if(p){
    box.querySelector("#bc-dev-realm").value=String(p.realm);
