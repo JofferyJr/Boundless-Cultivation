@@ -2,9 +2,9 @@ const BC_MUSIC_DB="boundless-cultivation-music";
 const BC_MUSIC_STORE="tracks";
 const BC_MUSIC_SLOT="slot-1";
 const BC_MUSIC_SETTINGS="boundless-cultivation-music-settings";
-const BC_BUILTIN_URL="/Cultivation/assets/music/ni-tian-xing-loop.ogg";
+const BC_BUILTIN_URL="/Boundless-Cultivation/assets/music/ni-tian-xing-loop.ogg";
 const BC_BUILTIN_NAME="Ni Tian Xing (逆天行) · Latar Bawaan";
-const BC_XIAN_URL="/Cultivation/assets/music/Xian%20Dao%20Chang%20(%E4%BB%99%E9%81%93%E9%95%BF).mp3";
+const BC_XIAN_URL="/Boundless-Cultivation/assets/music/Xian%20Dao%20Chang%20(%E4%BB%99%E9%81%93%E9%95%BF).mp3";
 const BC_XIAN_NAME="Xian Dao Chang (仙道长) · Muzik Repo ";
 
 let bcAudio=null;
