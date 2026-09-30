@@ -1,67 +1,121 @@
-# Boundless Cultivation v8.1.5 · Dunia Xianxia
+# Boundless Cultivation · Dunia Xianxia
 
-Repository rasmi **GitHub standalone** untuk Boundless Cultivation.
+Repository rasmi **Boundless Cultivation** — game RPG kultivasi Xianxia standalone yang berjalan sebagai static HTML melalui GitHub Pages.
 
-- Game version: **8.1.5**
-- Save format: **saveVersion 30**
-- Deployment: **GitHub Pages / Static HTML**
-- Runtime source: `site/`
-- Auto-sync with the former site: **disabled**
+- **Repository:** https://github.com/JofferyJr/Boundless-Cultivation
+- **Game:** Boundless Cultivation
+- **Current runtime:** `site/`
+- **Deployment:** GitHub Pages / Static HTML
+- **Repository standalone:** Ya — tidak diselaraskan dengan projek lama.
+- **GitHub Pages:** https://jofferyjr.github.io/Boundless-Cultivation/
 
-## Sorotan 8.1.5
+## Dunia & Peta
 
-- **Kertas Pemilihan Muka** untuk pemain dan pasangan True Love menggunakan satu helaian responsif yang kekal terbuka selepas pemilihan.
-- Pemain boleh memilih **1–4 bakat** dan semua kesan digunakan secara additive.
-- **True Love** hanya tersedia apabila usia permulaan sekurang-kurangnya 18 tahun.
-- Gambar **9 herba, 10 logam, 7 serpihan Kunci Portal Laut dan 1 kunci lengkap** dipulihkan daripada aset canonical apabila save lama tidak menyimpan art.
-- Save v8.1.4 dimigrasi kepada **saveVersion 30** tanpa memadam kemajuan.
-- Layout penciptaan watak dibataskan kepada viewport tanpa global `body { overflow-x: hidden; }`.
+Boundless menggunakan dua pengalaman peta yang berasingan.
+
+### Peta Dunia Utama
+
+Peta utama menggunakan:
+
+`site/assets/uploads/Peta Xianxia dengan Laut Tenggara Tenang.png`
+
+Peta ini kekal sebagai dunia utama dan mempunyai kawasan portal menuju **Dunia Laut**.
+
+### Dunia Laut
+
+Dunia Laut mempunyai peta khusus:
+
+`site/world-map/v3/dunia_laut/Peta Laut Xianxia yang Harmoni.png.webp`
+
+Dunia Laut dibuka melalui sistem portal laut dan tidak menggantikan peta dunia utama.
+
+## Sistem Utama
+
+- Penciptaan watak Xianxia dengan nama, usia, jantina dan potret.
+- **Kertas Pemilihan Muka** untuk pemain dan pasangan apabila pilihan pasangan tersedia.
+- Pemilihan **1–4 bakat**.
+- **True Love** hanya tersedia untuk watak berusia 18 tahun ke atas.
+- Sistem **Spiritual Root** dengan reroll gred.
+- Bloodline, physique, keluarga, sekte dan salasilah.
+- Bestari dengan koleksi makhluk dan penerangan.
+- Item, herba, bijih, pil, artifak, senjata, manual dan kunci portal.
+- Sistem hubungan, keluarga, pasangan dan perkembangan watak.
+- Sistem dunia hidup dan AI untuk entiti dunia.
+- Muzik latar dan pemulihan kedudukan muzik ketika save/load.
+- Save/Export melalui **Tetapan → Permainan**.
+
+## Spiritual Root · Reroll Gred
+
+Reroll hanya menentukan **gred akar**, bukan menukar kategori jenis akar.
+
+| Gred | Kebarangkalian |
+|---|---:|
+| Akar Palsu 5 | 35% |
+| Akar Palsu 4 | 25% |
+| Akar Sejati 3 | 20% |
+| Akar Sejati 2 | 15% |
+| Akar Surgawi | 5% |
+
+Kategori asas:
+- **Akar Palsu:** Api, Air, Kayu, Logam, Tanah.
+- **Akar Sejati:** Kilat, Ais, Angin, Cahaya, Gelap.
+- **Akar Surgawi:** pilihan khas dengan satu slot akar.
 
 ## Reincarnated Tree Spirit
 
-**Reincarnated Tree Spirit** ialah latar belakang untuk jiwa roh pokok yang dilahirkan semula sebagai manusia. Disebabkan asal-usulnya sebagai roh tumbuhan, beberapa jenis akar roh tidak serasi dan tidak boleh digunakan.
+**Reincarnated Tree Spirit** ialah latar belakang jiwa roh pokok yang dilahirkan semula sebagai manusia.
 
-### Akar yang boleh digunakan
+Akar yang serasi termasuk:
+- Akar Air
+- Akar Kayu
+- Akar Tanah
+- Akar Angin
+- Akar Cahaya/Yang
 
-- **Akar Air (水)** — boleh digunakan.
-- **Akar Kayu (木)** — boleh digunakan dan memberikan bonus khas.
-- **Akar Tanah (土)** — boleh digunakan.
-- **Akar Angin (风)** — boleh digunakan.
-- **Akar Cahaya/Yang (光/阳)** — boleh digunakan.
+Apabila watak ini mempunyai **Akar Kayu**, bonus khusus latar belakang ialah **+45% Cultivation Speed**. Bonus tersebut hanya aktif apabila jenis akar yang dipilih ialah Akar Kayu.
 
-### Akar yang tidak boleh digunakan
+## Save & Export
 
-- **Akar Api (火)**
-- **Akar Logam (金)**
-- **Akar Kilat (雷)**
-- **Akar Ais (冰)**
-- **Akar Yin/Gelap (暗/阴)**
-- **Akar Ruang (空间)**
-- **Akar Masa (时间)**
-- **Akar Penelan (吞噬)**
-- **Akar Kekacauan Primordial (混沌)**
-- **Akar Abadi/Ilahi (仙/神)**
+Sistem save berada di **Tetapan → Permainan**.
 
-Akar yang tidak serasi tidak ditawarkan sebagai pilihan untuk latar belakang ini.
+Panel native ini mengendalikan:
+- Simpan
+- Muat
+- Padam
+- Import
+- Export
+- Export Semua
 
-### Bonus Akar Kayu
+Save lama dimigrasi secara berperingkat supaya kemajuan pemain tidak hilang apabila struktur save berubah.
 
-Apabila watak **Reincarnated Tree Spirit** mempunyai **Akar Kayu (木)**:
+## Tetapan
 
-> **+45% Cultivation Speed**
+Tetapan Boundless mengandungi fungsi seperti:
+- Paparan
+- Permainan
+- Help & Tips
+- Dev
+- AI Control Center
+- Muzik
+- Sistem save/export
+- Refresh paparan versi
 
-Bonus ini hanya aktif apabila jenis akar watak ialah **Akar Kayu**. Memilih latar belakang Reincarnated Tree Spirit sahaja tidak memberikan bonus +45%.
+## Aset Penting
 
-**Reroll gred akar** kekal sebagai sistem berasingan dan tidak menukar sekatan jenis akar khusus latar belakang ini.
+- `site/assets/` — runtime dan aset permainan.
+- `site/game-assets/bestiary/` — koleksi Bestari.
+- `site/game-assets/items/` — aset item.
+- `site/assets/music/` — muzik permainan, termasuk `Xian Dao Chang (仙道长).mp3`.
+- `site/assets/uploads/` — aset peta dan bahan tambahan.
 
-## Play
+## Identiti Projek
 
-https://jofferyjr.github.io/Cultivation/
+Nama rasmi semasa ialah **Boundless Cultivation**.
 
-## Save manager
+Nama projek lama **Jalan Dao / Cultivation** tidak lagi digunakan sebagai nama game atau repository rasmi.
 
-Tetapan → Permainan mengandungi lima slot manual dengan Simpan, Muat, Padam, Import, Export dan Export Semua. Tiada butang save terapung atau quick-save pada UI utama.
+## Development
 
-## Verification
+Fail runtime utama berada di dalam `site/`. Untuk GitHub Pages, deployment menggunakan kandungan folder tersebut dan path asset disesuaikan dengan repository baharu **Boundless-Cultivation**.
 
-Repository menjalankan static-runtime audit, release audit 8.1.5/saveVersion 30, unit tests dan Playwright browser tests untuk hydration, save manager, multi-talent, True Love, Kertas Pemilihan Muka dan kawalan overflow.
+Perubahan runtime hendaklah mengekalkan keserasian dengan save lama dan tidak memadam aset canonical yang masih digunakan oleh sistem permainan.
