@@ -76,7 +76,7 @@ Apabila watak ini mempunyai **Akar Kayu**, bonus khusus latar belakang ialah **+
 
 ## Weapon System · Expert
 
-Boundless kini mempunyai sistem senjata berlapis yang menggunakan prefix item **WPN-** dan boleh diakses melalui **Tetapan → ⚔️ Weapon Forge**.
+Boundless kini mempunyai sistem senjata berlapis yang menggunakan prefix item **WPN-** dan boleh diakses melalui **Inventori → Slot Peralatan → ⚔️ Senjata & Tempa**.
 
 ### Lapisan Senjata
 
