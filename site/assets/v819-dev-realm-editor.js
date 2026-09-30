@@ -12,7 +12,7 @@ const unlocked=()=>sessionStorage.getItem(DEV_KEY)==="1";
 function read(){try{return JSON.parse(localStorage.getItem(SAVE_KEY)||"null")}catch{return null}}
 function write(obj){localStorage.setItem(SAVE_KEY,JSON.stringify(obj))}
 function reload(){if(typeof window.__boundlessLoadCurrent==="function"){window.__boundlessLoadCurrent();return true}location.reload();return true}
-function activePanel(){
+function inCharacterCreation(){\n return !!document.querySelector(".bc-character-creation");\n}\nfunction activePanel(){
  const tabs=[...document.querySelectorAll(".bc-settings-tabs")].find(t=>{const s=getComputedStyle(t);return s.display!=="none"&&s.visibility!=="hidden"})||document.querySelector(".bc-settings-tabs");
  if(!tabs)return null;
  const root=tabs.parentElement;
@@ -26,7 +26,7 @@ function isDevTab(){
  return !!active&&/\bdev\b/i.test(active.textContent||"");
 }
 function apply(){
- if(!unlocked())return;
+ if(!inCharacterCreation()||!unlocked())return;
  const save=read(); if(!save){alert("Tiada save Boundless aktif.");return}
  const sel=document.getElementById("bc-dev-realm"); const phase=document.getElementById("bc-dev-phase"); const layer=document.getElementById("bc-dev-layer");
  const realm=Number(sel.value);
@@ -43,7 +43,7 @@ function apply(){
 }
 function render(){
  const host=activePanel();
- if(!host||!unlocked()||!isDevTab())return;
+ if(!inCharacterCreation()||!host||!unlocked()||!isDevTab()){\n   document.getElementById("bc-dev-realm-editor")?.remove();\n   return;\n }
  let box=document.getElementById("bc-dev-realm-editor");
  if(!box){box=document.createElement("section");box.id="bc-dev-realm-editor";box.innerHTML=
  '<div class="bc-dev-head"><div><b>🛠 Dev · Cultivation Realm Editor</b><small>DEV aktif · hanya mempengaruhi pemain semasa</small></div></div>'+
