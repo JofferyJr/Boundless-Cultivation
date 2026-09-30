@@ -31,7 +31,7 @@
     const b = document.createElement("button");
     b.type = "button";
     b.dataset.boundlessCustomTab = key;
-    b.className = template?.className || "dao-tab justify-center";
+    b.className = "boundless-settings-utility-button";
     b.textContent = label;
     b.setAttribute("aria-label", label);
     b.disabled = disabled;
@@ -54,7 +54,7 @@
       "touch-action:manipulation",
       "position:relative",
       "z-index:9999",
-      "pointer-events:" + (disabled ? "none" : "auto"),
+      "pointer-events:" + (disabled ? "none" : "auto") + " !important",
       "user-select:none",
       "opacity:" + (disabled ? ".45" : "1")
     ].join(";");
@@ -225,9 +225,9 @@
     return !!row && !!row.querySelector('[' + CUSTOM + '="ai"]');
   }
 
-  function start() {
+  function installAIEventFallback() {\n    if (window.__boundlessAISettingsClickHook) return;\n    window.__boundlessAISettingsClickHook = true;\n    document.addEventListener("click", (event) => {\n      const button = event.target?.closest?.("[data-boundless-custom-tab=\\"ai\\"]");\n      if (!button || button.disabled) return;\n      event.preventDefault();\n      event.stopPropagation();\n      if (typeof window.__boundlessOpenAIControl === "function") {\n        window.__boundlessOpenAIControl();\n      } else {\n        console.warn("[Boundless Settings] AI Control Center belum tersedia.");\n      }\n    }, true);\n  }\n\n  function start() {
     if (observerStarted) return;
-    observerStarted = true;
+    observerStarted = true;\n    installAIEventFallback();
 
     const observer = new MutationObserver((records) => {
       if (records.some((r) =>
