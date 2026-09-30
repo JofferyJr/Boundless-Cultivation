@@ -109,6 +109,42 @@
     });
   }
 
+  function openAIControlCenter() {
+    const existing = document.getElementById("boundless-ai-panel");
+    if (existing) {
+      existing.hidden = false;
+      existing.style.display = "block";
+      existing.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+
+    const finish = () => {
+      const panel = document.getElementById("boundless-ai-panel");
+      if (panel) {
+        panel.hidden = false;
+        panel.style.display = "block";
+      }
+    };
+
+    if (window.BoundlessAI) {
+      finish();
+      return;
+    }
+
+    if (document.querySelector('script[data-boundless-ai-loader="lazy"]')) {
+      window.addEventListener("boundless-ai-ready", finish, { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "/Boundless-Cultivation/assets/v816-ai-world.js?v=8.2.2-ai-control";
+    script.defer = true;
+    script.dataset.boundlessAiLoader = "lazy";
+    script.onload = finish;
+    script.onerror = () => console.error("[Boundless Settings] AI Control Center gagal dimuat.");
+    document.head.appendChild(script);
+  }
+
   function buildUtilityRow(list, native) {
     // Keep the AI slot anchored directly below the native Settings tabs.
     // It no longer moves with individual tab panels, so React cannot make it disappear.
@@ -146,11 +182,7 @@
         "🧠 AI Control Center",
         "ai",
         () => {
-          if (typeof window.__boundlessOpenAIControl === "function") {
-            window.__boundlessOpenAIControl();
-          } else {
-            console.warn("[Boundless Settings] AI Control Center belum tersedia.");
-          }
+          openAIControlCenter();
         },
         template
       );
