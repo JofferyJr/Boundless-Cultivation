@@ -196,12 +196,27 @@
       extra.appendChild(ai);
     }
 
-    for (const key of ["empty-1", "empty-2", "empty-3"]) {
+    if (!get("weapon")) {
+      extra.appendChild(makeUtilityButton(
+        "⚔️ Weapon Forge",
+        "weapon",
+        () => {
+          if (typeof window.__boundlessOpenWeaponForge !== "function") {
+            console.warn("[Boundless Settings] Weapon Forge belum tersedia.");
+            return;
+          }
+          window.__boundlessOpenWeaponForge();
+        },
+        template
+      ));
+    }
+
+    for (const key of ["empty-2", "empty-3"]) {
       if (!get(key)) extra.appendChild(makeUtilityButton("Slot Akan Datang", key, () => {}, template, true));
     }
 
     // Hard order: AI, Empty, Empty, Empty.
-    const ordered = ["ai", "empty-1", "empty-2", "empty-3"]
+    const ordered = ["ai", "weapon", "empty-2", "empty-3"]
       .map(get)
       .filter(Boolean);
     ordered.forEach((el) => extra.appendChild(el));
@@ -233,7 +248,7 @@
 
     return !!extra &&
       extra.querySelector('[data-boundless-custom-tab="ai"]') &&
-      extra.querySelector('[data-boundless-custom-tab="empty-1"]') &&
+      extra.querySelector('[data-boundless-custom-tab="weapon"]') &&
       extra.querySelector('[data-boundless-custom-tab="empty-2"]') &&
       extra.querySelector('[data-boundless-custom-tab="empty-3"]');
   }
@@ -252,9 +267,13 @@
         if (typeof window.__boundlessOpenSaveManager === "function") {
           window.__boundlessOpenSaveManager();
         }
-      } else if (button.dataset.boundlessCustomTab === "ai") {
+      } else if (button.dataset.boundlessCustomTab === "ai" || button.dataset.boundlessCustomTab === "weapon") {
         if (typeof window.__boundlessOpenAIControl === "function") {
           window.__boundlessOpenAIControl();
+        }
+      } else if (button.dataset.boundlessCustomTab === "weapon") {
+        if (typeof window.__boundlessOpenWeaponForge === "function") {
+          window.__boundlessOpenWeaponForge();
         }
       }
     } catch (error) {
@@ -266,7 +285,7 @@
 
   function utilityAtPoint(x, y) {
     const buttons = [...document.querySelectorAll(
-      '[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"]'
+      '[data-boundless-custom-tab="save"],[data-boundless-custom-tab="ai"],[data-boundless-custom-tab="weapon"],[data-boundless-custom-tab="weapon"]'
     )].filter((button) => visible(button) && !button.disabled);
     return buttons.find((button) => {
       const r = button.getBoundingClientRect();
