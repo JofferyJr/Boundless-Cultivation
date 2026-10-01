@@ -1,0 +1,35 @@
+/* Boundless — Pulau Lingkong visual theme. Kept outside the gameplay bundle. */
+.local-region-shell.lingkong-wind-theme .local-region-map{
+  background:
+    radial-gradient(circle at 18% 18%,rgba(220,240,255,.16),transparent 28%),
+    radial-gradient(circle at 82% 72%,rgba(190,225,255,.12),transparent 30%),
+    linear-gradient(145deg,#263b4a,#0b1720 72%) !important;
+}
+.local-region-shell.lingkong-wind-theme .local-place-tile{
+  --tile-a:#304b5d;
+  --tile-b:#0d1d28;
+  border-color:rgba(210,235,255,.22);
+}
+.local-region-shell.lingkong-wind-theme .local-tile-terrain svg,
+.local-region-shell.lingkong-wind-theme .local-place-icon svg{
+  display:none;
+}
+.local-region-shell.lingkong-wind-theme .local-tile-terrain::before{
+  content:"☁";
+  display:block;
+  font-size:30px;
+  line-height:1;
+  color:#d9efff;
+  text-shadow:0 0 14px rgba(190,225,255,.5);
+}
+.local-region-shell.lingkong-wind-theme .local-place-icon::before{
+  content:"〰";
+  display:block;
+  font-size:25px;
+  line-height:1;
+  color:#cbe9ff;
+  text-shadow:0 0 12px rgba(170,220,255,.45);
+}
+.local-region-shell.lingkong-wind-theme .local-tile-terrain small{
+  color:#cfeaff;
+}
