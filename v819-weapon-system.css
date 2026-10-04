@@ -1,0 +1,410 @@
+/* Boundless Cultivation v8.2 Weapon System - REFINED CSS
+ * Fix: typo .bc-wpn-overlay, tambah variables, animation, accessibility, responsive
+ */
+
+:root {
+  --wp-bg: #0b1511;
+  --wp-bg-panel: #09130f;
+  --wp-bg-input: #111d18;
+  --wp-bg-card: #13231c;
+  --wp-border: #29443a;
+  --wp-border-gold: #806936;
+  --wp-border-soft: #45675a;
+  --wp-gold: #e2c479;
+  --wp-gold-strong: #b49148;
+  --wp-gold-light: #e5c77d;
+  --wp-text: #eee;
+  --wp-text-dim: #9caea5;
+  --wp-text-muted: #83948c;
+  --wp-danger: #d58d82;
+  --wp-radius: 12px;
+  --wp-radius-lg: 16px;
+}
+
+/* Overlay */
+#bc-wpn-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483640;
+  background: rgba(3, 7, 6, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  color: var(--wp-text);
+  animation: wpFadeIn 0.2s ease-out;
+}
+
+#bc-wpn-overlay[hidden] {
+  display: none !important;
+}
+
+@keyframes wpFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Dialog */
+.bc-wpn-dialog {
+  width: min(1280px, 96vw);
+  max-height: 92vh;
+  overflow: auto;
+  background: var(--wp-bg);
+  border: 1px solid var(--wp-border-gold);
+  border-radius: var(--wp-radius-lg);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(226,196,121,0.1) inset;
+  padding: 18px;
+  animation: wpPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  scrollbar-width: thin;
+  scrollbar-color: var(--wp-border-soft) var(--wp-bg);
+}
+
+@keyframes wpPop {
+  from { transform: scale(0.96) translateY(8px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.bc-wpn-dialog::-webkit-scrollbar { width: 8px; }
+.bc-wpn-dialog::-webkit-scrollbar-thumb { background: var(--wp-border-soft); border-radius: 4px; }
+
+/* Header */
+.bc-wpn-dialog header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--wp-border);
+  padding-bottom: 12px;
+  align-items: flex-start;
+}
+
+.bc-wpn-dialog header small {
+  color: var(--wp-text-muted);
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.bc-wpn-dialog header h2 {
+  margin: 0.25rem 0;
+  color: var(--wp-gold);
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.bc-wpn-dialog header p {
+  margin: 0;
+  color: var(--wp-text-dim);
+  font-size: 0.85rem;
+}
+
+.bc-wpn-dialog header button {
+  width: 42px;
+  height: 42px;
+  font-size: 25px;
+  background: #18251f;
+  color: var(--wp-gold);
+  border: 1px solid var(--wp-border-gold);
+  border-radius: 9px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.15s, border-color 0.15s;
+}
+
+.bc-wpn-dialog header button:hover {
+  background: #1f332a;
+  border-color: var(--wp-gold-strong);
+}
+
+.bc-wpn-dialog header button:active { transform: scale(0.95); }
+.bc-wpn-dialog header button:focus-visible { outline: 2px solid var(--wp-gold); outline-offset: 2px; }
+
+/* Grid Layout */
+.bc-wpn-grid {
+  display: grid;
+  grid-template-columns: 260px minmax(300px, 1fr) 390px;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+/* Panel */
+.bc-wpn-panel {
+  background: var(--wp-bg-panel);
+  border: 1px solid var(--wp-border);
+  border-radius: var(--wp-radius);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.bc-wpn-panel h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: var(--wp-gold);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.bc-wpn-panel label {
+  display: block;
+  font-size: 0.8rem;
+  margin: 10px 0 2px;
+  color: #aebdb6;
+}
+
+.bc-wpn-panel select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  background: var(--wp-bg-input);
+  color: var(--wp-text);
+  border: 1px solid var(--wp-border-soft);
+  border-radius: 7px;
+  padding: 9px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.bc-wpn-panel select:hover { border-color: var(--wp-gold-strong); }
+.bc-wpn-panel select:focus { outline: none; border-color: var(--wp-gold); box-shadow: 0 0 0 2px rgba(180,145,72,0.2); }
+
+.bc-wpn-panel button {
+  border: 1px solid var(--wp-border-soft);
+  background: var(--wp-bg-card);
+  color: var(--wp-text);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.bc-wpn-panel button:hover {
+  background: #1a2e26;
+  border-color: var(--wp-gold-strong);
+}
+
+.bc-wpn-panel button:active { transform: translateY(1px); }
+.bc-wpn-panel button:focus-visible { outline: 2px solid var(--wp-gold); outline-offset: 2px; }
+
+.bc-wpn-panel .gold {
+  width: 100%;
+  margin-top: 12px;
+  background: var(--wp-gold-strong);
+  color: #09110e;
+  font-weight: 700;
+  border-color: var(--wp-gold-strong);
+  padding: 11px;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.bc-wpn-panel .gold:hover { background: #c8a85a; }
+
+/* Cards */
+.bc-wpn-card {
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 8px;
+  text-align: left;
+  background: var(--wp-bg-input) !important;
+  border: 1px solid var(--wp-border) !important;
+}
+
+.bc-wpn-card:hover { border-color: var(--wp-border-soft) !important; background: #14241d !important; }
+
+.bc-wpn-card span,
+.bc-wpn-card em {
+  font-size: 0.75rem;
+  color: var(--wp-text-dim);
+  margin-top: 3px;
+}
+
+.bc-wpn-card.active {
+  border-color: var(--wp-gold) !important;
+  box-shadow: 0 0 0 1px rgba(226,196,121,0.2), 0 2px 12px rgba(226,196,121,0.15);
+  background: #1a2a22 !important;
+}
+
+/* Detail */
+.bc-wpn-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  color: var(--wp-gold);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bc-wpn-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin: 12px 0;
+}
+
+.bc-wpn-stats span {
+  background: var(--wp-bg-input);
+  border: 1px solid var(--wp-border);
+  padding: 8px 9px;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bc-wpn-progress { margin: 10px 0; }
+
+.bc-wpn-progress label {
+  font-size: 0.75rem;
+  color: var(--wp-text-dim);
+  margin: 0;
+}
+
+.bc-wpn-progress div {
+  height: 7px;
+  background: #17241e;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 3px 0 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.bc-wpn-progress i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--wp-gold-strong), var(--wp-gold));
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+.bc-wpn-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.bc-wpn-mats {
+  display: grid;
+  gap: 4px;
+  margin-top: 7px;
+  font-size: 0.72rem;
+}
+
+.bc-wpn-mats span {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 4px 6px;
+  border-radius: 5px;
+}
+
+.muted { color: var(--wp-text-muted); font-size: 0.85rem; }
+
+.bc-wpn-dialog pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 0.65rem;
+  color: var(--wp-text-dim);
+  background: #060d0a;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--wp-border);
+  max-height: 180px;
+  overflow: auto;
+}
+
+.bc-wpn-dialog footer {
+  padding-top: 12px;
+  margin-top: 14px;
+  color: var(--wp-text-muted);
+  font-size: 0.75rem;
+  border-top: 1px solid var(--wp-border);
+}
+
+/* Toast */
+#bc-wpn-toast {
+  position: fixed;
+  z-index: 2147483647;
+  left: 50%;
+  bottom: 28px;
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  pointer-events: none;
+  background: #101b16;
+  border: 1px solid var(--wp-border-gold);
+  color: var(--wp-gold);
+  padding: 10px 15px;
+  border-radius: 9px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  font-size: 0.85rem;
+  max-width: 90vw;
+  text-align: center;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+#bc-wpn-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Inventory / equipment entry point — weapon system is no longer exposed from Settings. */
+.boundless-weapon-menu-button {
+  appearance: none;
+  border: 1px solid var(--wp-border-gold);
+  border-radius: 10px;
+  background: #111b16;
+  color: var(--wp-gold-light);
+  padding: 0.55rem 0.8rem;
+  min-height: 42px;
+  font: 600 0.82rem/1.15 system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.boundless-weapon-menu-button:hover {
+  background: #1a2921;
+  border-color: var(--wp-gold-strong);
+  box-shadow: 0 0 0 1px rgba(180,145,72,0.15);
+}
+
+.boundless-weapon-menu-button:active { transform: translateY(1px); }
+.boundless-weapon-menu-button:focus-visible { outline: 2px solid var(--wp-gold); outline-offset: 2px; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .bc-wpn-grid { grid-template-columns: 240px 1fr 340px; }
+}
+
+@media (max-width: 900px) {
+  .bc-wpn-grid { grid-template-columns: 1fr; }
+  .bc-wpn-dialog { max-height: 96vh; width: 96vw; }
+  .bc-wpn-stats { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .boundless-weapon-menu-button { width: 100%; }
+}
+
+@media (max-width: 520px) {
+  #bc-wpn-overlay { /* FIX: .bc-wpn-overlay -> #bc-wpn-overlay */
+    padding: 8px;
+  }
+  .bc-wpn-dialog { padding: 12px; border-radius: 12px; }
+  .bc-wpn-actions { grid-template-columns: 1fr; }
+  .bc-wpn-stats { grid-template-columns: 1fr; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #bc-wpn-overlay, .bc-wpn-dialog, #bc-wpn-toast, .bc-wpn-progress i {
+    animation: none;
+    transition: none;
+  }
+}
