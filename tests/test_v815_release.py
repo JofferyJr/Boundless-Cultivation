@@ -36,7 +36,7 @@ class V815ReleaseTests(unittest.TestCase):
         self.assertIn('.map(BC815HydrateItem)', self.bundle)
         self.assertIn('bcArts=[...new Set([e.art,bcCanonical].filter(Boolean))]', self.bundle)
         self.assertIn('onError:()=>bcSetIndex(e=>e+1)', self.bundle)
-        self.assertIn('window.location.pathname.startsWith(`/Cultivation`)', self.bundle)
+        self.assertIn('window.location.pathname.startsWith(`/Boundless-Cultivation`)', self.bundle)
         for marker in ['Ug=Hg(`herb`', 'Wg=Hg(`metal`', 'Kg=Hg(`portal`']: self.assertIn(marker, self.bundle)
 
     def test_all_27_inventory_art_files_exist(self):
