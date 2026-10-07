@@ -11,10 +11,10 @@ test('standalone Boundless Cultivation 8.1.5 hydrates without SiteGPT', async ({
   });
   await page.route('**://legacy-source.invalid/**', route => route.abort());
 
-  await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle(/Boundless Cultivation/i);
   await expect(page.getByText('Boundless Cultivation', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('Versi 8.1.5').first()).toBeVisible();
+  await expect(page.getByText('Versi 8.1.11').first()).toBeVisible();
 
   const settings = page.getByRole('button', { name: 'Tetapan' }).first();
   await expect(settings).toBeVisible();
