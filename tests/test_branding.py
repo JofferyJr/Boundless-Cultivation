@@ -16,8 +16,8 @@ class BrandingTests(unittest.TestCase):
         html = (ROOT / "site/index.html").read_text(encoding="utf-8")
         self.assertEqual(html.count("/Boundless-Cultivation/assets/v815-music.js"), 1)
         self.assertIn("/Boundless-Cultivation/assets/v817-cultivation-world.js?v=8.1.13-expert", html)
-        self.assertIn("/Boundless-Cultivation/assets/v818-settings-slot-bridge.js?v=8.1.13-expert", html)
-        self.assertIn("/Boundless-Cultivation/assets/v815-save-manager.js?v=8.1.13-expert", html)
+        self.assertIn("/Boundless-Cultivation/assets/v818-settings-slot-bridge.js?v=8.4.0-settings-dev", html)
+        self.assertIn("/Boundless-Cultivation/assets/v815-save-manager.js?v=8.1.29-native-permainan-direct", html)
         self.assertIn("/Boundless-Cultivation/assets/v815-release.js?v=8.1.13-expert", html)
         self.assertNotIn("/Boundless-Cultivation/assets/v816-ai-world.js", html)
 
