@@ -147,7 +147,7 @@
         if (tile) openGrid(shell, tile);
       });
     }
-    var mapButtons = $(".map-view-switch button", switcher);
+    var mapButtons = $("button", switcher);
     var smallMapButton = mapButtons.filter(function (button) { return /Peta Kecil/i.test(button.textContent); })[0];
     if (smallMapButton && explorationButton.parentNode !== switcher) smallMapButton.insertAdjacentElement("afterend", explorationButton);
     var selectedView = $("button[aria-pressed='true']", switcher);
