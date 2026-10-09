@@ -21,6 +21,7 @@ test('nested map grid opens and DEV can override its size and cell lore', async 
       button.className = 'local-place-tile wilderness';
       button.dataset.bcLoreIndex = String(i);
       button.innerHTML = '<span class="local-place-copy"><b>Slot ' + (i + 1) + '</b><small>Deskripsi asal ' + (i + 1) + '</small></span>';
+      button.addEventListener('click', () => button.setAttribute('data-native-visit', '1'));
       grid.appendChild(button);
     }
     document.body.appendChild(shell);
@@ -53,4 +54,8 @@ test('nested map grid opens and DEV can override its size and cell lore', async 
   expect(saved.entries['puncak-xuefeng::4'].rows).toBe(1);
   expect(saved.entries['puncak-xuefeng::4'].cols).toBe(2);
   expect(saved.entries['puncak-xuefeng::4'].cells['0-0'].name).toBe('Balai Utama');
+
+  await page.locator('#bcng-enter-parent').click();
+  await expect(page.locator('#bc-nested-grid-v822')).toBeHidden();
+  await expect(page.locator('.local-region-shell .local-place-tile').nth(4)).toHaveAttribute('data-native-visit', '1');
 });
