@@ -205,3 +205,56 @@
 @media (prefers-reduced-motion:reduce){
   .family-member{transition:none!important}
 }
+
+/* Couple layout fix: keep both partners adjacent with one continuous shared connector. */
+.family-waist{
+  display:grid!important;
+  grid-template-columns:minmax(13rem,17rem) 2.5rem minmax(13rem,17rem)!important;
+  grid-auto-flow:row!important;
+  justify-content:center!important;
+  align-items:center!important;
+  justify-items:stretch!important;
+  width:max-content!important;
+  max-width:none!important;
+  margin:1.1rem auto!important;
+  padding:0!important;
+  column-gap:0!important;
+}
+.family-waist>.family-member{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:100%!important;
+  margin:0!important;
+  align-self:stretch!important;
+}
+.family-waist>.spouse-connector{
+  display:block!important;
+  grid-column:2!important;
+  grid-row:1!important;
+  width:100%!important;
+  min-width:2.5rem!important;
+  height:3px!important;
+  margin:0!important;
+  padding:0!important;
+  align-self:center!important;
+  justify-self:stretch!important;
+  border:0!important;
+  border-radius:999px!important;
+}
+.family-waist>.family-member:first-child{grid-column:1!important;grid-row:1!important}
+.family-waist>.family-member.spouse-member{grid-column:3!important;grid-row:1!important}
+@media(max-width:760px){
+  .family-waist{
+    grid-template-columns:minmax(12rem,15rem) 2rem minmax(12rem,15rem)!important;
+    width:max-content!important;
+    max-width:none!important;
+  }
+  .family-waist>.spouse-connector{min-width:2rem!important}
+}
+@media(max-width:480px){
+  .family-waist{
+    grid-template-columns:minmax(11.5rem,13rem) 1.75rem minmax(11.5rem,13rem)!important;
+  }
+  .family-waist>.spouse-connector{min-width:1.75rem!important}
+}
