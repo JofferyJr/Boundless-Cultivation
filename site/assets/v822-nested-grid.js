@@ -135,8 +135,8 @@
     event.preventDefault(); event.stopPropagation(); if (event.stopImmediatePropagation) event.stopImmediatePropagation(); openGrid(shell, tile);
   }, true);
   var scan = function () {
-    $(".local-region-shell").forEach(function (shell) {
-      $(".local-place-tile", shell).forEach(function (tile) { if (tile.disabled) tile.disabled = false; tile.setAttribute("aria-disabled", tile.classList.contains("fog") ? "true" : "false"); });
+    $$(".local-region-shell").forEach(function (shell) {
+      $$(".local-place-tile", shell).forEach(function (tile) { if (tile.disabled) tile.disabled = false; tile.setAttribute("aria-disabled", tile.classList.contains("fog") ? "true" : "false"); });
       var note = $(".local-map-note", shell);
       if (note && !note.dataset.bcNestedGridHint) { var hint = document.createElement("span"); hint.className = "bcng-map-hint"; hint.textContent = " Klik jubin untuk membuka grid dalaman; gunakan “Masuki lokasi permainan” untuk perjalanan asal."; hint.style.color = "#e5c77d"; note.appendChild(hint); note.dataset.bcNestedGridHint = "1"; }
     });
