@@ -1,5 +1,5 @@
-/* Boundless v8.2.2 — nested exploration grids with automatic sizing and DEV overrides.
-   Additive navigation layer: preserves the native 3x3 map and its original travel handler. */
+/* Boundless v8.2.6 — nested exploration grids open only from the top map-view button.
+   Native 3x3 tile clicks remain owned by the original travel handler. */
 (function () {
   "use strict";
   if (window.__boundlessNestedGridV822) return;
@@ -128,19 +128,41 @@
   $("#bcng-reset-size", modal).addEventListener("click", function () { if (!isDev()) return; var ok = updateEntry(function (next) { next.mode = "auto"; delete next.rows; delete next.cols; }); $("#bcng-dev-status", modal).textContent = ok ? "✓ Saiz automatik dipulihkan." : "Gagal memulihkan saiz."; renderGrid(); });
   modal.addEventListener("click", function (event) { if (event.target === modal) closeModal(); });
   document.addEventListener("keydown", function (event) { if (event.key === "Escape" && !modal.hidden) { event.preventDefault(); event.stopPropagation(); if (!devPanel.hidden) { devPanel.hidden = true; editorOpen = false; } else closeModal(); } }, true);
-  document.addEventListener("click", function (event) {
-    var tile = event.target && event.target.closest ? event.target.closest(".local-place-tile") : null; if (!tile) return;
-    if (allowNativeTravel.has(tile)) { allowNativeTravel.delete(tile); return; }
-    var shell = tile.closest(".local-region-shell"); if (!shell) return;
-    event.preventDefault(); event.stopPropagation(); if (event.stopImmediatePropagation) event.stopImmediatePropagation(); openGrid(shell, tile);
-  }, true);
+  var explorationButton = null;
+  var ensureExplorationButton = function () {
+    var switcher = $(".map-view-switch");
+    if (!switcher) { if (explorationButton) explorationButton.disabled = true; return; }
+    if (!explorationButton) {
+      explorationButton = document.createElement("button");
+      explorationButton.type = "button";
+      explorationButton.className = "bcng-map-open";
+      explorationButton.textContent = "Petak Penerokaan";
+      explorationButton.setAttribute("aria-label", "Buka Petak Penerokaan");
+      explorationButton.title = "Buka grid dalaman bagi lokasi semasa dalam Peta Kecil";
+      explorationButton.addEventListener("click", function () {
+        var shell = $(".local-region-shell");
+        var isLocal = !!(shell && $(".map-view-switch button[aria-pressed='true']") && /Peta Kecil/i.test($(".map-view-switch button[aria-pressed='true']").textContent));
+        if (!isLocal || !shell) return;
+        var tile = $(".local-place-tile.active", shell) || $(".local-place-tile.visited", shell) || $(".local-place-tile.frontier", shell);
+        if (tile) openGrid(shell, tile);
+      });
+    }
+    var mapButtons = $(".map-view-switch button", switcher);
+    var smallMapButton = mapButtons.filter(function (button) { return /Peta Kecil/i.test(button.textContent); })[0];
+    if (smallMapButton && explorationButton.parentNode !== switcher) smallMapButton.insertAdjacentElement("afterend", explorationButton);
+    var selectedView = $(".map-view-switch button[aria-pressed='true']", switcher);
+    var isLocalView = !!(selectedView && /Peta Kecil/i.test(selectedView.textContent) && $(".local-region-shell"));
+    explorationButton.disabled = !isLocalView;
+    explorationButton.setAttribute("aria-disabled", String(!isLocalView));
+    explorationButton.style.cssText = "border:1px solid #806936;border-radius:8px;background:#18231b;color:#e5c77d;padding:6px 10px;font:inherit;font-size:12px;cursor:" + (isLocalView ? "pointer" : "not-allowed") + ";opacity:" + (isLocalView ? "1" : ".5") + ";white-space:nowrap";
+  };
   var scan = function () {
-    $$(".local-region-shell").forEach(function (shell) {
-      $$(".local-place-tile", shell).forEach(function (tile) { if (tile.disabled) tile.disabled = false; tile.setAttribute("aria-disabled", tile.classList.contains("fog") ? "true" : "false"); });
+    ensureExplorationButton();
+    $(".local-region-shell").forEach(function (shell) {
       var note = $(".local-map-note", shell);
-      if (note && !note.dataset.bcNestedGridHint) { var hint = document.createElement("span"); hint.className = "bcng-map-hint"; hint.textContent = " Klik jubin untuk membuka grid dalaman; gunakan “Masuki lokasi permainan” untuk perjalanan asal."; hint.style.color = "#e5c77d"; note.appendChild(hint); note.dataset.bcNestedGridHint = "1"; }
+      if (note && !note.dataset.bcNestedGridHint) { var hint = document.createElement("span"); hint.className = "bcng-map-hint"; hint.textContent = " Untuk membuka Petak Penerokaan, gunakan butang di bahagian atas ketika Peta Kecil dipaparkan."; hint.style.color = "#e5c77d"; note.appendChild(hint); note.dataset.bcNestedGridHint = "1"; }
     });
   };
-  var start = function () { scan(); var queued = false; new MutationObserver(function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; scan(); }); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["disabled", "class"] }); window.addEventListener("boundless-open-dev", scan); window.__boundlessNestedGridRefresh = scan; };
+  var start = function () { scan(); var queued = false; new MutationObserver(function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; scan(); }); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["disabled", "class", "aria-pressed"] }); window.addEventListener("boundless-open-dev", scan); window.__boundlessNestedGridRefresh = scan; };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true }); else start();
 })();
