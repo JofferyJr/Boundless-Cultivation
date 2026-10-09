@@ -258,3 +258,20 @@
   }
   .family-waist>.spouse-connector{min-width:1.75rem!important}
 }
+
+/* Hide empty parental branches; let the remaining branch use the full row. */
+.family-branch:not(:has(.family-member)){
+  display:none!important;
+}
+.family-branch-grid:has(>.family-branch:first-child:not(:has(.family-member))),
+.family-branch-grid:has(>.family-branch:last-child:not(:has(.family-member))){
+  grid-template-columns:minmax(0,1fr)!important;
+}
+.family-branch-grid:has(>.family-branch:first-child:not(:has(.family-member)))>.family-branch:last-child,
+.family-branch-grid:has(>.family-branch:last-child:not(:has(.family-member)))>.family-branch:first-child{
+  grid-column:1/-1!important;
+  width:100%;
+}
+.family-branch-grid:not(:has(.family-member)){
+  display:none!important;
+}
