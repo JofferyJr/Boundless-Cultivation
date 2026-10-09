@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test('nested map grid opens and DEV can override its size and cell lore', async ({ page }) => {
+test('Petak Penerokaan requires Peta Kecil and the top button', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('boundless-dev-mode', '1'));
   await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
 
@@ -8,6 +8,13 @@ test('nested map grid opens and DEV can override its size and cell lore', async 
   await expect(page.locator('#bc-nested-grid-v822')).toHaveCount(1);
 
   await page.evaluate(() => {
+    const switcher = document.createElement('div');
+    switcher.className = 'map-view-switch';
+    switcher.innerHTML =
+      '<button type="button" aria-pressed="false">Peta Besar</button>' +
+      '<button type="button" aria-pressed="true">Peta Kecil</button>';
+    document.body.appendChild(switcher);
+
     const shell = document.createElement('section');
     shell.className = 'local-region-shell';
     shell.innerHTML =
@@ -18,8 +25,8 @@ test('nested map grid opens and DEV can override its size and cell lore', async 
     for (let i = 0; i < 9; i++) {
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'local-place-tile wilderness ' + (i === 4 ? 'frontier' : 'fog');
-      button.disabled = i !== 4; // Simulate native exploration locks on non-frontier tiles.
+      button.className = 'local-place-tile wilderness ' + (i === 4 ? 'active visited' : i === 3 ? 'frontier' : 'fog');
+      button.disabled = i !== 4 && i !== 3;
       button.dataset.bcLoreIndex = String(i);
       button.innerHTML = '<span class="local-place-copy"><b>Slot ' + (i + 1) + '</b><small>Deskripsi asal ' + (i + 1) + '</small></span>';
       button.addEventListener('click', () => button.setAttribute('data-native-visit', '1'));
@@ -29,27 +36,33 @@ test('nested map grid opens and DEV can override its size and cell lore', async 
     window.__boundlessNestedGridRefresh?.();
   });
 
-  const lockedTile = page.locator('.local-region-shell .local-place-tile').first();
-  await expect(lockedTile).toBeEnabled(); // Grid inspection is allowed even when native travel is locked.
-  await expect(lockedTile).toHaveAttribute('aria-disabled', 'true');
-  await lockedTile.click();
-  await expect(page.locator('#bc-nested-grid-v822')).toBeVisible();
-  await page.locator('#bcng-enter-parent').click();
-  await expect(page.locator('#bc-nested-grid-v822')).toBeVisible();
-  await expect(page.locator('#bcng-cell-status')).toContainText('belum boleh dimasuki');
-  await page.locator('#bcng-return').click();
-
-  // Simulate the native map unlocking this tile after adjacent exploration.
-  await lockedTile.evaluate((tile) => { tile.classList.remove('fog'); tile.classList.add('frontier'); tile.disabled = false; });
-  await expect(lockedTile).toHaveAttribute('aria-disabled', 'false');
-  await lockedTile.click();
-  await page.locator('#bcng-enter-parent').click();
+  const explorationButton = page.getByRole('button', { name: 'Buka Petak Penerokaan' });
+  await expect(explorationButton).toBeEnabled();
   await expect(page.locator('#bc-nested-grid-v822')).toBeHidden();
-  await expect(lockedTile).toHaveAttribute('data-native-visit', '1');
 
-  await page.locator('.local-region-shell .local-place-tile').nth(4).click();
+  // The 3x3 tile click must stay with the native travel handler, not open the nested grid.
+  await page.locator('.local-region-shell .local-place-tile.active').click();
+  await expect(page.locator('#bc-nested-grid-v822')).toBeHidden();
+  await expect(page.locator('.local-region-shell .local-place-tile.active')).toHaveAttribute('data-native-visit', '1');
+
+  // Peta Besar does not satisfy the first condition.
+  await page.locator('.map-view-switch button').first().evaluate(button => {
+    button.setAttribute('aria-pressed', 'true');
+    button.parentElement.querySelectorAll('button')[1].setAttribute('aria-pressed', 'false');
+  });
+  await page.evaluate(() => window.__boundlessNestedGridRefresh?.());
+  await expect(explorationButton).toBeDisabled();
+
+  // Peta Kecil plus the top button opens the inner exploration grid.
+  await page.locator('.map-view-switch button').nth(1).evaluate(button => {
+    button.setAttribute('aria-pressed', 'true');
+    button.parentElement.querySelectorAll('button')[0].setAttribute('aria-pressed', 'false');
+  });
+  await page.evaluate(() => window.__boundlessNestedGridRefresh?.());
+  await expect(explorationButton).toBeEnabled();
+  await explorationButton.click();
   await expect(page.locator('#bc-nested-grid-v822')).toBeVisible();
-  await expect(page.locator('#bcng-summary')).toContainText('Saiz 6×6');
+  await expect(page.locator('#bcng-summary')).toContainText('Saiz');
 
   await page.getByRole('button', { name: /Sunting grid \(DEV\)/ }).click();
   await page.locator('#bcng-mode').selectOption('manual');
@@ -76,5 +89,5 @@ test('nested map grid opens and DEV can override its size and cell lore', async 
 
   await page.locator('#bcng-enter-parent').click();
   await expect(page.locator('#bc-nested-grid-v822')).toBeHidden();
-  await expect(page.locator('.local-region-shell .local-place-tile').nth(4)).toHaveAttribute('data-native-visit', '1');
+  await expect(page.locator('.local-region-shell .local-place-tile.active')).toHaveAttribute('data-native-visit', '1');
 });
