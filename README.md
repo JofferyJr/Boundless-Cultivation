@@ -153,6 +153,25 @@ Ranah yang boleh ditukar:
 Editor juga membenarkan pemilihan **Tahap Awal, Tahap Pertengahan, Tahap Akhir** atau **Kesempurnaan Agung**, serta lapisan Qi untuk ujian Qi Condensation.
 
 Perubahan dibuat pada save pemain semasa dan dimuatkan semula melalui loader save native supaya UI permainan menggunakan state yang sama.
+## Item Atlas & Accessory Atlas
+
+The inventory uses atlas images as item artwork sources. Keep the existing filenames and canonical paths when replacing the artwork so references remain compatible:
+
+- **Item Atlas:** `site/game-assets/items/item-atlas-v1.webp`
+- **Accessory Atlas:** `site/game-assets/items/Assesoris.webp`
+
+The repository also contains `site/game-art/item-atlas-v1.webp`; do not assume this file is the inventory's active source. The runtime may reference a specific path, so update the canonical file that the inventory actually loads.
+
+### Replacing an atlas image
+
+1. Replace the image at the existing path; keep the filename, capitalization, and `.webp` extension unchanged.
+2. Preserve the atlas layout/grid and the relative positions of existing item sprites unless the sprite-coordinate data is updated too.
+3. Commit the replacement to the `main` branch and wait for GitHub Pages to finish deploying.
+4. Test the live game with a hard refresh (`Ctrl+Shift+R` on most desktop browsers) or in a private window. Browsers and GitHub Pages may continue serving a cached image.
+5. If the old artwork remains after a hard refresh, inspect the image URL requested by the inventory and verify that it points to the exact file replaced. If the app uses a different atlas path, replacing another copy will not change the inventory.
+
+Replacing the image alone does not change item names, IDs, or item definitions. It only changes the artwork source; item mapping depends on the existing atlas layout and runtime references.
+
 ## Aset Penting
 
 - `site/assets/` — runtime dan aset permainan.
