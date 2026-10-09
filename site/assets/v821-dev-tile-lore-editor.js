@@ -1,0 +1,37 @@
+/* Boundless DEV — manual names and descriptions for local 3x3 map tiles.
+   Additive layer: does not alter region geometry, marker positions, or travel rules. */
+(()=>{"use strict";
+const DEV_KEY="boundless-dev-mode";
+const STORE_KEY="boundless-3x3-tile-lore-v1";
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const dev=()=>{try{return sessionStorage.getItem(DEV_KEY)==="1"}catch{return false}};
+const slug=s=>(s||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"wilayah";
+function read(){try{const v=JSON.parse(localStorage.getItem(STORE_KEY)||"{}");return v&&typeof v==="object"?v:{}}catch{return {}}}
+function write(v){localStorage.setItem(STORE_KEY,JSON.stringify(v))}
+function regionName(shell){return ($(".local-region-heading .eyebrow",shell)?.textContent||"Jubin Pengembaraan").split("·").slice(1).join("·").trim()||"Wilayah"}
+function tiles(shell){return $$(".local-place-tile",shell)}
+function tileKey(shell,btn,i){return slug(regionName(shell))+"::"+(btn.dataset.bcLoreIndex||i)}
+function patch(shell){const data=read();tiles(shell).forEach((btn,i)=>{const key=tileKey(shell,btn,i),v=data[key];if(!v)return;const b=$(".local-place-copy b",btn),s=$(".local-place-copy small",btn);if(b&&b.textContent!==v.name)b.textContent=v.name;if(s&&s.textContent!==v.description)s.textContent=v.description;btn.dataset.bcLoreIndex=String(i);if(v.name)btn.title=v.name+(v.description?" — "+v.description:"")})}
+function addStyle(){if($("#bc-tile-lore-style"))return;const st=document.createElement("style");st.id="bc-tile-lore-style";st.textContent=`
+#bc-tile-lore-launch{border:1px solid #806936;border-radius:9px;background:#111b16;color:#e5c77d;padding:8px 12px;font:600 12px system-ui;cursor:pointer;margin-top:8px}
+#bc-tile-lore-modal{position:fixed;inset:0;z-index:2147483000;background:#020805d9;display:grid;place-items:center;padding:16px}
+#bc-tile-lore-modal[hidden]{display:none}
+#bc-tile-lore-modal .bc-tile-lore-card{width:min(540px,100%);max-height:90vh;overflow:auto;box-sizing:border-box;border:1px solid #806936;border-radius:14px;background:#0c1914;color:#f4ead1;padding:18px;box-shadow:0 20px 80px #000b;font:14px/1.5 system-ui}
+#bc-tile-lore-modal h3{font:600 21px Georgia,serif;margin:0 0 5px}
+#bc-tile-lore-modal p{color:#aebdb4;font-size:12px;margin:0 0 14px}
+#bc-tile-lore-modal label{display:grid;gap:6px;margin:12px 0;color:#dfc477;font-size:12px}
+#bc-tile-lore-modal input,#bc-tile-lore-modal textarea,#bc-tile-lore-modal select{box-sizing:border-box;width:100%;border:1px solid #355347;border-radius:8px;background:#07100d;color:#f4ead1;padding:10px;font:14px system-ui}
+#bc-tile-lore-modal textarea{min-height:105px;resize:vertical}
+#bc-tile-lore-modal .bc-tile-lore-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+#bc-tile-lore-modal button{border:1px solid #5b4d30;border-radius:8px;background:#18231b;color:#e5c77d;padding:9px 12px;cursor:pointer}
+#bc-tile-lore-modal button.primary{background:#b49148;color:#09110e;font-weight:700}
+`;document.head.appendChild(st)}
+function modal(){let m=$("#bc-tile-lore-modal");if(m)return m;m=document.createElement("div");m.id="bc-tile-lore-modal";m.hidden=true;m.innerHTML='<section class="bc-tile-lore-card" role="dialog" aria-modal="true" aria-labelledby="bc-tile-lore-title"><h3 id="bc-tile-lore-title">Sunting Nama & Deskripsi Jubin</h3><p>Perubahan disimpan dalam pelayar ini. Kedudukan marker, perjalanan dan data wilayah asal tidak diubah.</p><label>Slot 3×3<select id="bc-tile-lore-slot"></select></label><label>Nama slot<input id="bc-tile-lore-name" maxlength="90" placeholder="Nama tempat atau jubin"></label><label>Deskripsi<textarea id="bc-tile-lore-desc" maxlength="500" placeholder="Terangkan tempat, suasana, sumber atau perkara menarik…"></textarea></label><div class="bc-tile-lore-actions"><button class="primary" id="bc-tile-lore-save">Simpan</button><button id="bc-tile-lore-reset">Pulihkan slot ini</button><button id="bc-tile-lore-close">Tutup</button></div><p id="bc-tile-lore-status" aria-live="polite" style="margin-top:10px"></p></section>';document.body.appendChild(m);return m}
+let activeShell=null;
+function open(shell){if(!dev())return;activeShell=shell;const m=modal(),sel=$("#bc-tile-lore-slot",m),data=read(),list=tiles(shell);sel.innerHTML="";list.forEach((btn,i)=>{btn.dataset.bcLoreIndex=String(i);const original=$(".local-place-copy b",btn)?.textContent||("Slot "+(i+1));const opt=document.createElement("option");opt.value=String(i);opt.textContent=(i+1)+". "+original;sel.appendChild(opt)});function load(){const i=Number(sel.value)||0,btn=list[i],v=data[tileKey(shell,btn,i)]||{};$("#bc-tile-lore-name",m).value=v.name||$(".local-place-copy b",btn)?.textContent||"";$("#bc-tile-lore-desc",m).value=v.description||$(".local-place-copy small",btn)?.textContent||"";$("#bc-tile-lore-status",m).textContent=""}sel.onchange=load;$("#bc-tile-lore-save",m).onclick=()=>{const i=Number(sel.value)||0,btn=list[i],name=$("#bc-tile-lore-name",m).value.trim(),description=$("#bc-tile-lore-desc",m).value.trim();if(!name){$("#bc-tile-lore-status",m).textContent="Nama slot diperlukan.";return}data[tileKey(shell,btn,i)]={name,description};write(data);patch(shell);$("#bc-tile-lore-status",m).textContent="✓ Nama dan deskripsi disimpan.";sel.options[i].textContent=(i+1)+". "+name};$("#bc-tile-lore-reset",m).onclick=()=>{const i=Number(sel.value)||0,btn=list[i];delete data[tileKey(shell,btn,i)];write(data);const b=$(".local-place-copy b",btn),s=$(".local-place-copy small",btn);if(b)b.textContent=btn.dataset.bcOriginalName||b.textContent;if(s)s.textContent=btn.dataset.bcOriginalDesc||s.textContent;$("#bc-tile-lore-status",m).textContent="Slot ini dipulihkan jika nilai asal masih tersedia. Muat semula peta jika perlu.";load()};$("#bc-tile-lore-close",m).onclick=()=>m.hidden=true;m.onclick=e=>{if(e.target===m)m.hidden=true};load();m.hidden=false}
+function enhance(shell){if(!shell)return;tiles(shell).forEach((b,i)=>{if(!("bcOriginalName" in b)){b.dataset.bcOriginalName=$(".local-place-copy b",b)?.textContent||"";b.dataset.bcOriginalDesc=$(".local-place-copy small",b)?.textContent||"";b.dataset.bcLoreIndex=String(i)}});patch(shell);if(!dev()){$("#bc-tile-lore-launch",shell)?.remove();return}const heading=$(".local-region-heading",shell);if(!heading||$("#bc-tile-lore-launch",shell))return;const b=document.createElement("button");b.type="button";b.id="bc-tile-lore-launch";b.textContent="✎ Sunting Nama & Deskripsi Jubin (DEV)";b.addEventListener("click",()=>open(shell));heading.appendChild(b)}
+function scan(){if(!dev()){$$("#bc-tile-lore-launch").forEach(e=>e.remove());return}$$(".local-region-shell").forEach(enhance)}
+function start(){addStyle();scan();let queued=false;new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})}).observe(document.body,{childList:true,subtree:true});document.addEventListener("storage",e=>{if(e.key===STORE_KEY)scan()});document.addEventListener("visibilitychange",scan);window.addEventListener("boundless-open-dev",scan);window.__boundlessRefreshTileLore=scan}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+})();
