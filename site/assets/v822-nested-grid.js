@@ -103,7 +103,7 @@
     $("#bcng-breadcrumb", modal).textContent = "WILAYAH: " + regionName(shell) + "  →  GRID 3×3: " + tileName(tile, tileIndex(tile, shell)) + "  →  GRID DALAMAN";
     modal.hidden = false; renderGrid(); $("#bcng-return", modal).focus();
   };
-  var enterParent = function () { if (!active || !active.tile || active.tile.disabled) return; var tile = active.tile; modal.hidden = true; allowNativeTravel.add(tile); tile.click(); if (active) active = null; selected = null; };
+  var enterParent = function () { if (!active || !active.tile) return; var tile = active.tile; if (tile.dataset.bcNestedNativeDisabled === "1") { var status = $("#bcng-cell-status", modal); if (status) status.textContent = "Jubin ini belum boleh dimasuki. Teroka jubin yang bersebelahan dahulu melalui sistem perjalanan asal."; return; } modal.hidden = true; allowNativeTravel.add(tile); tile.click(); if (active) active = null; selected = null; };
   $("#bcng-close", modal).addEventListener("click", closeModal); $("#bcng-return", modal).addEventListener("click", closeModal); $("#bcng-enter-parent", modal).addEventListener("click", enterParent);
   $("#bcng-mark-visited", modal).addEventListener("click", function () {
     var coords = selectedCoordinates(); if (!coords) return; var id = cellId(coords.row, coords.col);
@@ -130,12 +130,13 @@
   document.addEventListener("keydown", function (event) { if (event.key === "Escape" && !modal.hidden) { event.preventDefault(); event.stopPropagation(); if (!devPanel.hidden) { devPanel.hidden = true; editorOpen = false; } else closeModal(); } }, true);
   document.addEventListener("click", function (event) {
     var tile = event.target && event.target.closest ? event.target.closest(".local-place-tile") : null; if (!tile) return;
-    if (allowNativeTravel.has(tile)) { allowNativeTravel.delete(tile); return; } if (tile.disabled) return;
+    if (allowNativeTravel.has(tile)) { allowNativeTravel.delete(tile); return; }
     var shell = tile.closest(".local-region-shell"); if (!shell) return;
     event.preventDefault(); event.stopPropagation(); if (event.stopImmediatePropagation) event.stopImmediatePropagation(); openGrid(shell, tile);
   }, true);
   var scan = function () {
-    $$(".local-region-shell").forEach(function (shell) {
+    $(".local-region-shell").forEach(function (shell) {
+      $(".local-place-tile", shell).forEach(function (tile) { if (!("bcNestedNativeDisabled" in tile.dataset)) tile.dataset.bcNestedNativeDisabled = tile.disabled ? "1" : "0"; if (tile.disabled) tile.disabled = false; tile.setAttribute("aria-disabled", tile.dataset.bcNestedNativeDisabled === "1" ? "true" : "false"); });
       var note = $(".local-map-note", shell);
       if (note && !note.dataset.bcNestedGridHint) { var hint = document.createElement("span"); hint.className = "bcng-map-hint"; hint.textContent = " Klik jubin untuk membuka grid dalaman; gunakan “Masuki lokasi permainan” untuk perjalanan asal."; hint.style.color = "#e5c77d"; note.appendChild(hint); note.dataset.bcNestedGridHint = "1"; }
     });
