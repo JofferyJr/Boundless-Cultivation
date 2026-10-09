@@ -150,7 +150,7 @@
     var mapButtons = $(".map-view-switch button", switcher);
     var smallMapButton = mapButtons.filter(function (button) { return /Peta Kecil/i.test(button.textContent); })[0];
     if (smallMapButton && explorationButton.parentNode !== switcher) smallMapButton.insertAdjacentElement("afterend", explorationButton);
-    var selectedView = $(".map-view-switch button[aria-pressed='true']", switcher);
+    var selectedView = $("button[aria-pressed='true']", switcher);
     var isLocalView = !!(selectedView && /Peta Kecil/i.test(selectedView.textContent) && $(".local-region-shell"));
     explorationButton.disabled = !isLocalView;
     explorationButton.setAttribute("aria-disabled", String(!isLocalView));
