@@ -280,3 +280,16 @@
 .family-merge-connector{
   display:none!important;
 }
+
+/* Show the merge line only when at least one parental branch has a family member. */
+.family-merge-connector{
+  display:block!important;
+  height:3.2rem!important;
+  position:relative!important;
+}
+.family-branch-grid:has(.family-member)~.family-merge-connector{
+  display:block!important;
+}
+.family-branch-grid:not(:has(.family-member))~.family-merge-connector{
+  display:none!important;
+}
