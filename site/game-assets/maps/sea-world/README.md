@@ -1,7 +1,9 @@
 # Sea World Map Slot
 
-Place the separate Sea World / ocean map assets in this folder.
+The Sea World map asset is stored in this folder.
 
 - Folder: `site/game-assets/maps/sea-world/`
+- Map image: `Peta Laut Xianxia yang Harmoni.png.webp`
 - Purpose: ocean regions, islands, and sea-world exploration.
-- Keep the currently used asset under `site/world-map/v3/dunia_laut/` until the loader is explicitly updated and tested.
+- The image is a copy of the existing asset under `site/game-assets/maps/v3/dunia_laut/`. The original file and current runtime path are preserved.
+- This organization does not change the runtime loader; connect the game to this slot separately and test before removing any old copy.
