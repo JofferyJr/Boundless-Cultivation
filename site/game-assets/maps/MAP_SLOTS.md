@@ -1,8 +1,8 @@
 # Boundless Map Asset Slots
 
-This directory is the organized asset location for the five world-map categories. Each slot has its own folder so images can be replaced independently without mixing assets.
+This directory organizes the five world-map categories and the shared resources used by map views.
 
-## Slots
+## World-map slots
 
 1. **Main World** — `main-world/`
 2. **Sea World** — `sea-world/`
@@ -10,9 +10,18 @@ This directory is the organized asset location for the five world-map categories
 4. **Underworld** — `underworld/`
 5. **Dungeon** — `dungeon/`
 
+## Shared map resources
+
+Use `shared-map-assets/` for reusable map UI resources that are not exclusive to one world map, such as markers, pins, logos, symbols, and common base-map assets.
+
+Current shared files:
+- `shared-map-assets/marker_gold.png` — gold location marker used on the main world map.
+- `shared-map-assets/map_base.webp` — shared base-map resource.
+
 ## Asset rules
 
-- Keep each map's original filename and extension consistent with the code that loads it.
-- Do not delete or move existing maps in `site/world-map/` or `site/game-assets/maps/v3/` as part of this folder organization.
-- These folders are asset slots only. Creating them does **not** switch the game runtime to load from them; runtime paths must be updated separately when a slot is ready to be connected.
-- Use descriptive names for additional maps and avoid storing duplicate copies unless a specific runtime path requires them.
+- Keep filenames and extensions consistent with the runtime paths that load them.
+- Store each world map in its matching slot; put reusable markers, icons, and symbols in `shared-map-assets/`.
+- Do not restore the deleted `site/world-map/` path. Runtime references should use `site/game-assets/maps/`.
+- Creating or moving assets does not automatically connect them to the game; update runtime paths whenever an asset path changes.
+- Avoid duplicate copies unless a specific runtime path requires them.
