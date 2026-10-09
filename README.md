@@ -1,146 +1,204 @@
-# Boundless Cultivation · Dunia Xianxia
+# Boundless Cultivation
+### A standalone Xianxia cultivation RPG
 
-Repository rasmi **Boundless Cultivation** — game RPG kultivasi Xianxia standalone yang berjalan sebagai static HTML melalui GitHub Pages.
+**Boundless Cultivation** is a browser-based Xianxia RPG project hosted with GitHub Pages. The repository contains the game website, its runtime assets, world-map resources, item artwork, and supporting development documentation.
 
-- **Repository:** https://github.com/JofferyJr/Boundless-Cultivation
-- **Game:** Boundless Cultivation
-- **Current runtime:** `site/`
-- **Deployment:** GitHub Pages / Static HTML
-- **Repository standalone:** Ya — tidak diselaraskan dengan projek lama.
-- **GitHub Pages:** https://jofferyjr.github.io/Boundless-Cultivation/
+<p align="center">
+  <a href="https://jofferyjr.github.io/Boundless-Cultivation/"><strong>▶ Play Boundless Cultivation</strong></a>
+  ·
+  <a href="https://github.com/JofferyJr/Boundless-Cultivation"><strong>Repository</strong></a>
+</p>
 
-## Dunia & Peta
+---
 
-Boundless menggunakan dua pengalaman peta yang berasingan.
+## Project at a glance
 
-### Peta Dunia Utama
+| Detail | Value |
+|---|---|
+| Project | Boundless Cultivation |
+| Genre | Xianxia / cultivation RPG |
+| Delivery | Static website |
+| Main website source | `site/` |
+| Hosting | GitHub Pages |
+| Live website | https://jofferyjr.github.io/Boundless-Cultivation/ |
+| Main branch | `main` |
 
-Peta utama menggunakan:
+The repository is maintained as the standalone Boundless project. **Boundless Cultivation** is the current project name; “Jalan Dao” and “Cultivation” are legacy names, not the current game title.
+
+## Contents
+
+- [Game systems](#game-systems)
+- [Character creation](#character-creation)
+- [Spiritual Root](#spiritual-root-and-reroll-rates)
+- [World maps](#world-maps)
+- [Inventory and item atlases](#inventory-and-item-atlases)
+- [Weapons and forging](#weapons-and-forging)
+- [Save, export, and settings](#save-export-and-settings)
+- [Developer tools](#developer-tools)
+- [Repository structure](#repository-structure)
+- [Updating images safely](#updating-images-safely)
+- [Development and deployment](#development-and-deployment)
+- [Troubleshooting](#troubleshooting)
+
+---
+
+## Game systems
+
+Boundless is designed around character growth and a persistent cultivation world. The project includes systems for:
+
+- Character creation, including name, age, gender, portrait, talents, and background options.
+- **Kertas Pemilihan Muka** (Face Selection Album) for choosing player and eligible partner portraits.
+- Spiritual Root grades and rerolls.
+- Bloodlines, physiques, family background, lineage, sects, and relationships.
+- Bestiary entries for creatures and their descriptions.
+- Inventory content such as items, herbs, ores, pills, artifacts, weapons, manuals, and portal keys.
+- World simulation and AI-related runtime modules.
+- Background music.
+- Save-slot management and import/export tools.
+- Development settings and cultivation realm testing tools.
+
+Availability and behaviour of individual features depend on the current deployed build.
+
+## Character creation
+
+Character creation is the starting point for a new cultivation journey. It brings together identity, age, gender, portraits, talents, background, and cultivation-related choices.
+
+The face-selection interface is intended to present portraits in an album-style panel that can be closed after a selection. Partner-related options are conditional on the rules of the game.
+
+### True Love
+
+The game's stated rule is that **True Love is only available to characters aged 18 or older**. Partner and family/lineage outcomes depend on the character's relationship state and the applicable background rules.
+
+## Spiritual Root and reroll rates
+
+A Spiritual Root reroll determines the root grade using the following configured probability distribution:
+
+| Result | Probability |
+|---|---:|
+| False Root — 5 slots | 35% |
+| False Root — 4 slots | 25% |
+| True Root — 3 slots | 20% |
+| True Root — 2 slots | 15% |
+| Heavenly Root | 5% |
+| **Total** | **100%** |
+
+### Root categories
+
+- **False Root:** Fire, Water, Wood, Metal, Earth.
+- **True Root:** Lightning, Ice, Wind, Light, Dark.
+- **Heavenly Root:** a special root with one usable slot.
+
+The reroll is intended to determine the grade and slot configuration; it should not arbitrarily replace the root category rules. Only usable root slots should be presented as available.
+
+## Background: Reincarnated Tree Spirit
+
+**Reincarnated Tree Spirit** represents a tree spirit reborn as a human. The documented compatible roots include Water, Wood, Earth, Wind, and Light/Yang.
+
+When the character has a **Wood Root**, this background's specified bonus is **+45% Cultivation Speed**. The bonus is conditional on having the Wood Root.
+
+## World maps
+
+Boundless separates the main world map from the ocean-world map.
+
+### Main world map
+
+Current documented source asset:
 
 `site/assets/uploads/Peta Xianxia dengan Laut Tenggara Tenang.png`
 
-Peta ini kekal sebagai dunia utama dan mempunyai kawasan portal menuju **Dunia Laut**.
+The main map remains the primary world-map experience.
 
 ### Dunia Laut
 
-Dunia Laut mempunyai peta khusus:
+Current documented ocean-map asset:
 
 `site/world-map/v3/dunia_laut/Peta Laut Xianxia yang Harmoni.png.webp`
 
-Dunia Laut dibuka melalui sistem portal laut dan tidak menggantikan peta dunia utama.
+Dunia Laut is a separate ocean setting connected to the world through the portal concept. Its map is intended to supplement—not replace—the main world map.
 
-## Sistem Utama
+> **Asset-path note:** Keep filenames, capitalization, extensions, and directory paths consistent with the runtime references. A file existing in the repository does not by itself prove that the live game is loading that copy.
 
-- Penciptaan watak Xianxia dengan nama, usia, jantina dan potret.
-- **Kertas Pemilihan Muka** untuk pemain dan pasangan apabila pilihan pasangan tersedia.
-- Pemilihan **1–4 bakat**.
-- **True Love** hanya tersedia untuk watak berusia 18 tahun ke atas.
-- Sistem **Spiritual Root** dengan reroll gred.
-- Bloodline, physique, keluarga, sekte dan salasilah.
-- Bestari dengan koleksi makhluk dan penerangan.
-- Item, herba, bijih, pil, artifak, senjata, manual dan kunci portal.
-- Sistem hubungan, keluarga, pasangan dan perkembangan watak.
-- Sistem dunia hidup dan AI untuk entiti dunia.
-- Muzik latar dan pemulihan kedudukan muzik ketika save/load.
-- Save/Export melalui **Tetapan → Permainan**.
+## Inventory and item atlases
 
-## Spiritual Root · Reroll Gred
+Inventory artwork is supplied by image assets and runtime mappings. The repository contains multiple atlas-like files, so replace the exact file referenced by the inventory rather than assuming that similarly named copies are interchangeable.
 
-Reroll hanya menentukan **gred akar**, bukan menukar kategori jenis akar.
+### Documented atlas paths
 
-| Gred | Kebarangkalian |
-|---|---:|
-| Akar Palsu 5 | 35% |
-| Akar Palsu 4 | 25% |
-| Akar Sejati 3 | 20% |
-| Akar Sejati 2 | 15% |
-| Akar Surgawi | 5% |
+| Purpose | Path |
+|---|---|
+| Item atlas | `site/game-assets/items/item-atlas-v1.webp` |
+| Accessory atlas | `site/game-assets/items/Assesoris.webp` |
+| Additional item-atlas copy | `site/game-art/item-atlas-v1.webp` |
 
-Kategori asas:
-- **Akar Palsu:** Api, Air, Kayu, Logam, Tanah.
-- **Akar Sejati:** Kilat, Ais, Angin, Cahaya, Gelap.
-- **Akar Surgawi:** pilihan khas dengan satu slot akar.
+The additional copy under `site/game-art/` may not be the same file used by the inventory. Check the runtime's actual image URL before deciding which copy to replace.
 
-## Reincarnated Tree Spirit
+### Replacing an atlas image
 
-**Reincarnated Tree Spirit** ialah latar belakang jiwa roh pokok yang dilahirkan semula sebagai manusia.
+1. Open the existing file in the repository and confirm the exact path.
+2. Replace its image content while keeping the same filename, capitalization, extension, and path.
+3. Preserve the atlas dimensions, grid, sprite positions, and item ordering if the runtime uses fixed coordinates or sprite indices.
+4. Commit the changed image to `main` and wait for the GitHub Pages deployment to finish.
+5. Open the live game and perform a hard refresh (`Ctrl+Shift+R` in most desktop browsers). A private/incognito window can help test without an existing browser cache.
+6. If the old artwork still appears, inspect the image URL requested by the inventory in the browser's developer tools. Confirm that the URL matches the file you replaced and that the deployed response contains the new image.
 
-Akar yang serasi termasuk:
-- Akar Air
-- Akar Kayu
-- Akar Tanah
-- Akar Angin
-- Akar Cahaya/Yang
+**Important:** Replacing an atlas image changes artwork, not item IDs, names, descriptions, or inventory data. Those depend on the game's item definitions and mappings. If sprites move to different positions in the new atlas, the corresponding mapping may also need to be updated.
 
-Apabila watak ini mempunyai **Akar Kayu**, bonus khusus latar belakang ialah **+45% Cultivation Speed**. Bonus tersebut hanya aktif apabila jenis akar yang dipilih ialah Akar Kayu.
+### Asset locations
 
-## Weapon System · Expert
+- `site/game-assets/items/` — item-related assets.
+- `site/game-assets/bestiary/` — bestiary image assets.
+- `site/game-art/item-atlas-v1.webp` — additional atlas copy.
+- `site/assets/uploads/` — general image uploads and map source material.
 
-Boundless kini mempunyai sistem senjata berlapis yang menggunakan prefix item **WPN-** dan boleh diakses melalui **Inventori → Slot Peralatan → ⚔️ Senjata & Tempa**.
+The uploads folder is a staging area; it is not automatically the canonical runtime location for every image.
 
-### Lapisan Senjata
+## Weapons and forging
 
-- **10 jenis senjata:** Pedang, Saber, Tombak, Busur, Tongkat, Kipas, Guandao, Palu, Belati dan Orb.
-- **6 grade:** Mortal, Spiritual, Earth, Heaven, Immortal dan Divine.
-- **Core Material:** menentukan asas Attack, Defense, Stability dan affix.
-- **Catalyst / Soul:** memberikan elemen dan skill khas.
-- **Karma:** Orthodox, Neutral atau Asura/Demonic.
-- **Quality:** 1–5.
-- **Purity & Stability:** mempengaruhi hasil forging.
-- **Dao Tribulation:** risiko meningkat pada grade Earth ke atas.
-- **Refinement:** peningkatan kuasa dengan risiko kegagalan dan kehilangan durability.
-- **Tempering:** sehingga tahap 10 dengan kemungkinan backlash.
-- **Dao Rune Matrix:** Sword Qi, Kilat, Api, Ais, Angin, Ilusi, Pertahanan, Ruang dan Jiwa.
-- **Affixes:** kesan sekunder seperti Kukuh, Spirit Flow, Flame Edge, Void Rend dan Astral.
-- **Durability:** senjata boleh rosak dan dibaiki.
-- **Mastery:** latihan senjata meningkatkan penguasaan.
-- **Weapon Intent:** Kesedaran Senjata → Jiwa Senjata → Roh Senjata → Dewa Senjata.
-- **Soul Resonance:** berkembang melalui penggunaan dan latihan.
-- **Permanent identity:** setiap senjata mempunyai ID unik `WPN-...` dan boleh dinamakan semula.
-- **Arsenal persistence:** data senjata disimpan sebagai JSON dalam runtime tempatan.
+The weapon system uses the `WPN-` item prefix and is documented as accessible through **Inventory → Equipment Slot → Weapons & Forging**.
 
-### Aliran Forging
+### Weapon components
 
-**Furnace → Core Material → Catalyst/Soul → Purity/Stability → Shape → Dao Runes → Tribulation → Weapon Intent**
+- **Weapon types:** Sword, Saber, Spear, Bow, Staff, Fan, Guandao, Hammer, Dagger, and Orb.
+- **Grades:** Mortal, Spiritual, Earth, Heaven, Immortal, and Divine.
+- **Core Material:** provides the base weapon attributes.
+- **Catalyst / Soul:** may provide an element or special skill.
+- **Karma alignment:** Orthodox, Neutral, or Asura/Demonic.
+- **Quality:** levels 1–5.
+- **Purity and Stability:** influence forging outcomes.
+- **Dao Tribulation:** adds risk at higher grades.
+- **Refinement and Tempering:** upgrade mechanics with potential failure or backlash.
+- **Dao Rune Matrix:** includes Sword Qi, Lightning, Fire, Ice, Wind, Illusion, Defense, Space, and Soul themes.
+- **Affixes:** secondary effects such as Spirit Flow, Flame Edge, Void Rend, and Astral.
+- **Durability, repair, mastery, weapon intent, and soul resonance:** support weapon progression.
+- **Persistent identity:** weapons use unique `WPN-...` IDs and may be renamed.
 
-Sistem ini berdiri sebagai modul runtime tersendiri supaya senjata boleh diperluaskan kemudian tanpa perlu mengubah bundle utama permainan.
+### Forging flow
 
-### Material & Grade
+`Furnace → Core Material → Catalyst/Soul → Purity/Stability → Shape → Dao Runes → Tribulation → Weapon Intent`
 
-Grade lebih tinggi mempunyai multiplier kuasa yang lebih besar dan risiko tribulation yang lebih tinggi. Material seperti **Spirit Steel, Cold Jade, Thunderstone, Phoenix Metal, Void Ore** dan **Star Iron** mempunyai ciri asas yang berbeza.
-## Save & Export
+The weapon system is organized as a separate runtime module to support future expansion without requiring every feature to be embedded in the main game bundle.
 
-Sistem save berada di **Tetapan → Permainan**.
+## Save, export, and settings
 
-Panel native ini mengendalikan:
-- Simpan
-- Muat
-- Padam
-- Import
-- Export
-- Export Semua
+Save and export tools are documented under **Settings → Game**. Available controls may include:
 
-Save lama dimigrasi secara berperingkat supaya kemajuan pemain tidak hilang apabila struktur save berubah.
+- Save and load.
+- Delete a save.
+- Import and export.
+- Export all saves.
 
-## Tetapan
+Settings are also organized around areas such as display, gameplay, Help & Tips, Dev, AI controls, music, save/export, and refreshing the displayed version.
 
-Tetapan Boundless mengandungi fungsi seperti:
-- Paparan
-- Permainan
-- Help & Tips
-- Dev
-- AI Control Center
-- Muzik
-- Sistem save/export
-- Refresh paparan versi
+When testing save/load changes, use a disposable test save first. Do not assume a new build is compatible with every older save unless that compatibility has been verified.
 
-## Dev Mode · Cultivation Realm Editor
+## Developer tools
 
-Apabila **Dev Mode** Boundless telah diaktifkan, tab **Dev** menyediakan **Cultivation Realm Editor** untuk ujian development.
+When Dev Mode is unlocked, the Dev settings area is intended to provide a **Cultivation Realm Editor** for testing.
 
-Ranah yang boleh ditukar:
+The documented realm sequence is:
+
 1. Body Refinement
-2. Qi Condensation — 13 lapisan
+2. Qi Condensation — 13 layers
 3. Foundation Establishment
 4. Core Formation
 5. Nascent Soul
@@ -150,44 +208,93 @@ Ranah yang boleh ditukar:
 9. Tribulation Transcendence
 10. Immortal Ascension
 
-Editor juga membenarkan pemilihan **Tahap Awal, Tahap Pertengahan, Tahap Akhir** atau **Kesempurnaan Agung**, serta lapisan Qi untuk ujian Qi Condensation.
+The editor is documented with realm stages—Early, Middle, Late, and Great Perfection—and Qi-layer selection for Qi Condensation. Changes are intended to apply to the current player save through the game's save/state loader.
 
-Perubahan dibuat pada save pemain semasa dan dimuatkan semula melalui loader save native supaya UI permainan menggunakan state yang sama.
-## Item Atlas & Accessory Atlas
+## Repository structure
 
-The inventory uses atlas images as item artwork sources. Keep the existing filenames and canonical paths when replacing the artwork so references remain compatible:
+Key locations in the repository include:
 
-- **Item Atlas:** `site/game-assets/items/item-atlas-v1.webp`
-- **Accessory Atlas:** `site/game-assets/items/Assesoris.webp`
+| Path | Purpose |
+|---|---|
+| `site/` | Website and game runtime served by GitHub Pages |
+| `site/index.html` | Website entry point |
+| `site/assets/` | Runtime JavaScript, CSS, music, and supporting assets |
+| `site/assets/music/` | Background music files |
+| `site/assets/uploads/` | General uploaded assets and map source material |
+| `site/game-assets/items/` | Item atlas and item-related assets |
+| `site/game-assets/bestiary/` | Bestiary images |
+| `site/game-art/` | Additional game-art assets |
+| `site/world-map/v3/dunia_laut/` | Dunia Laut map assets |
+| `docs/` | Design, migration, and development documentation |
+| `.github/workflows/` | GitHub Actions workflows, including Pages deployment |
 
-The repository also contains `site/game-art/item-atlas-v1.webp`; do not assume this file is the inventory's active source. The runtime may reference a specific path, so update the canonical file that the inventory actually loads.
+Runtime bundles under `site/assets/` may have generated or hashed filenames. Do not rename or replace a bundle casually: the HTML entry point and other runtime files may refer to its exact name.
 
-### Replacing an atlas image
+## Development and deployment
 
-1. Replace the image at the existing path; keep the filename, capitalization, and `.webp` extension unchanged.
-2. Preserve the atlas layout/grid and the relative positions of existing item sprites unless the sprite-coordinate data is updated too.
-3. Commit the replacement to the `main` branch and wait for GitHub Pages to finish deploying.
-4. Test the live game with a hard refresh (`Ctrl+Shift+R` on most desktop browsers) or in a private window. Browsers and GitHub Pages may continue serving a cached image.
-5. If the old artwork remains after a hard refresh, inspect the image URL requested by the inventory and verify that it points to the exact file replaced. If the app uses a different atlas path, replacing another copy will not change the inventory.
+Boundless is published as a static site through GitHub Pages. The website is served from the repository's `site/` directory through the configured deployment workflow.
 
-Replacing the image alone does not change item names, IDs, or item definitions. It only changes the artwork source; item mapping depends on the existing atlas layout and runtime references.
+### Safe change workflow
 
-## Aset Penting
+1. Identify the exact source file and all runtime references to it.
+2. Make a focused change on a branch when possible.
+3. Check paths and filename capitalization.
+4. Validate the relevant HTML, CSS, JavaScript, JSON, or image asset.
+5. Review the diff to ensure unrelated files were not changed.
+6. Commit and push the change.
+7. Wait for the Pages workflow to complete, then test the deployed website—not only the GitHub file preview.
 
-- `site/assets/` — runtime dan aset permainan.
-- `site/game-assets/bestiary/` — koleksi Bestari.
-- `site/game-assets/items/` — aset item.
-- `site/assets/music/` — muzik permainan, termasuk `Xian Dao Chang (仙道长).mp3`.
-- `site/assets/uploads/` — aset peta dan bahan tambahan.
+For image-only changes, verify the actual binary file changed in the commit and that the deployed image URL serves the new artwork. For runtime changes, check the browser console and test the affected flow.
 
-## Identiti Projek
+### Compatibility principles
 
-Nama rasmi semasa ialah **Boundless Cultivation**.
+- Keep existing canonical paths stable unless all references are updated.
+- Preserve existing save data where possible.
+- Avoid duplicate event handlers and repeated audio playback.
+- Avoid changing generated runtime bundles without checking their HTML/import references.
+- Do not delete an asset simply because another copy appears to exist; confirm whether the game still references it.
+- Do not perform a rollback unless it is explicitly requested.
 
-Nama projek lama **Jalan Dao / Cultivation** tidak lagi digunakan sebagai nama game atau repository rasmi.
+## Troubleshooting
 
-## Development
+### Inventory still displays the old atlas
 
-Fail runtime utama berada di dalam `site/`. Untuk GitHub Pages, deployment menggunakan kandungan folder tersebut dan path asset disesuaikan dengan repository baharu **Boundless-Cultivation**.
+1. Verify that the new image was committed to the correct branch.
+2. Confirm the exact canonical path used by the inventory.
+3. Check whether the inventory loads `site/game-assets/items/item-atlas-v1.webp`, `site/game-assets/items/Assesoris.webp`, or another image path.
+4. Hard-refresh the live website or test in a private window.
+5. Inspect the requested image URL and response in the browser's developer tools.
+6. If the new image loads but the wrong items appear, compare the new atlas grid and sprite positions with the runtime's item mapping.
 
-Perubahan runtime hendaklah mengekalkan keserasian dengan save lama dan tidak memadam aset canonical yang masih digunakan oleh sistem permainan.
+### Image is missing or fails to load
+
+- Check spelling, capitalization, extension, and directory.
+- Confirm the file is committed and available in the deployed branch.
+- Check for broken relative paths or references to an old filename.
+- Verify that the image format matches the file extension.
+
+### A runtime feature breaks after an update
+
+- Check the browser console for JavaScript errors.
+- Inspect the deployment workflow for build or publishing failures.
+- Review recent commits for changes to shared state, event handlers, asset paths, and runtime loading order.
+- Reproduce the issue using the deployed build and document the steps before changing additional files.
+
+## Music assets
+
+Music files are stored in `site/assets/music/`, including:
+
+- `Xian Dao Chang (仙道长).mp3`
+- `ni-tian-xing-loop.ogg`
+
+The filenames above identify repository assets; the live settings UI must still reference the correct file path for playback.
+
+## Project identity
+
+The official current name is **Boundless Cultivation**. New documentation, UI labels, commits, and project-facing text should use this name consistently.
+
+---
+
+## License and asset ownership
+
+No license terms are specified here. Before redistributing the project or its artwork, confirm the license and usage rights for the code, images, music, and any third-party assets included in the repository.
