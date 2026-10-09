@@ -136,7 +136,7 @@
   }, true);
   var scan = function () {
     $(".local-region-shell").forEach(function (shell) {
-      $(".local-place-tile", shell).forEach(function (tile) { if (!("bcNestedNativeDisabled" in tile.dataset)) tile.dataset.bcNestedNativeDisabled = tile.disabled ? "1" : "0"; if (tile.disabled) tile.disabled = false; tile.setAttribute("aria-disabled", tile.dataset.bcNestedNativeDisabled === "1" ? "true" : "false"); });
+      $$(".local-place-tile", shell).forEach(function (tile) { if (!("bcNestedNativeDisabled" in tile.dataset)) tile.dataset.bcNestedNativeDisabled = tile.disabled ? "1" : "0"; if (tile.disabled) tile.disabled = false; tile.setAttribute("aria-disabled", tile.dataset.bcNestedNativeDisabled === "1" ? "true" : "false"); });
       var note = $(".local-map-note", shell);
       if (note && !note.dataset.bcNestedGridHint) { var hint = document.createElement("span"); hint.className = "bcng-map-hint"; hint.textContent = " Klik jubin untuk membuka grid dalaman; gunakan “Masuki lokasi permainan” untuk perjalanan asal."; hint.style.color = "#e5c77d"; note.appendChild(hint); note.dataset.bcNestedGridHint = "1"; }
     });
