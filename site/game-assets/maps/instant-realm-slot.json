@@ -1,0 +1,44 @@
+{
+  "id": "instant-realm",
+  "slot": 1,
+  "name": "Instant Realm",
+  "name_zh": "洞天福地",
+  "aliases": [
+    "Grotto-Heaven Manifestation",
+    "Absolute Domain / Law Domain",
+    "Boundary Creation / Mirror World"
+  ],
+  "category": "personal-dimension",
+  "description": "A private pocket dimension manifested by a cultivator, combining a hidden paradise, a personal law domain, and a sealed mirror-world boundary.",
+  "functions": [
+    "accelerated cultivation and training",
+    "hidden farming and resource cultivation",
+    "safe private refuge",
+    "overrides local natural laws with the owner's selected elements or laws",
+    "isolates activity inside from outside observation or interference"
+  ],
+  "mechanics": {
+    "slotCount": 1,
+    "separateSlotsForAliases": false,
+    "unlockable": true,
+    "persistentLocation": true,
+    "ownerBound": true,
+    "lawDomainEnabled": true,
+    "boundaryIsolationEnabled": true
+  },
+  "visual": {
+    "theme": "xianxia hidden paradise",
+    "suggestedElements": [
+      "floating mountains",
+      "spiritual lake",
+      "mist",
+      "ancient pavilion",
+      "subtle spatial boundary"
+    ],
+    "assetPath": "site/game-assets/maps/instant-realm/"
+  },
+  "integration": {
+    "status": "asset-definition",
+    "note": "Single slot metadata. Gameplay UI and runtime behavior must load this definition before it becomes visible in-game."
+  }
+}
