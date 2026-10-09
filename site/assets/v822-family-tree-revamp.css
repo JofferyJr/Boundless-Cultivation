@@ -275,3 +275,8 @@
 .family-branch-grid:not(:has(.family-member)){
   display:none!important;
 }
+
+/* Remove the connector above the player's generation; keep all family data and lower-generation connectors intact. */
+.family-merge-connector{
+  display:none!important;
+}
