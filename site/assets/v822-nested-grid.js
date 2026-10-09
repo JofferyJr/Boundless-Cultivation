@@ -147,7 +147,7 @@
         if (tile) openGrid(shell, tile);
       });
     }
-    var mapButtons = $("button", switcher);
+    var mapButtons = $$("button", switcher);
     var smallMapButton = mapButtons.filter(function (button) { return /Peta Kecil/i.test(button.textContent); })[0];
     if (smallMapButton && explorationButton.parentNode !== switcher) smallMapButton.insertAdjacentElement("afterend", explorationButton);
     var selectedView = $("button[aria-pressed='true']", switcher);
@@ -158,7 +158,7 @@
   };
   var scan = function () {
     ensureExplorationButton();
-    $(".local-region-shell").forEach(function (shell) {
+    $$(".local-region-shell").forEach(function (shell) {
       var note = $(".local-map-note", shell);
       if (note && !note.dataset.bcNestedGridHint) { var hint = document.createElement("span"); hint.className = "bcng-map-hint"; hint.textContent = " Untuk membuka Petak Penerokaan, gunakan butang di bahagian atas ketika Peta Kecil dipaparkan."; hint.style.color = "#e5c77d"; note.appendChild(hint); note.dataset.bcNestedGridHint = "1"; }
     });
