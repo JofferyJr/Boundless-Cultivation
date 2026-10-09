@@ -19,6 +19,7 @@ test('nested map grid opens and DEV can override its size and cell lore', async 
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'local-place-tile wilderness';
+      button.disabled = i !== 4; // Simulate native exploration locks on non-frontier tiles.
       button.dataset.bcLoreIndex = String(i);
       button.innerHTML = '<span class="local-place-copy"><b>Slot ' + (i + 1) + '</b><small>Deskripsi asal ' + (i + 1) + '</small></span>';
       button.addEventListener('click', () => button.setAttribute('data-native-visit', '1'));
@@ -27,6 +28,16 @@ test('nested map grid opens and DEV can override its size and cell lore', async 
     document.body.appendChild(shell);
     window.__boundlessNestedGridRefresh?.();
   });
+
+  const lockedTile = page.locator('.local-region-shell .local-place-tile').first();
+  await expect(lockedTile).toBeEnabled(); // Grid inspection is allowed even when native travel is locked.
+  await expect(lockedTile).toHaveAttribute('aria-disabled', 'true');
+  await lockedTile.click();
+  await expect(page.locator('#bc-nested-grid-v822')).toBeVisible();
+  await page.locator('#bcng-enter-parent').click();
+  await expect(page.locator('#bc-nested-grid-v822')).toBeVisible();
+  await expect(page.locator('#bcng-cell-status')).toContainText('belum boleh dimasuki');
+  await page.locator('#bcng-return').click();
 
   await page.locator('.local-region-shell .local-place-tile').nth(4).click();
   await expect(page.locator('#bc-nested-grid-v822')).toBeVisible();
