@@ -30,15 +30,24 @@ function enhanceGamePanel(scope){
 }
 function showContent(scope,root,value){
  root.dataset.view="content:"+value;
- const trigger=nativeTab(value,scope);if(trigger)trigger.click();
+ const trigger=nativeTab(value,scope);
  root.hidden=true;root.style.display="none";root.setAttribute("aria-hidden","true");
- const list=panels(scope);let target=list.find(p=>p.dataset.value===value)||null;
- if(!target){const active=list.find(p=>p.dataset.state==="active");if(active)target=active}
- for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.setAttribute("aria-hidden",active?"false":"true")}
- if(value==="game")enhanceGamePanel(scope);
- if(!target){root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");setStatus(root,"Ruang ini belum dapat dibuka. Cuba sekali lagi.");return}
- let back=target.querySelector(".bc-revamp-back");
- if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
+ const reveal=attempt=>{
+  if(root.dataset.view!=="content:"+value)return;
+  const list=panels(scope);
+  let target=list.find(p=>p.dataset.value===value)||null;
+  if(!target&&trigger?.id)target=list.find(p=>p.getAttribute("aria-labelledby")===trigger.id)||null;
+  if(!target&&trigger?.getAttribute("aria-controls"))target=list.find(p=>p.id===trigger.getAttribute("aria-controls"))||null;
+  if(!target)target=list.find(p=>p.dataset.state==="active"&&p.getAttribute("aria-labelledby")===trigger?.id)||null;
+  if(!target&&attempt<8){requestAnimationFrame(()=>reveal(attempt+1));return}
+  if(!target){root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");showDashboard(scope,root);setStatus(root,"Ruang ini belum dapat dibuka. Cuba sekali lagi.");return}
+  for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.setAttribute("aria-hidden",active?"false":"true")}
+  if(value==="game")enhanceGamePanel(scope);
+  let back=target.querySelector(".bc-revamp-back");
+  if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
+ };
+ if(trigger)trigger.click();
+ requestAnimationFrame(()=>requestAnimationFrame(()=>reveal(0)));
 }
 function openSave(scope,root){showContent(scope,root,"game");setTimeout(()=>{const target=$("#bc-save-manager-mount",scope);target?.scrollIntoView({behavior:"smooth",block:"start"});target?.classList.add("bc-revamp-focus");setTimeout(()=>target?.classList.remove("bc-revamp-focus"),1400)},150)}
 function openAI(scope,root){
