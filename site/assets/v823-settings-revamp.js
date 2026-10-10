@@ -74,6 +74,10 @@ function showContent(scope,root,value){
   for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.removeAttribute("inert");p.setAttribute("aria-hidden",active?"false":"true")}
   if(value==="game")delete target.dataset.bcSaveOnly;
   enhanceNativePanel(scope,value);
+  if(value==="dev"){
+   window.dispatchEvent(new CustomEvent("boundless-open-dev"));
+   window.__boundlessSyncDevRealm?.();
+  }
   let back=target.querySelector(".bc-revamp-back");
   if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
  };
