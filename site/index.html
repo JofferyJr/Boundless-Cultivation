@@ -28,7 +28,29 @@
   },true);
   window.addEventListener("unhandledrejection",function(event){
     var reason=event.reason;
-    show("Promise tidak dikendalikan",reason&&reason.message||reason,reason&&reason.stack);
+    var message="";
+    var stack="";
+    try{
+      if(reason instanceof Error){
+        message=(reason.name||"Error")+": "+(reason.message||String(reason));
+        stack=reason.stack||"";
+      }else if(reason&&typeof reason==="object"){
+        var details=[];
+        ["name","message","type","code","status","statusText","url","reason"].forEach(function(key){
+          try{if(reason[key]!==undefined&&reason[key]!==null)details.push(key+"="+String(reason[key]));}catch(_){}
+        });
+        if(typeof Event!=="undefined"&&reason instanceof Event){
+          message="Objek Event ditolak oleh Promise; type="+String(reason.type||"(tiada)")+"; target="+String(reason.target&&((reason.target.tagName||reason.target.constructor&&reason.target.constructor.name)||reason.target.nodeName)||"(tiada)")+"; properties="+(details.join(", ")||"(tiada)");
+        }else{
+          try{message=JSON.stringify(reason);}catch(_){}
+          if(!message||message==="{}")message=(reason.constructor&&reason.constructor.name||"Object")+"; "+(details.join(", ")||String(reason));
+        }
+        stack=reason.stack||reason.error&&reason.error.stack||"";
+      }else{
+        message=String(reason===undefined?"undefined":reason);
+      }
+    }catch(_){message="Gagal membaca sebab Promise; jenis="+typeof reason;}
+    show("Promise tidak dikendalikan",message||"Sebab Promise kosong",stack||"(tiada stack; periksa jenis sebab dan sifat Event di atas)");
   });
 })();
 </script><script>self.__VINEXT_RSC_NAV__={"pathname":"/","searchParams":[]}</script><link rel="modulepreload" href="/Boundless-Cultivation/assets/index-Cyw089Xg.js?v=react-error-report-fb302a0" />
