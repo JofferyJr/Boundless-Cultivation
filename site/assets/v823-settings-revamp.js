@@ -62,14 +62,16 @@ function showContent(scope,root,value){
  const reveal=attempt=>{
   if(root.dataset.view!=="content:"+value)return;
   const list=panels(scope);
+  const triggerList=[...scope.querySelectorAll(".bc-settings-tabs button,.bc-settings-tabs [role=tab]")];
+  const tabIndex=trigger?triggerList.indexOf(trigger):-1;
   let target=list.find(p=>p.dataset.value===value)||null;
-  if(!target&&trigger?.getAttribute("data-state")==="active")target=list.find(p=>p.getAttribute("aria-labelledby")===trigger.id)||null;
-  if(!target&&trigger?.id)target=list.find(p=>p.getAttribute("aria-labelledby")===trigger.id)||null;
   if(!target&&trigger?.getAttribute("aria-controls"))target=list.find(p=>p.id===trigger.getAttribute("aria-controls"))||null;
-  if(!target)target=list.find(p=>p.dataset.state==="active"&&p.getAttribute("aria-labelledby")===trigger?.id)||null;
-  if(!target&&attempt<8){requestAnimationFrame(()=>reveal(attempt+1));return}
-  if(!target){root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");showDashboard(scope,root);setStatus(root,"Ruang ini belum dapat dibuka. Cuba sekali lagi.");return}
-  for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.setAttribute("aria-hidden",active?"false":"true")}
+  if(!target&&trigger?.id)target=list.find(p=>p.getAttribute("aria-labelledby")===trigger.id)||null;
+  if(!target)target=list.find(p=>p.dataset.state==="active"||p.getAttribute("data-state")==="active")||null;
+  if(!target&&tabIndex>=0&&list[tabIndex])target=list[tabIndex];
+  if(!target&&attempt<12){requestAnimationFrame(()=>reveal(attempt+1));return}
+  if(!target){root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");showDashboard(scope,root);setStatus(root,"Panel asal tidak dikenal pasti. Navigasi dipulihkan; cuba slot sekali lagi.");return}
+  for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.removeAttribute("inert");p.setAttribute("aria-hidden",active?"false":"true")}
   if(value==="game")delete target.dataset.bcSaveOnly;
   enhanceNativePanel(scope,value);
   let back=target.querySelector(".bc-revamp-back");
