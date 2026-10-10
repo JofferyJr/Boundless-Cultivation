@@ -1,7 +1,7 @@
 /* Boundless Settings REVAMP — dashboard-first navigation, resilient mounting */
 (()=>{"use strict";
 const ROOT_ID="bc-settings-revamp";
-const tabs=[["display","◈","Paparan","Rupa, gerakan dan kebolehbacaan"],["game","✦","Permainan","Muzik, save dan pilihan permainan"],["help","⌘","Help & Tips","Panduan sistem Boundless"],["dev","⚒","DEV","Alat pembangun dan ranah awal"]];
+const tabs=[["game","✦","Permainan","Muzik, save dan pilihan permainan"],["help","⌘","Help & Tips","Panduan sistem Boundless"],["dev","⚒","DEV","Alat pembangun dan ranah awal"]];
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 function visible(el){if(!el)return false;const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0}
@@ -44,7 +44,7 @@ function mount(forceDashboard=false){
  if(root&&root.closest(".bc-settings-sheet, [role='dialog']")!==scope){root.remove();root=null}
  if(!root){
   root=document.createElement("section");root.id=ROOT_ID;root.setAttribute("aria-label","Pusat tetapan Boundless");
-  root.innerHTML='<div class="bc-revamp-hero"><div class="bc-revamp-kicker"><span class="bc-revamp-orbit"></span> BOUNDLESS CULTIVATION · CONTROL HALL</div><div class="bc-revamp-hero-line"><div><h2>Pusat Tetapan</h2><p>Semua kawalan dunia anda, disusun dalam satu ruang.</p></div><div class="bc-revamp-seal" aria-hidden="true">道</div></div><div class="bc-revamp-status" data-revamp-status>SESI AKTIF · Pilih satu ruang untuk bermula</div></div><div class="bc-revamp-section-head"><div><small>PILIH RUANG</small><h3>Kawalan utama</h3></div><span>08 RUANG</span></div><div class="bc-revamp-grid" data-revamp-grid></div><div class="bc-revamp-foot"><span class="bc-revamp-foot-mark">B</span><span><b>BOUNDLESS</b><small>Setiap perubahan membentuk perjalanan anda.</small></span><span class="bc-revamp-build">SETTINGS REVAMP</span></div>';
+  root.innerHTML='<div class="bc-revamp-hero"><div class="bc-revamp-kicker"><span class="bc-revamp-orbit"></span> BOUNDLESS CULTIVATION · CONTROL HALL</div><div class="bc-revamp-hero-line"><div><h2>Pusat Tetapan</h2><p>Semua kawalan dunia anda, disusun dalam satu ruang.</p></div><div class="bc-revamp-seal" aria-hidden="true">道</div></div><div class="bc-revamp-status" data-revamp-status>SESI AKTIF · Pilih satu ruang untuk bermula</div></div><div class="bc-revamp-section-head"><div><small>PILIH RUANG</small></div></div><div class="bc-revamp-grid" data-revamp-grid></div>';
   tabbar.insertAdjacentElement("beforebegin",root);
   const grid=$("[data-revamp-grid]",root);
   for(const [value,icon,title,desc] of tabs)grid.appendChild(makeCard({id:value,icon,title,desc,tag:"BUKA",action:()=>showContent(scope,root,value)}));
@@ -53,7 +53,7 @@ function mount(forceDashboard=false){
   grid.appendChild(makeCard({id:"future-world",icon:"⌁",title:"Ruang Dunia",desc:"Slot masa depan untuk kawalan dunia lanjutan.",tag:"AKAN DATANG",disabled:true}));
   grid.appendChild(makeCard({id:"future-data",icon:"◇",title:"Arkib & Diagnostik",desc:"Slot masa depan untuk alat data dan diagnostik.",tag:"AKAN DATANG",disabled:true}));
  }
- tabbar.setAttribute("aria-label","Navigasi tetapan asal");tabbar.style.display="none";if(created||forceDashboard||!root.dataset.view)showDashboard(scope,root);return true
+ tabbar.setAttribute("aria-label","Navigasi tetapan asal");tabbar.style.display="none";if(!root.dataset.view||forceDashboard||root.dataset.view==="dashboard")showDashboard(scope,root);return true
 }
 let scheduled=false;function scheduleMount(forceDashboard=false){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;mount(forceDashboard)})}
 function boot(){
