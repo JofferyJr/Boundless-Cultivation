@@ -152,3 +152,9 @@
 
 .bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] .bc-game-section-heading:has(+ #bc-music-manager-mount),
 .bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] .bc-game-tips-card{display:none!important}
+
+/* Save & Export is exclusive to its own dashboard space */
+.bc-settings-sheet [role="tabpanel"][data-bc-revamp-panel="game"]:not([data-bc-save-only="true"]) #bc-save-manager-mount,
+.bc-settings-sheet [role="tabpanel"][data-bc-revamp-panel="game"]:not([data-bc-save-only="true"]) .bc-game-save-heading{display:none!important}
+.bc-settings-sheet [role="tabpanel"][data-bc-revamp-panel="game"][data-bc-save-only="true"] #bc-save-manager-mount{display:block!important}
+.bc-settings-sheet [role="tabpanel"][data-bc-revamp-panel="game"][data-bc-save-only="true"] .bc-game-save-heading{display:flex!important}
