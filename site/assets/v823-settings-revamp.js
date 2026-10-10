@@ -11,8 +11,9 @@ function nativeTab(value,scope){return $('[data-value="'+value+'"]',scope?.query
 function panels(scope){const tabRoot=scope?.querySelector(".bc-settings-tabs")?.parentElement;let list=tabRoot?$$('[role="tabpanel"]',tabRoot):[];if(!list.length&&scope)list=$$('[role="tabpanel"]',scope);return list}
 function setStatus(root,msg){const el=$("[data-revamp-status]",root);if(el)el.textContent=msg}
 function hidePanels(scope){for(const p of panels(scope)){p.hidden=true;p.style.display="none";p.setAttribute("aria-hidden","true")}}
-function showDashboard(scope,root){hidePanels(scope);root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false")}
+function showDashboard(scope,root){hidePanels(scope);root.dataset.view="dashboard";root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false")}
 function showContent(scope,root,value){
+ root.dataset.view="content:"+value;
  const trigger=nativeTab(value,scope);if(trigger)trigger.click();
  root.hidden=true;root.style.display="none";root.setAttribute("aria-hidden","true");
  const list=panels(scope);let target=list.find(p=>p.dataset.value===value)||null;
@@ -36,7 +37,7 @@ function makeCard({id,icon,title,desc,tag,action,disabled=false}){
  b.innerHTML='<span class="bc-revamp-card-top"><span class="bc-revamp-icon" aria-hidden="true">'+icon+'</span><span class="bc-revamp-tag">'+tag+'</span></span><strong>'+title+'</strong><span class="bc-revamp-desc">'+desc+'</span><span class="bc-revamp-arrow" aria-hidden="true">↗</span>';
  if(action)b.addEventListener("click",action);return b
 }
-function mount(){
+function mount(forceDashboard=false){
  const tabbar=findTabbar();if(!tabbar)return false;
  const scope=findSheet(tabbar);if(!scope)return false;
  let root=$("#"+ROOT_ID);
@@ -52,11 +53,11 @@ function mount(){
   grid.appendChild(makeCard({id:"future-world",icon:"⌁",title:"Ruang Dunia",desc:"Slot masa depan untuk kawalan dunia lanjutan.",tag:"AKAN DATANG",disabled:true}));
   grid.appendChild(makeCard({id:"future-data",icon:"◇",title:"Arkib & Diagnostik",desc:"Slot masa depan untuk alat data dan diagnostik.",tag:"AKAN DATANG",disabled:true}));
  }
- tabbar.setAttribute("aria-label","Navigasi tetapan asal");tabbar.style.display="none";showDashboard(scope,root);return true
+ tabbar.setAttribute("aria-label","Navigasi tetapan asal");tabbar.style.display="none";if(created||forceDashboard||!root.dataset.view)showDashboard(scope,root);return true
 }
-let scheduled=false;function scheduleMount(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;mount()})}
+let scheduled=false;function scheduleMount(forceDashboard=false){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;mount(forceDashboard)})}
 function boot(){
- document.addEventListener("click",e=>{const trigger=e.target?.closest?.("button[data-slot='sheet-trigger'],button[aria-haspopup='dialog']");if(trigger&&/tetapan|settings/i.test((trigger.textContent||"")+" "+(trigger.getAttribute("aria-label")||""))){setTimeout(scheduleMount,30);setTimeout(scheduleMount,150);setTimeout(scheduleMount,400)}},true);
+ document.addEventListener("click",e=>{const trigger=e.target?.closest?.("button[data-slot='sheet-trigger'],button[aria-haspopup='dialog']");if(trigger&&/tetapan|settings/i.test((trigger.textContent||"")+" "+(trigger.getAttribute("aria-label")||""))){setTimeout(()=>scheduleMount(true),30);setTimeout(()=>scheduleMount(true),150);setTimeout(()=>scheduleMount(true),400)}},true);
  const observer=new MutationObserver(scheduleMount);observer.observe(document.documentElement,{childList:true,subtree:true});scheduleMount();window.__boundlessSettingsRevamp=scheduleMount
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot()
