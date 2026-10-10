@@ -70,7 +70,8 @@ function showContent(scope,root,value){
   if(!target&&attempt<8){requestAnimationFrame(()=>reveal(attempt+1));return}
   if(!target){root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");showDashboard(scope,root);setStatus(root,"Ruang ini belum dapat dibuka. Cuba sekali lagi.");return}
   for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.setAttribute("aria-hidden",active?"false":"true")}
-  if(value==="game")enhanceGamePanel(scope);
+  if(value==="game")delete target.dataset.bcSaveOnly;
+  enhanceNativePanel(scope,value);
   let back=target.querySelector(".bc-revamp-back");
   if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
  };
