@@ -1,9 +1,9 @@
-/* Boundless v8.2.6 — nested exploration grids open only from the top map-view button.
+/* Boundless v8.5.0 — one Petak Penerokaan control, integrated with the nested-grid flow.
    Native 3x3 tile clicks remain owned by the original travel handler. */
 (function () {
   "use strict";
-  if (window.__boundlessNestedGridV822) return;
-  window.__boundlessNestedGridV822 = true;
+  if (window.__boundlessNestedGridV850) return;
+  window.__boundlessNestedGridV850 = true;
   var DEV_KEY = "boundless-dev-mode", STORE_KEY = "boundless-nested-grid-v1";
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -147,7 +147,11 @@
         if (tile) openGrid(shell, tile);
       });
     }
-    var mapButtons = $$("button", switcher);
+    // Keep one exploration entry point: remove the original React tab and retain this single nested-grid button.
+    $("button", switcher).forEach(function (button) {
+      if (button !== explorationButton && /Petak Penerokaan/i.test(button.textContent || "")) button.remove();
+    });
+    var mapButtons = $("button", switcher);
     var smallMapButton = mapButtons.filter(function (button) { return /Peta Kecil/i.test(button.textContent); })[0];
     if (smallMapButton && explorationButton.parentNode !== switcher) smallMapButton.insertAdjacentElement("afterend", explorationButton);
     var selectedView = $("button[aria-pressed='true']", switcher);
