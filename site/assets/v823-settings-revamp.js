@@ -12,13 +12,29 @@ function panels(scope){const tabRoot=scope?.querySelector(".bc-settings-tabs")?.
 function setStatus(root,msg){const el=$("[data-revamp-status]",root);if(el)el.textContent=msg}
 function hidePanels(scope){for(const p of panels(scope)){p.hidden=true;p.style.display="none";p.setAttribute("aria-hidden","true")}}
 function showDashboard(scope,root){hidePanels(scope);root.dataset.view="dashboard";root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false")}
+function enhanceGamePanel(scope){
+ const panel=$("#bc-music-manager-mount",scope)?.closest('[role="tabpanel"]')||$("#bc-save-manager-mount",scope)?.closest('[role="tabpanel"]');
+ if(!panel)return;
+ panel.dataset.bcGameRevamp="true";
+ const oldTitle=$(".settings-section-title",panel);if(oldTitle)oldTitle.hidden=true;
+ if(!$(".bc-game-revamp-heading",panel)){
+  const head=document.createElement("header");head.className="bc-game-revamp-heading";
+  head.innerHTML='<div class="bc-game-revamp-kicker">PILIHAN PENGALAMAN</div><h2>Permainan</h2><p>Urus muzik, simpanan dan pilihan sesi di satu tempat.</p><div class="bc-game-revamp-meta"><span>◈ <b>SESI</b> · Tetapan peribadi</span><span>BOUNDLESS / CONTROL</span></div>';
+  panel.insertAdjacentElement("afterbegin",head);
+ }
+ const music=$("#bc-music-manager-mount",panel),save=$("#bc-save-manager-mount",panel);
+ if(music&&!music.dataset.bcSectionReady){const h=document.createElement("div");h.className="bc-game-section-heading";h.innerHTML='<span class="bc-game-section-icon">♫</span><span><b>Muzik & Audio</b><small>Pilih runut dan kawal audio permainan.</small></span>';music.insertAdjacentElement("beforebegin",h);music.dataset.bcSectionReady="true"}
+ if(save&&!save.dataset.bcSectionReady){const h=document.createElement("div");h.className="bc-game-section-heading bc-game-save-heading";h.innerHTML='<span class="bc-game-section-icon">▣</span><span><b>Simpanan & Pemindahan</b><small>Simpan, muat, eksport atau import kemajuan anda.</small></span>';save.insertAdjacentElement("beforebegin",h);save.dataset.bcSectionReady="true"}
+ const tips=[...panel.querySelectorAll('button,[role="switch"],input[type="checkbox"]')].find(el=>/petua konteks/i.test((el.textContent||"")+" "+(el.getAttribute("aria-label")||"")));
+ if(tips){const card=tips.closest(".settings-card")||tips.parentElement;if(card)card.classList.add("bc-game-tips-card")}
+}
 function showContent(scope,root,value){
  root.dataset.view="content:"+value;
  const trigger=nativeTab(value,scope);if(trigger)trigger.click();
  root.hidden=true;root.style.display="none";root.setAttribute("aria-hidden","true");
  const list=panels(scope);let target=list.find(p=>p.dataset.value===value)||null;
  if(!target){const active=list.find(p=>p.dataset.state==="active");if(active)target=active}
- for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.setAttribute("aria-hidden",active?"false":"true")}
+ for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.setAttribute("aria-hidden",active?"false":"true")}\n if(value==="game")enhanceGamePanel(scope);
  if(!target){root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");setStatus(root,"Ruang ini belum dapat dibuka. Cuba sekali lagi.");return}
  let back=target.querySelector(".bc-revamp-back");
  if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
@@ -53,7 +69,7 @@ function mount(forceDashboard=false){
   grid.appendChild(makeCard({id:"future-world",icon:"⌁",title:"Ruang Dunia",desc:"Slot masa depan untuk kawalan dunia lanjutan.",tag:"AKAN DATANG",disabled:true}));
   grid.appendChild(makeCard({id:"future-data",icon:"◇",title:"Arkib & Diagnostik",desc:"Slot masa depan untuk alat data dan diagnostik.",tag:"AKAN DATANG",disabled:true}));
  }
- tabbar.setAttribute("aria-label","Navigasi tetapan asal");tabbar.style.display="none";if(!root.dataset.view||forceDashboard||root.dataset.view==="dashboard")showDashboard(scope,root);return true
+ tabbar.setAttribute("aria-label","Navigasi tetapan asal");tabbar.style.display="none";if(!root.dataset.view||forceDashboard||root.dataset.view==="dashboard")showDashboard(scope,root);if(root.dataset.view==="content:game")enhanceGamePanel(scope);return true
 }
 let scheduled=false;function scheduleMount(forceDashboard=false){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;mount(forceDashboard)})}
 function boot(){
