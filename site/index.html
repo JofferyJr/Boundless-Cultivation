@@ -40,7 +40,16 @@
           try{if(reason[key]!==undefined&&reason[key]!==null)details.push(key+"="+String(reason[key]));}catch(_){}
         });
         if(typeof Event!=="undefined"&&reason instanceof Event){
-          message="Objek Event ditolak oleh Promise; type="+String(reason.type||"(tiada)")+"; target="+String(reason.target&&((reason.target.tagName||reason.target.constructor&&reason.target.constructor.name)||reason.target.nodeName)||"(tiada)")+"; properties="+(details.join(", ")||"(tiada)");
+          var eventTarget=reason.target;
+          var targetName=eventTarget&&((eventTarget.tagName||eventTarget.constructor&&eventTarget.constructor.name)||eventTarget.nodeName)||"(tiada)";
+          var targetUrl=eventTarget&&(eventTarget.href||eventTarget.src||eventTarget.currentSrc)||"";
+          var targetRel=eventTarget&&eventTarget.rel||"";
+          var targetAs=eventTarget&&eventTarget.as||"";
+          if(String(targetName).toUpperCase()==="LINK"){
+            message="Pautan asset gagal dimuat; type="+String(reason.type||"(tiada)")+"; href="+String(targetUrl||"(href tiada)")+"; rel="+String(targetRel||"(tiada)")+"; as="+String(targetAs||"(tiada)")+"; readyState="+String(eventTarget.sheet?"sheet tersedia":"sheet tiada");
+          }else{
+            message="Objek Event ditolak oleh Promise; type="+String(reason.type||"(tiada)")+"; target="+String(targetName)+"; url="+String(targetUrl||"(tiada)")+"; properties="+(details.join(", ")||"(tiada)");
+          }
         }else{
           try{message=JSON.stringify(reason);}catch(_){}
           if(!message||message==="{}")message=(reason.constructor&&reason.constructor.name||"Object")+"; "+(details.join(", ")||String(reason));
