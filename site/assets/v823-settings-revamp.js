@@ -8,7 +8,7 @@ function visible(el){if(!el)return false;const s=getComputedStyle(el),r=el.getBo
 function findTabbar(){const all=$$(".bc-settings-tabs");return all.find(visible)||all[0]||null}
 function findSheet(tabbar){return tabbar?.closest(".bc-settings-sheet")||tabbar?.closest('[role="dialog"]')||tabbar?.parentElement?.parentElement||null}
 function nativeTab(value,scope){return $('[data-value="'+value+'"]',scope?.querySelector(".bc-settings-tabs")||document)}
-function panels(scope){const tabRoot=scope?.querySelector(".bc-settings-tabs")?.parentElement;let list=tabRoot?$$('[role="tabpanel"]',tabRoot):[];if(!list.length&&scope)list=$$('[role="tabpanel"]',scope);return list}
+function panels(scope){if(!scope)return [];const all=$('[role="tabpanel"]',scope);const tabRoot=scope.querySelector(".bc-settings-tabs");if(!tabRoot)return all;const ids=new Set([...(tabRoot.querySelectorAll("[aria-controls]"))].map(el=>el.getAttribute("aria-controls")).filter(Boolean));const related=all.filter(p=>ids.has(p.id)||[...tabRoot.querySelectorAll("[id]")].some(t=>p.getAttribute("aria-labelledby")===t.id));return related.length?related:all}
 function setStatus(root,msg){const el=$("[data-revamp-status]",root);if(el)el.textContent=msg}
 function hidePanels(scope){for(const p of panels(scope)){p.hidden=true;p.style.display="none";p.setAttribute("aria-hidden","true")}}
 function showDashboard(scope,root){hidePanels(scope);root.dataset.view="dashboard";root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");for(const el of $(".bc-revamp-hero,.bc-revamp-section-head,.bc-revamp-grid",root))el.hidden=false;const local=$(".bc-revamp-local-panel",root);if(local)local.hidden=true;setStatus(root,"SESI AKTIF · Pilih satu ruang untuk bermula")}
@@ -36,6 +36,7 @@ function showContent(scope,root,value){
   if(root.dataset.view!=="content:"+value)return;
   const list=panels(scope);
   let target=list.find(p=>p.dataset.value===value)||null;
+  if(!target&&trigger?.getAttribute("data-state")==="active")target=list.find(p=>p.getAttribute("aria-labelledby")===trigger.id)||null;
   if(!target&&trigger?.id)target=list.find(p=>p.getAttribute("aria-labelledby")===trigger.id)||null;
   if(!target&&trigger?.getAttribute("aria-controls"))target=list.find(p=>p.id===trigger.getAttribute("aria-controls"))||null;
   if(!target)target=list.find(p=>p.dataset.state==="active"&&p.getAttribute("aria-labelledby")===trigger?.id)||null;
@@ -46,7 +47,7 @@ function showContent(scope,root,value){
   let back=target.querySelector(".bc-revamp-back");
   if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
  };
- if(trigger){try{trigger.dispatchEvent(new MouseEvent("mousedown",{bubbles:true,cancelable:true,button:0,buttons:1,view:window}));}catch(e){console.warn("[Boundless Settings] Tab activation failed",e)} }
+ if(trigger){try{const init={bubbles:true,cancelable:true,view:window,button:0,buttons:1};trigger.dispatchEvent(new PointerEvent("pointerdown",{...init,pointerId:1,pointerType:"mouse",isPrimary:true}));trigger.dispatchEvent(new MouseEvent("mousedown",init));trigger.dispatchEvent(new PointerEvent("pointerup",{...init,pointerId:1,pointerType:"mouse",isPrimary:true,buttons:0}));trigger.dispatchEvent(new MouseEvent("mouseup",{...init,buttons:0}));trigger.click();}catch(e){console.warn("[Boundless Settings] Tab activation failed",e);try{trigger.click()}catch(_){}} }
  requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>reveal(0))));
 }
 function openSave(scope,root){showContent(scope,root,"game");setTimeout(()=>{const target=$("#bc-save-manager-mount",scope);target?.scrollIntoView({behavior:"smooth",block:"start"});target?.classList.add("bc-revamp-focus");setTimeout(()=>target?.classList.remove("bc-revamp-focus"),1400)},250)}
