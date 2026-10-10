@@ -106,6 +106,7 @@
     save() {
       try { localStorage.setItem(STORAGE, JSON.stringify({
         version:this.version, seed:this.seed, year:this.year, day:this.day,
+        lastProcessedDay:this.lastProcessedDay,
         npcs:this.npcs, events:this.events.slice(-60), news:this.news.slice(-100)
       })); } catch {}
     }
@@ -264,7 +265,7 @@
 
     joinEvent(eventId) {
       const ev=this.events.find(e=>e.id===eventId && e.status==="active");
-      if(!ev) return false;
+      if(!ev || ev.playerJoined) return false;
       ev.playerJoined=true;
       ev.log.push("Pemain menyertai event.");
       this.news.unshift({day:this.day,year:this.year,type:"player",text:"Pemain menyertai "+ev.title+" di "+ev.region+"."});
