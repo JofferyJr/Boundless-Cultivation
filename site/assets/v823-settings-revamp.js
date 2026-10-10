@@ -34,7 +34,8 @@ function showContent(scope,root,value){
  root.hidden=true;root.style.display="none";root.setAttribute("aria-hidden","true");
  const list=panels(scope);let target=list.find(p=>p.dataset.value===value)||null;
  if(!target){const active=list.find(p=>p.dataset.state==="active");if(active)target=active}
- for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.setAttribute("aria-hidden",active?"false":"true")}\n if(value==="game")enhanceGamePanel(scope);
+ for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.setAttribute("aria-hidden",active?"false":"true")}
+ if(value==="game")enhanceGamePanel(scope);
  if(!target){root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");setStatus(root,"Ruang ini belum dapat dibuka. Cuba sekali lagi.");return}
  let back=target.querySelector(".bc-revamp-back");
  if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
