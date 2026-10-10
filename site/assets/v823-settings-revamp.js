@@ -43,7 +43,7 @@ function enhanceNativePanel(scope,value){
   panel.insertAdjacentElement("afterbegin",head);
  }
  if(value==="display"){panel.classList.add("bc-panel-display");panel.querySelectorAll(".settings-card").forEach((card,i)=>card.dataset.bcSettingIndex=String(i+1))}
- enhanceNativePanel(scope,value);
+ if(value==="game")enhanceGamePanel(scope);
  if(value==="help"){panel.classList.add("bc-panel-help");panel.querySelectorAll(".settings-card").forEach(card=>card.classList.add("bc-help-card"))}
  if(value==="dev"){panel.classList.add("bc-panel-dev");panel.querySelectorAll(".settings-card").forEach(card=>card.classList.add("bc-dev-card"))}
 }
