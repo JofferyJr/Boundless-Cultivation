@@ -83,12 +83,54 @@ function showContent(scope,root,value){
 function openSave(scope,root){showContent(scope,root,"game");setTimeout(()=>{const panel=$("#bc-save-manager-mount",scope)?.closest("[role=\"tabpanel\"]");if(panel){panel.dataset.bcSaveOnly="true";const target=$("#bc-save-manager-mount",scope);target?.scrollIntoView({behavior:"smooth",block:"start"});target?.classList.add("bc-revamp-focus");setTimeout(()=>target?.classList.remove("bc-revamp-focus"),1400)}},320)}
 function showLocalPanel(scope,root,id,title,subtitle,body){hidePanels(scope);root.dataset.view="local:"+id;root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");for(const el of $(".bc-revamp-hero,.bc-revamp-section-head,.bc-revamp-grid",root))el.hidden=true;let panel=$(".bc-revamp-local-panel",root);if(!panel){panel=document.createElement("section");panel.className="bc-revamp-local-panel";root.appendChild(panel)}panel.hidden=false;panel.innerHTML='<button type="button" class="bc-revamp-back">← Kembali ke Pusat Tetapan</button><div class="bc-revamp-local-kicker">BOUNDLESS · CONTROL SPACE</div><h2>'+title+'</h2><p class="bc-revamp-local-subtitle">'+subtitle+'</p><div class="bc-revamp-local-body">'+body+'</div>';panel.querySelector(".bc-revamp-back").addEventListener("click",()=>showDashboard(scope,root));panel.querySelector("[data-open-ai]")?.addEventListener("click",()=>openAI(scope,root));setStatus(root,"RUANG DIPILIH · "+title)}
 function openAI(scope,root){
- showDashboard(scope,root);
- const show=()=>{const p=$("#boundless-ai-panel");if(p){p.hidden=false;p.style.display="block";p.style.visibility="visible";p.style.pointerEvents="auto";p.style.zIndex="2147483647";p.scrollIntoView?.({behavior:"smooth",block:"start"});try{window.BoundlessAI?.engine?.renderUI?.()}catch(e){console.warn("[Boundless AI]",e)}}else setStatus(root,"AI Control Center sedang dimuat. Cuba sekali lagi sebentar lagi.")};
- if(window.BoundlessAI){show();return}
- let s=$('script[data-boundless-ai-loader="lazy"]');
- if(!s){s=document.createElement("script");s.src="/Boundless-Cultivation/assets/v816-ai-world.js?v=8.2.5-ai-control";s.defer=true;s.dataset.boundlessAiLoader="lazy";s.onload=()=>setTimeout(show,0);s.onerror=()=>setStatus(root,"AI Control Center gagal dimuat. Semak sambungan dan cuba lagi.");document.head.appendChild(s)}
- else{s.addEventListener("load",show,{once:true});if(window.BoundlessAI)show()}
+ showLocalPanel(scope,root,"ai","🧠 Dunia AI Boundless","Pantau event Jianghu, sertai peristiwa dan baca berita NPC AI dalam ruang tetapan ini.",'<div class="bc-ai-tab-host" data-bc-ai-tab-host><p class="bc-ai-loading">Memuatkan simulasi AI Boundless…</p></div>');
+ const mount=()=>{
+  const host=$("[data-bc-ai-tab-host]",root),p=$("#boundless-ai-panel");
+  if(!host){return}
+  if(!p){setStatus(root,"Panel AI belum tersedia. Cuba buka semula tab Dunia AI.");return}
+  p.classList.add("bc-ai-embedded");
+  p.hidden=false;
+  p.removeAttribute("aria-hidden");
+  p.style.setProperty("position","relative","important");
+  p.style.setProperty("inset","auto","important");
+  p.style.setProperty("right","auto","important");
+  p.style.setProperty("bottom","auto","important");
+  p.style.setProperty("width","100%","important");
+  p.style.setProperty("max-width","none","important");
+  p.style.setProperty("max-height","none","important");
+  p.style.setProperty("height","auto","important");
+  p.style.setProperty("overflow","visible","important");
+  p.style.setProperty("z-index","1","important");
+  p.style.setProperty("margin","0","important");
+  p.style.setProperty("box-sizing","border-box","important");
+  host.replaceChildren(p);
+  try{window.BoundlessAI?.engine?.renderUI?.()}catch(e){console.warn("[Boundless AI]",e)}
+  setStatus(root,"RUANG DIPILIH · Dunia AI Boundless");
+ };
+ if(window.BoundlessAI){mount();return}
+ let script=$('script[data-boundless-ai-loader="lazy"]');
+ if(!script){
+  script=document.createElement("script");
+  script.src="/Boundless-Cultivation/assets/v816-ai-world.js?v=8.2.6-ai-tab";
+  script.defer=true;
+  script.dataset.boundlessAiLoader="lazy";
+  script.onload=()=>setTimeout(mount,0);
+  script.onerror=()=>{const host=$("[data-bc-ai-tab-host]",root);if(host)host.innerHTML='<p class="bc-ai-loading">AI Control Center gagal dimuat. Semak sambungan dan cuba lagi.</p>';setStatus(root,"AI Control Center gagal dimuat.")};
+  document.head.appendChild(script);
+ }else{
+  script.addEventListener("load",mount,{once:true});
+  if(window.BoundlessAI)mount();
+ }
+}
+function ensureAiTabStyle(){
+ let style=$("#bc-ai-tab-style");
+ if(!style){style=document.createElement("style");style.id="bc-ai-tab-style";style.textContent=`
+ .bc-ai-tab-host{width:100%;min-width:0}
+ #boundless-ai-panel.bc-ai-embedded{display:block!important;position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;max-height:none!important;height:auto!important;overflow:visible!important;z-index:1!important;margin:0!important;border-radius:14px!important;box-shadow:none!important}
+ #boundless-ai-panel.bc-ai-embedded .bai-head{position:sticky;top:0;z-index:2;background:#09120f}
+ #boundless-ai-panel.bc-ai-embedded .bai-events,#boundless-ai-panel.bc-ai-embedded .bai-news{max-height:none}
+ .bc-ai-loading{padding:16px;border:1px solid #29443a;border-radius:10px;color:#9fb4a8}
+ `;document.head.appendChild(style)}
 }
 function makeCard({id,icon,title,desc,tag,action,disabled=false}){
  const b=document.createElement("button");b.type="button";b.className="bc-revamp-card";b.dataset.action=id;b.disabled=disabled;
