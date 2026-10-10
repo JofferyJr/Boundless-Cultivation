@@ -1,7 +1,7 @@
 /* Boundless Settings REVAMP — dashboard-first navigation, resilient mounting */
 (()=>{"use strict";
 const ROOT_ID="bc-settings-revamp";
-const tabs=[["game","✦","Permainan","Muzik, save dan pilihan permainan"],["help","⌘","Help & Tips","Panduan sistem Boundless"],["dev","⚒","DEV","Alat pembangun dan ranah awal"]];
+const tabs=[["display","◉","Paparan","Aksesibiliti, animasi dan paparan dunia"],["game","✦","Permainan","Muzik, audio dan pilihan sesi"],["help","⌘","Help & Tips","Panduan sistem dan mekanik Boundless"],["dev","⚒","DEV","Alat pembangun dan ranah awal"]];
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 function visible(el){if(!el)return false;const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0}
@@ -11,7 +11,7 @@ function nativeTab(value,scope){return $('[data-value="'+value+'"]',scope?.query
 function panels(scope){const tabRoot=scope?.querySelector(".bc-settings-tabs")?.parentElement;let list=tabRoot?$$('[role="tabpanel"]',tabRoot):[];if(!list.length&&scope)list=$$('[role="tabpanel"]',scope);return list}
 function setStatus(root,msg){const el=$("[data-revamp-status]",root);if(el)el.textContent=msg}
 function hidePanels(scope){for(const p of panels(scope)){p.hidden=true;p.style.display="none";p.setAttribute("aria-hidden","true")}}
-function showDashboard(scope,root){hidePanels(scope);root.dataset.view="dashboard";root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false")}
+function showDashboard(scope,root){hidePanels(scope);root.dataset.view="dashboard";root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");for(const el of $(".bc-revamp-hero,.bc-revamp-section-head,.bc-revamp-grid",root))el.hidden=false;const local=$(".bc-revamp-local-panel",root);if(local)local.hidden=true;setStatus(root,"SESI AKTIF · Pilih satu ruang untuk bermula")}
 function enhanceGamePanel(scope){
  const panel=$("#bc-music-manager-mount",scope)?.closest('[role="tabpanel"]')||$("#bc-save-manager-mount",scope)?.closest('[role="tabpanel"]');
  if(!panel)return;
@@ -49,7 +49,8 @@ function showContent(scope,root,value){
  if(trigger){try{trigger.dispatchEvent(new MouseEvent("mousedown",{bubbles:true,cancelable:true,button:0,buttons:1,view:window}));}catch(e){console.warn("[Boundless Settings] Tab activation failed",e)} }
  requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>reveal(0))));
 }
-function openSave(scope,root){showContent(scope,root,"game");setTimeout(()=>{const target=$("#bc-save-manager-mount",scope);target?.scrollIntoView({behavior:"smooth",block:"start"});target?.classList.add("bc-revamp-focus");setTimeout(()=>target?.classList.remove("bc-revamp-focus"),1400)},150)}
+function openSave(scope,root){showContent(scope,root,"game");setTimeout(()=>{const target=$("#bc-save-manager-mount",scope);target?.scrollIntoView({behavior:"smooth",block:"start"});target?.classList.add("bc-revamp-focus");setTimeout(()=>target?.classList.remove("bc-revamp-focus"),1400)},250)}
+function showLocalPanel(scope,root,id,title,subtitle,body){hidePanels(scope);root.dataset.view="local:"+id;root.hidden=false;root.style.display="block";root.setAttribute("aria-hidden","false");for(const el of $(".bc-revamp-hero,.bc-revamp-section-head,.bc-revamp-grid",root))el.hidden=true;let panel=$(".bc-revamp-local-panel",root);if(!panel){panel=document.createElement("section");panel.className="bc-revamp-local-panel";root.appendChild(panel)}panel.hidden=false;panel.innerHTML='<button type="button" class="bc-revamp-back">← Kembali ke Pusat Tetapan</button><div class="bc-revamp-local-kicker">BOUNDLESS · CONTROL SPACE</div><h2>'+title+'</h2><p class="bc-revamp-local-subtitle">'+subtitle+'</p><div class="bc-revamp-local-body">'+body+'</div>';panel.querySelector(".bc-revamp-back").addEventListener("click",()=>showDashboard(scope,root));setStatus(root,"RUANG DIPILIH · "+title)}
 function openAI(scope,root){
  showDashboard(scope,root);
  const show=()=>{const p=$("#boundless-ai-panel");if(p){p.hidden=false;p.style.display="block";p.style.visibility="visible";p.style.pointerEvents="auto";p.style.zIndex="2147483647";p.scrollIntoView?.({behavior:"smooth",block:"start"});try{window.BoundlessAI?.engine?.renderUI?.()}catch(e){console.warn("[Boundless AI]",e)}}else setStatus(root,"AI Control Center sedang dimuat. Cuba sekali lagi sebentar lagi.")};
@@ -74,10 +75,10 @@ function mount(forceDashboard=false){
   tabbar.insertAdjacentElement("beforebegin",root);
   const grid=$("[data-revamp-grid]",root);
   for(const [value,icon,title,desc] of tabs)grid.appendChild(makeCard({id:value,icon,title,desc,tag:"BUKA",action:()=>showContent(scope,root,value)}));
-  grid.appendChild(makeCard({id:"save",icon:"▣",title:"Save & Export",desc:"Urus slot, muat, eksport atau import kemajuan.",tag:"SAVE",action:()=>openSave(scope,root)}));
-  grid.appendChild(makeCard({id:"ai",icon:"🧠",title:"AI Control Center",desc:"Pantau simulasi dunia, NPC dan peristiwa aktif.",tag:"AI",action:()=>openAI(scope,root)}));
-  grid.appendChild(makeCard({id:"future-world",icon:"⌁",title:"Ruang Dunia",desc:"Slot masa depan untuk kawalan dunia lanjutan.",tag:"AKAN DATANG",disabled:true}));
-  grid.appendChild(makeCard({id:"future-data",icon:"◇",title:"Arkib & Diagnostik",desc:"Slot masa depan untuk alat data dan diagnostik.",tag:"AKAN DATANG",disabled:true}));
+  grid.appendChild(makeCard({id:"save",icon:"▣",title:"Save & Export",desc:"Urus slot, muatkan, eksport dan import kemajuan.",tag:"SIMPANAN",action:()=>openSave(scope,root)}));
+  grid.appendChild(makeCard({id:"ai",icon:"✧",title:"AI Control Center",desc:"Pantau simulasi dunia, NPC dan peristiwa aktif.",tag:"SIMULASI",action:()=>openAI(scope,root)}));
+  grid.appendChild(makeCard({id:"world",icon:"⌁",title:"Ruang Dunia",desc:"Pusat kawalan wilayah, masa dan keadaan dunia.",tag:"DUNIA",action:()=>showLocalPanel(scope,root,"world","Ruang Dunia","Pusat untuk kawalan dunia Boundless.",'<article class="bc-revamp-feature"><span>01 · WILAYAH</span><h3>Peta & Wilayah</h3><p>Pengurusan peta kekal melalui modul dunia sedia ada. Slot ini disediakan sebagai pintu masuk supaya kawalan wilayah boleh dipusatkan tanpa menggantikan data peta semasa.</p></article><article class="bc-revamp-feature"><span>02 · SIMULASI</span><h3>Masa & Peristiwa</h3><p>Kawalan masa dunia dan peristiwa akan dipautkan kepada sistem simulasi sebenar apabila modulnya tersedia.</p></article>')}));
+  grid.appendChild(makeCard({id:"archive",icon:"◇",title:"Arkib & Diagnostik",desc:"Ringkasan versi, keadaan sistem dan panduan pemulihan.",tag:"SISTEM",action:()=>showLocalPanel(scope,root,"archive","Arkib & Diagnostik","Semakan sistem dan rujukan pemulihan.",'<article class="bc-revamp-feature"><span>01 · VERSI</span><h3>Boundless Cultivation</h3><p>Semakan kod dibuat melalui repositori; ruang ini tidak akan mendakwa ujian pelayar atau diagnostik automatik yang belum dijalankan.</p></article><article class="bc-revamp-feature"><span>02 · PEMULIHAN</span><h3>Langkah selamat</h3><p>Jika paparan bermasalah, catat ruang yang dibuka dan tindakan terakhir. Elakkan memadam simpanan permainan ketika menyiasat ralat UI.</p></article>')}));
  }
  tabbar.setAttribute("aria-label","Navigasi tetapan asal");tabbar.style.display="none";if(!root.dataset.view||forceDashboard||root.dataset.view==="dashboard")showDashboard(scope,root);if(root.dataset.view==="content:game")enhanceGamePanel(scope);return true
 }
