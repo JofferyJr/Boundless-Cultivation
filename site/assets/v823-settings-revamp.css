@@ -120,7 +120,6 @@
 .bc-settings-sheet [data-bc-revamp-panel="dev"] .settings-card:before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:2px;background:#b79a4f66}
 .bc-settings-sheet [data-bc-revamp-panel="dev"] .settings-card b{font-size:.96rem}
 .bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] #bc-music-manager-mount,
-.bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] #bc-music-manager-mount~*,
 .bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] .bc-game-section-heading:not(.bc-game-save-heading),
 .bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] .bc-game-revamp-heading{display:none!important}
 .bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] #bc-save-manager-mount{margin-top:0}
@@ -150,3 +149,6 @@
 #bc-settings-revamp .bc-revamp-desc{font-size:.74rem}
 @media(max-width:800px){#bc-settings-revamp .bc-revamp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bc-settings-sheet [data-bc-revamp-panel="help"] .settings-card{grid-template-columns:1fr}}
 @media(max-width:520px){.bc-settings-sheet [role="tabpanel"][data-bc-revamp-panel]{padding:13px!important}.bc-native-panel-hero{padding:19px}.bc-native-panel-hero:after{right:8px}.bc-settings-sheet [data-bc-revamp-panel="display"] .settings-card{align-items:flex-start;gap:12px;padding:13px!important}.bc-settings-sheet [data-bc-revamp-panel="display"] .settings-card p{font-size:.7rem}.bc-diag-list{grid-template-columns:1fr}.bc-diag-state{font-size:.48rem}#bc-settings-revamp .bc-revamp-card{min-height:154px;padding:12px}}
+
+.bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] .bc-game-section-heading:has(+ #bc-music-manager-mount),
+.bc-settings-sheet [data-bc-revamp-panel="game"][data-bc-save-only="true"] .bc-game-tips-card{display:none!important}
