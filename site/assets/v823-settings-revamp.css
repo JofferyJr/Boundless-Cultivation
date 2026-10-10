@@ -53,3 +53,24 @@
 .bc-settings-sheet [role="tabpanel"][hidden]{display:none!important}
 .bc-settings-sheet .bc-revamp-back{display:flex;align-items:center;gap:8px;width:fit-content;max-width:100%;margin:0 0 18px;padding:10px 15px;border:1px solid #78663d;border-radius:10px;background:#15241a;color:#e2c778;font:600 .78rem/1.3 system-ui,sans-serif;cursor:pointer}
 .bc-settings-sheet .bc-revamp-back:hover{background:#203426;border-color:#b59a55}
+
+/* SETTINGS > PERMAINAN — rebuilt layout */
+.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"]{display:block;max-width:100%;padding:clamp(16px,2.5vw,30px)!important;border:1px solid #394b37!important;border-radius:20px!important;background:radial-gradient(ellipse at 95% 0%,#a78b3b13,transparent 38%),linear-gradient(155deg,#101b14,#080e0b 78%)!important;box-shadow:inset 0 1px #ffffff08,0 16px 36px #0003!important}
+.bc-game-revamp-heading{position:relative;overflow:hidden;margin:-2px 0 24px;padding:clamp(20px,3vw,32px);border:1px solid #685832;border-radius:16px;background:linear-gradient(120deg,#1c2a1c,#111b13 58%,#17180f)}
+.bc-game-revamp-heading:after{content:"道";position:absolute;right:20px;top:50%;transform:translateY(-50%);font:clamp(4rem,10vw,7rem) Georgia,serif;color:#d8bb6520;pointer-events:none}
+.bc-game-revamp-kicker{color:#cbb16c;font-size:.65rem;font-weight:800;letter-spacing:.2em}
+.bc-game-revamp-heading h2{margin:10px 0 0;color:#f4e9d1;font:clamp(2rem,4vw,3rem)/1.05 Georgia,"Times New Roman",serif;letter-spacing:-.03em}
+.bc-game-revamp-heading p{max-width:560px;margin:12px 0 0;color:#a9b8aa;font-size:.9rem;line-height:1.7}
+.bc-game-revamp-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:20px;padding-top:14px;border-top:1px solid #ffffff14;color:#7f9583;font-size:.62rem;letter-spacing:.1em}
+.bc-game-revamp-meta b{color:#d4bd7a}
+.bc-game-section-heading{display:flex;align-items:center;gap:13px;margin:24px 0 12px;padding:15px 17px;border:1px solid #334a38;border-radius:13px;background:linear-gradient(110deg,#142319,#0c1510)}
+.bc-game-section-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;border:1px solid #71603b;border-radius:12px;background:#202719;color:#e0c675;font-size:1.3rem}
+.bc-game-section-heading>span:last-child{display:grid;gap:4px}
+.bc-game-section-heading b{color:#eee2c5;font:1.05rem Georgia,"Times New Roman",serif}
+.bc-game-section-heading small{color:#91a494;font-size:.74rem;line-height:1.5}
+.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] #bc-music-manager-mount,.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] #bc-save-manager-mount{display:block;min-width:0;margin:0 0 20px;padding:clamp(14px,2vw,22px);border:1px solid #2d4435;border-radius:15px;background:linear-gradient(145deg,#101d15,#0a120d);box-shadow:inset 0 1px #ffffff08}
+.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] .settings-card{border-color:#334936!important;background:linear-gradient(130deg,#142219,#0b1510)!important}
+.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] button:not(.bc-revamp-back){min-height:38px}
+.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] input:not([type="range"]),.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] select{max-width:100%;border-color:#425943;border-radius:9px;background-color:#0a130e;color:#f0e6d0}
+.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] .bc-game-tips-card{margin-top:18px;padding:16px;border:1px solid #344737;border-radius:13px;background:#101c14}
+@media(max-width:600px){.bc-game-revamp-meta span:last-child{display:none}.bc-game-revamp-heading:after{right:8px}.bc-game-section-heading{align-items:flex-start}.bc-game-section-heading small{max-width:38ch}}
