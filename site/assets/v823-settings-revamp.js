@@ -7,7 +7,7 @@ const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 function visible(el){if(!el)return false;const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.display!=="none"&&s.visibility!=="hidden"&&r.width>0&&r.height>0}
 function findTabbar(){const all=$$(".bc-settings-tabs");return all.find(visible)||all[0]||null}
 function findSheet(tabbar){return tabbar?.closest(".bc-settings-sheet")||tabbar?.closest('[role="dialog"]')||tabbar?.parentElement?.parentElement||null}
-function nativeTab(value,scope){return $('[data-value="'+value+'"]',scope?.querySelector(".bc-settings-tabs")||document)}
+function nativeTab(value,scope){const bar=scope?.querySelector(".bc-settings-tabs");if(!bar)return null;const labels={display:/paparan/i,game:/permainan/i,help:/help\s*&?\s*tips|bantuan/i,dev:/dev/i};return [...bar.querySelectorAll("button,[role=\"tab\"]")].find(el=>labels[value]?.test((el.textContent||"").trim()))||null}
 function panels(scope){if(!scope)return [];const all=$('[role="tabpanel"]',scope);const tabRoot=scope.querySelector(".bc-settings-tabs");if(!tabRoot)return all;const ids=new Set([...(tabRoot.querySelectorAll("[aria-controls]"))].map(el=>el.getAttribute("aria-controls")).filter(Boolean));const related=all.filter(p=>ids.has(p.id)||[...tabRoot.querySelectorAll("[id]")].some(t=>p.getAttribute("aria-labelledby")===t.id));return related.length?related:all}
 function setStatus(root,msg){const el=$("[data-revamp-status]",root);if(el)el.textContent=msg}
 function hidePanels(scope){for(const p of panels(scope)){p.hidden=true;p.style.display="none";p.setAttribute("aria-hidden","true")}}
@@ -47,7 +47,7 @@ function showContent(scope,root,value){
   let back=target.querySelector(".bc-revamp-back");
   if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
  };
- if(trigger){try{const init={bubbles:true,cancelable:true,view:window,button:0,buttons:1};trigger.dispatchEvent(new PointerEvent("pointerdown",{...init,pointerId:1,pointerType:"mouse",isPrimary:true}));trigger.dispatchEvent(new MouseEvent("mousedown",init));trigger.dispatchEvent(new PointerEvent("pointerup",{...init,pointerId:1,pointerType:"mouse",isPrimary:true,buttons:0}));trigger.dispatchEvent(new MouseEvent("mouseup",{...init,buttons:0}));trigger.click();}catch(e){console.warn("[Boundless Settings] Tab activation failed",e);try{trigger.click()}catch(_){}} }
+ if(trigger){try{const init={bubbles:true,cancelable:true,view:window,button:0,buttons:1};trigger.focus();trigger.dispatchEvent(new MouseEvent("mousedown",init));trigger.click();}catch(e){console.warn("[Boundless Settings] Tab activation failed",e);try{trigger.click()}catch(_){}} }
  requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>reveal(0))));
 }
 function openSave(scope,root){showContent(scope,root,"game");setTimeout(()=>{const target=$("#bc-save-manager-mount",scope);target?.scrollIntoView({behavior:"smooth",block:"start"});target?.classList.add("bc-revamp-focus");setTimeout(()=>target?.classList.remove("bc-revamp-focus"),1400)},250)}
