@@ -46,8 +46,8 @@ function showContent(scope,root,value){
   let back=target.querySelector(".bc-revamp-back");
   if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
  };
- if(trigger)trigger.click();
- requestAnimationFrame(()=>requestAnimationFrame(()=>reveal(0)));
+ if(trigger){try{trigger.dispatchEvent(new MouseEvent("mousedown",{bubbles:true,cancelable:true,button:0,buttons:1,view:window}));}catch(e){console.warn("[Boundless Settings] Tab activation failed",e)} }
+ requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>reveal(0))));
 }
 function openSave(scope,root){showContent(scope,root,"game");setTimeout(()=>{const target=$("#bc-save-manager-mount",scope);target?.scrollIntoView({behavior:"smooth",block:"start"});target?.classList.add("bc-revamp-focus");setTimeout(()=>target?.classList.remove("bc-revamp-focus"),1400)},150)}
 function openAI(scope,root){
