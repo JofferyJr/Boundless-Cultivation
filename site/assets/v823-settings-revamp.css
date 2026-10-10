@@ -47,3 +47,9 @@
 @media(max-width:800px){.bc-revamp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bc-revamp-card{min-height:150px}.bc-settings-sheet{width:min(100vw,100%)!important;max-width:100%!important;border-radius:18px 0 0 18px!important}}
 @media(max-width:430px){.bc-revamp-grid{gap:8px}.bc-revamp-card{padding:12px;min-height:154px}.bc-revamp-icon{width:36px;height:36px}.bc-revamp-card strong{font-size:.94rem}.bc-revamp-desc{font-size:.68rem}.bc-revamp-tag{font-size:.48rem}.bc-revamp-seal{width:52px;height:52px;font-size:1.6rem}.bc-revamp-hero h2{font-size:2rem}.bc-revamp-build{display:none}}
 @media(prefers-reduced-motion:reduce){.bc-revamp-card{transition:none}.bc-revamp-card:hover:not(:disabled){transform:none}}
+
+/* Dashboard-first navigation fix */
+#bc-settings-revamp[hidden]{display:none!important}
+.bc-settings-sheet [role="tabpanel"][hidden]{display:none!important}
+.bc-settings-sheet .bc-revamp-back{display:flex;align-items:center;gap:8px;width:fit-content;max-width:100%;margin:0 0 18px;padding:10px 15px;border:1px solid #78663d;border-radius:10px;background:#15241a;color:#e2c778;font:600 .78rem/1.3 system-ui,sans-serif;cursor:pointer}
+.bc-settings-sheet .bc-revamp-back:hover{background:#203426;border-color:#b59a55}
