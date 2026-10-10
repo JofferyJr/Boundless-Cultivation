@@ -8,7 +8,9 @@ const pending=()=>{try{return JSON.parse(sessionStorage.getItem(PENDING_KEY)||"n
 const setPending=v=>sessionStorage.setItem(PENDING_KEY,JSON.stringify(v));
 const clearPending=()=>sessionStorage.removeItem(PENDING_KEY);
 function activeDevPanel(){
- return document.querySelector('[role="tabpanel"][data-value="dev"][data-state="active"]')||
+ return document.querySelector('[role="tabpanel"][data-bc-revamp-panel="dev"]')||
+ document.querySelector('[role="tabpanel"].bc-panel-dev')||
+ document.querySelector('[role="tabpanel"][data-value="dev"][data-state="active"]')||
  document.querySelector('[data-value="dev"][role="tabpanel"]')||
  [...document.querySelectorAll('[data-value="dev"]')].find(el=>el.getAttribute("role")==="tabpanel"||el.dataset.state==="active");
 }
