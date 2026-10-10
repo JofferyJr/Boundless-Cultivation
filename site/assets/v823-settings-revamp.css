@@ -74,3 +74,19 @@
 .bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] input:not([type="range"]),.bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] select{max-width:100%;border-color:#425943;border-radius:9px;background-color:#0a130e;color:#f0e6d0}
 .bc-settings-sheet [role="tabpanel"][data-bc-game-revamp="true"] .bc-game-tips-card{margin-top:18px;padding:16px;border:1px solid #344737;border-radius:13px;background:#101c14}
 @media(max-width:600px){.bc-game-revamp-meta span:last-child{display:none}.bc-game-revamp-heading:after{right:8px}.bc-game-section-heading{align-items:flex-start}.bc-game-section-heading small{max-width:38ch}}
+
+
+/* Eight-space settings rebuild */
+#bc-settings-revamp [hidden]{display:none!important}
+.bc-revamp-local-panel{margin:0 clamp(14px,2.5vw,28px) 24px;padding:clamp(20px,3vw,34px);border:1px solid #655633;border-radius:18px;background:radial-gradient(ellipse at 95% 0%,#a98a3a1c,transparent 48%),linear-gradient(145deg,#132219,#09110d 78%);color:#efe7d3}
+.bc-revamp-back{display:inline-flex;align-items:center;gap:8px;margin:0 0 26px;padding:10px 14px;border:1px solid #536b58;border-radius:9px;background:#101b14;color:#d9c78e;font-size:.78rem;cursor:pointer}
+.bc-revamp-back:hover,.bc-revamp-back:focus-visible{border-color:#c3a75b;outline:none}
+.bc-revamp-local-kicker{color:#d3b56a;font-size:.64rem;font-weight:800;letter-spacing:.2em}
+.bc-revamp-local-panel h2{margin:12px 0 0;color:#f5ecd6;font:clamp(2rem,4vw,2.7rem)/1.1 Georgia,"Times New Roman",serif}
+.bc-revamp-local-subtitle{margin:10px 0 24px;color:#aab9ac;font-size:.9rem;line-height:1.6}
+.bc-revamp-local-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.bc-revamp-feature{padding:20px;border:1px solid #30483a;border-radius:13px;background:linear-gradient(145deg,#142219,#0b1510)}
+.bc-revamp-feature>span{color:#cbb36b;font-size:.62rem;font-weight:800;letter-spacing:.15em}
+.bc-revamp-feature h3{margin:12px 0 8px;color:#f1e6cf;font:1.2rem Georgia,serif}
+.bc-revamp-feature p{margin:0;color:#9eafa1;font-size:.8rem;line-height:1.7}
+@media(max-width:600px){.bc-revamp-local-body{grid-template-columns:1fr}.bc-revamp-local-panel{padding:18px}}
