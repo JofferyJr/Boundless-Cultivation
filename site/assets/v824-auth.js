@@ -245,6 +245,35 @@
     });
   }
 
+  window.__boundlessAccountService = {
+    status() { return { configured: !!supabase, user: currentUser ? (currentUser.user_metadata?.username || "Pemain") : null }; },
+    async authenticate(username, password, mode) {
+      if (!supabase) throw new Error("Supabase belum dikonfigurasi. Isi URL dan anon key dalam v824-auth-config.js.");
+      username = String(username || "").trim().toLowerCase();
+      password = String(password || "");
+      if (!USERNAME_RE.test(username)) throw new Error("Username mesti 3–24 aksara: huruf kecil, nombor atau garis bawah.");
+      if (password.length < 8) throw new Error("Kata laluan mesti sekurang-kurangnya 8 aksara.");
+      const result = mode === "signup"
+        ? await supabase.auth.signUp({ email: usernameEmail(username), password, options: { data: { username } } })
+        : await supabase.auth.signInWithPassword({ email: usernameEmail(username), password });
+      if (result.error) throw result.error;
+      if (mode === "signup" && !result.data.session) throw new Error("Akaun mungkin telah dibuat tetapi tiada sesi. Pastikan Confirm email dimatikan dalam Supabase Auth settings.");
+      currentUser = result.data.user || result.data.session?.user || null;
+      renderAccount();
+      await syncAfterLogin();
+      return this.status();
+    },
+    async logout() {
+      if (!supabase) throw new Error("Supabase belum dikonfigurasi.");
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      currentUser = null; renderAccount();
+      return this.status();
+    },
+    async backup() { await uploadCloud(); return true; },
+    async restore() { await restoreCloud(); return true; }
+  };
+
   function patchLocalStorage() {
     const original = Storage.prototype.setItem;
     Storage.prototype.setItem = function(key, value) {
