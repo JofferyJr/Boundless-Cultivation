@@ -86,8 +86,8 @@ A rejection note is retained with the request. Approvals re-check requirements s
 
 Special roles are stored in `public.boundless_account_special_roles`; they do not replace or modify Mortal, Cultivator, or Immortal.
 
-- **DEV** — unlocks the DEV settings entry for developer/test tools.
-- **ADMIN** — includes DEV access and server-authorized account progression administration.
+- **ADMIN** — server-authorized account progression administration (requests, EXP, achievements, requirements).
+- **DEV** — highest role; includes every ADMIN permission plus the DEV settings entry and developer/test tools. ADMIN does not automatically receive DEV access.
 - Regular progression remains Mortal → Cultivator → Immortal and still requires EXP, achievements, and admin approval.
 
 Role grants are deliberately not available to normal browser clients or the in-game admin panel. Assign or revoke a role only from the trusted Supabase SQL Editor after verifying the exact username and account UUID. Never grant a role based only on a username supplied in an untrusted request.
@@ -100,12 +100,17 @@ from auth.users
 where raw_user_meta_data ->> 'username' = 'EXACT_USERNAME';
 ```
 
-Grant DEV to a verified account:
+Grant DEV to a verified account (DEV must also be in the existing admin allowlist so the database award RPCs authorize the same identity):
 
 ```sql
+begin;
 insert into public.boundless_account_special_roles (user_id, special_role, note)
 values ('VERIFIED-USER-UUID', 'dev', 'Authorized developer access')
 on conflict (user_id) do update set special_role = excluded.special_role, note = excluded.note;
+insert into public.boundless_account_admins (user_id)
+values ('VERIFIED-USER-UUID')
+on conflict (user_id) do nothing;
+commit;
 ```
 
-Grant ADMIN only to the verified project owner/admin. Insert the account into `public.boundless_account_admins` to authorize server-side admin operations, and also set `special_role = 'admin'` in `public.boundless_account_special_roles` if you want the explicit special-role badge. The allowlist is still required by the database EXP/achievement award RPCs. Revoke special-role display by deleting the role row; revoke admin capabilities by also deleting the row from `public.boundless_account_admins`. Keep role assignment outside public client APIs.
+Grant ADMIN only to the verified project owner/admin by inserting into `public.boundless_account_admins`; optionally add `special_role = 'admin'` for the badge. DEV receives all ADMIN permissions and DEV tools; ADMIN alone does not receive DEV tools. To fully revoke a DEV role, remove it from `public.boundless_account_special_roles` and remove the account from `public.boundless_account_admins` unless it has a separate independent admin grant. Keep role assignment outside public client APIs.
