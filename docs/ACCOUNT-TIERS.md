@@ -80,3 +80,32 @@ Only the project owner should perform this allowlist change from the Supabase SQ
 - Adjust minimum EXP and achievement counts for both promotion steps.
 
 A rejection note is retained with the request. Approvals re-check requirements server-side immediately before updating the tier.
+
+
+## Special account roles (separate from progression tiers)
+
+Special roles are stored in `public.boundless_account_special_roles`; they do not replace or modify Mortal, Cultivator, or Immortal.
+
+- **DEV** — unlocks the DEV settings entry for developer/test tools.
+- **ADMIN** — includes DEV access and server-authorized account progression administration.
+- Regular progression remains Mortal → Cultivator → Immortal and still requires EXP, achievements, and admin approval.
+
+Role grants are deliberately not available to normal browser clients or the in-game admin panel. Assign or revoke a role only from the trusted Supabase SQL Editor after verifying the exact username and account UUID. Never grant a role based only on a username supplied in an untrusted request.
+
+Example lookup (verify the result before changing anything):
+
+```sql
+select id, raw_user_meta_data ->> 'username' as username
+from auth.users
+where raw_user_meta_data ->> 'username' = 'EXACT_USERNAME';
+```
+
+Grant DEV to a verified account:
+
+```sql
+insert into public.boundless_account_special_roles (user_id, special_role, note)
+values ('VERIFIED-USER-UUID', 'dev', 'Authorized developer access')
+on conflict (user_id) do update set special_role = excluded.special_role, note = excluded.note;
+```
+
+Grant ADMIN through the existing admin allowlist or special-role table only to the verified project owner/admin. A special-role ADMIN record is also recognized by the server-side admin check. Revoke a special role by deleting that account's row from `public.boundless_account_special_roles`. Keep role assignment outside public client APIs.
