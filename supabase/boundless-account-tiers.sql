@@ -136,7 +136,7 @@ declare v_inserted integer; v_total bigint;
 begin
   if p_user_id is null or p_admin_id is null or p_amount is null or p_amount < 1 or p_amount > 1000000 then raise exception 'Invalid account EXP award.'; end if;
   if coalesce(length(trim(p_reason_code)),0) < 1 or length(p_reason_code)>80 or coalesce(length(trim(p_reference_id)),0)<1 or length(p_reference_id)>160 then raise exception 'Reason code and reference ID are required.'; end if;
-  if not exists (select 1 from public.boundless_account_admins where user_id=p_admin_id) then raise exception 'Admin authorization required.'; end if;
+  if not exists (select 1 from public.boundless_account_admins where user_id=p_admin_id) and not exists (select 1 from public.boundless_account_special_roles where user_id=p_admin_id and special_role='admin') then raise exception 'Admin authorization required.'; end if;
   insert into public.boundless_account_exp_ledger(user_id,amount,reason_code,reference_id,awarded_by)
     values(p_user_id,p_amount,trim(p_reason_code),trim(p_reference_id),p_admin_id)
     on conflict(user_id,reason_code,reference_id) do nothing;
