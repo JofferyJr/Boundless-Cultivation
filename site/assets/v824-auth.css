@@ -1,0 +1,17 @@
+#bc-account-button{position:fixed;z-index:10020;right:18px;top:16px;border:1px solid #a98945;border-radius:999px;background:#101b16;color:#f4e6bd;padding:10px 15px;font:600 13px/1.2 system-ui;box-shadow:0 6px 24px #0005;cursor:pointer}
+#bc-auth-panel{position:fixed;z-index:10030;inset:0;background:#020906b8;display:grid;place-items:center;padding:18px;overflow:auto}
+#bc-auth-panel[hidden],#bc-auth-panel [hidden]{display:none!important}
+.bc-auth-card{width:min(100%,440px);max-height:min(92vh,760px);overflow:auto;background:#0b1712;color:#e9e4d5;border:1px solid #826b39;border-radius:18px;padding:22px;box-shadow:0 24px 80px #0009;font:14px/1.5 system-ui}
+.bc-auth-head{display:flex;justify-content:space-between;gap:16px;align-items:start}.bc-auth-head h2{margin:0;font-size:22px;color:#f0d38b}.bc-auth-eyebrow{font-size:10px;letter-spacing:.18em;color:#a98945;margin:0 0 5px}
+#bc-auth-close{background:transparent;border:1px solid #42564a;border-radius:8px;color:#eee;font-size:24px;line-height:1;padding:3px 10px;cursor:pointer}
+#bc-auth-account{color:#c5d0c7;margin:14px 0}
+#bc-auth-form label{display:block;margin:12px 0;color:#e4d4a7;font-weight:600}
+#bc-auth-form input{display:block;box-sizing:border-box;width:100%;margin-top:6px;background:#07100c;border:1px solid #40584a;border-radius:9px;padding:12px;color:#fff;font:inherit}
+.bc-auth-actions,#bc-cloud-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.bc-auth-card button:not(#bc-auth-close){border:1px solid #a98945;border-radius:9px;background:#b49148;color:#10160f;padding:10px 13px;font:600 13px system-ui;cursor:pointer}
+.bc-auth-card button.secondary{background:#15271e;color:#eadbb0;border-color:#53694e}
+.bc-auth-card button:disabled{opacity:.6;cursor:wait}
+#bc-auth-status{padding:11px 12px;border-radius:9px;background:#13271c;color:#d6e7d9;overflow-wrap:anywhere}
+#bc-auth-status[data-error="true"]{background:#351d18;color:#ffd3c7}
+.bc-auth-note{font-size:12px;color:#aebbb1}
+@media(max-width:600px){#bc-account-button{right:10px;top:10px;padding:8px 11px;font-size:12px}.bc-auth-card{padding:17px}.bc-auth-head h2{font-size:19px}}
