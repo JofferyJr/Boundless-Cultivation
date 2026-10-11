@@ -226,7 +226,7 @@
     panel.querySelector("#bc-auth-close").addEventListener("click", closePanel);
     panel.querySelector("#bc-auth-form").addEventListener("click", (event) => {
       const btn = event.target.closest("button[data-mode]");
-      if (btn) panel.querySelector('input[name="mode"]').value = btn.dataset.mode;
+      if (btn) btn.closest("form")?.querySelector('input[name="mode"]') && (btn.closest("form").querySelector('input[name="mode"]').value = btn.dataset.mode);
     });
     panel.querySelector("#bc-auth-form").addEventListener("submit", onSubmit);
     panel.querySelector("#bc-cloud-upload").addEventListener("click", () => uploadCloud().catch((e) => setStatus(e.message, true)));
