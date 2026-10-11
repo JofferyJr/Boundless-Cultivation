@@ -1,4 +1,3 @@
-#bc-account-button{position:fixed;z-index:10020;right:18px;top:16px;border:1px solid #a98945;border-radius:999px;background:#101b16;color:#f4e6bd;padding:10px 15px;font:600 13px/1.2 system-ui;box-shadow:0 6px 24px #0005;cursor:pointer}
 #bc-auth-panel{position:fixed;z-index:10030;inset:0;background:#020906b8;display:grid;place-items:center;padding:18px;overflow:auto}
 #bc-auth-panel[hidden],#bc-auth-panel [hidden]{display:none!important}
 .bc-auth-card{width:min(100%,440px);max-height:min(92vh,760px);overflow:auto;background:#0b1712;color:#e9e4d5;border:1px solid #826b39;border-radius:18px;padding:22px;box-shadow:0 24px 80px #0009;font:14px/1.5 system-ui}
@@ -14,4 +13,12 @@
 #bc-auth-status{padding:11px 12px;border-radius:9px;background:#13271c;color:#d6e7d9;overflow-wrap:anywhere}
 #bc-auth-status[data-error="true"]{background:#351d18;color:#ffd3c7}
 .bc-auth-note{font-size:12px;color:#aebbb1}
-@media(max-width:600px){#bc-account-button{right:10px;top:10px;padding:8px 11px;font-size:12px}.bc-auth-card{padding:17px}.bc-auth-head h2{font-size:19px}}
+@media(max-width:600px){.bc-auth-card{padding:17px}.bc-auth-head h2{font-size:19px}}
+
+/* Account page embedded inside Pusat Tetapan */
+#bc-auth-panel[hidden]{display:none!important}
+.bc-auth-settings-card{width:100%;max-width:none;max-height:none;overflow:visible;box-sizing:border-box;border-radius:14px}
+.bc-account-settings-host{grid-column:1/-1;min-width:0}
+.bc-account-settings-loading{padding:16px;border:1px solid #29443a;border-radius:10px;color:#9fb4a8}
+.bc-auth-settings-card .bc-auth-head h2{font-size:clamp(1.2rem,3vw,1.6rem)}
+@media(max-width:600px){.bc-auth-settings-card{padding:15px}}
