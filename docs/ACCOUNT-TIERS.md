@@ -34,3 +34,49 @@ Approval must be performed by a trusted admin process, never by a player-facing 
 - Anonymous table privileges are revoked.
 - Authenticated users have read access only, plus column-limited permission to submit a tier request.
 - The database, not UI controls alone, enforces the Mortal → Cultivator → Immortal request order.
+
+
+## Approved thresholds and achievement counts
+
+Initial configuration:
+- Mortal → Cultivator: **2,500 account EXP + at least 3 recorded account achievements + admin approval**.
+- Cultivator → Immortal: **25,000 account EXP + at least 10 recorded account achievements + admin approval**.
+
+The EXP values are the owner-approved thresholds. The achievement counts (3 and 10) are initial defaults because the owner specified that achievements are mandatory but did not specify exact counts; an authorized admin can change these counts in the in-game admin panel.
+
+## Secure server endpoint
+
+Supabase Edge Function `boundless-account-progression` is deployed with JWT verification enabled. It verifies the user's access token, checks the admin allowlist for admin-only operations, validates tier order and requirements on the server, and only allows an approval when EXP and achievement requirements still pass. Admin EXP awards use a database RPC and a unique (user, reason, reference) ledger key to prevent duplicate awards. Achievement codes are unique per account.
+
+The static game client cannot securely prove that a gameplay event really happened. Therefore this version's manual EXP/achievement award tools are admin-only. Automatic EXP from quests or battles must be wired to authoritative server-validated events before being enabled; never trust a client-supplied amount or event name alone.
+
+## Give the owner account admin access
+
+The admin panel stays hidden until the account is explicitly allowlisted. In Supabase Dashboard → SQL Editor, replace `YOUR_USERNAME` with the exact Boundless login username and run:
+
+```sql
+insert into public.boundless_account_admins (user_id)
+select id
+from auth.users
+where raw_user_meta_data ->> 'username' = 'YOUR_USERNAME'
+on conflict (user_id) do nothing;
+```
+
+Check that exactly one account matches before running the insert:
+
+```sql
+select id, raw_user_meta_data ->> 'username' as username
+from auth.users
+where raw_user_meta_data ->> 'username' = 'YOUR_USERNAME';
+```
+
+Only the project owner should perform this allowlist change from the Supabase SQL Editor. Do not expose the service-role key in the game or GitHub. After granting admin access, log out and log back in, then open Settings → Account & Login to see the admin panel.
+
+## Admin panel operations
+
+- Review and approve/reject pending tier requests.
+- Award account EXP with a reason and unique reference ID.
+- Record account achievements by unique achievement code.
+- Adjust minimum EXP and achievement counts for both promotion steps.
+
+A rejection note is retained with the request. Approvals re-check requirements server-side immediately before updating the tier.
