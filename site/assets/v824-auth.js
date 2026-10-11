@@ -199,7 +199,9 @@
   }
 
   function installUI() {
-    if (document.querySelector("#bc-account-button")) return;
+    // Do not abort merely because a legacy account button exists elsewhere.
+    // The settings dashboard needs this panel and its global mount callback.
+    if (document.querySelector("#bc-auth-panel")) return;
     const panel = document.createElement("section");
     panel.id = "bc-auth-panel";
     panel.hidden = true;
