@@ -3,7 +3,7 @@
 const DEV_KEY="boundless-dev-mode",PENDING_KEY="boundless-dev-start-realm";
 const REALMS=["Body Refinement","Qi Condensation","Foundation Establishment","Core Formation","Nascent Soul","Soul Transformation","Void Refinement","Dao Integration","Tribulation Transcendence","Immortal Ascension"];
 const PHASES=["Tahap Awal","Tahap Pertengahan","Tahap Akhir","Kesempurnaan Agung"];
-const unlocked=()=>sessionStorage.getItem(DEV_KEY)==="1";
+const unlocked=()=>window.__boundlessSpecialAccountRole==="dev"||sessionStorage.getItem(DEV_KEY)==="1";
 const pending=()=>{try{return JSON.parse(sessionStorage.getItem(PENDING_KEY)||"null")}catch{return null}};
 const setPending=v=>sessionStorage.setItem(PENDING_KEY,JSON.stringify(v));
 const clearPending=()=>sessionStorage.removeItem(PENDING_KEY);
