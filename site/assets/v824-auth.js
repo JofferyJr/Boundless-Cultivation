@@ -210,10 +210,9 @@
     panel.innerHTML = '<div class="bc-auth-card"><div class="bc-auth-head"><div><p class="bc-auth-eyebrow">BOUNDLESS CULTIVATION</p><h2 id="bc-auth-title">Akaun & Backup Awan</h2></div><button id="bc-auth-close" type="button" aria-label="Tutup">×</button></div><p id="bc-auth-account">Anda sedang bermain sebagai tetamu. Save tempatan kekal aktif.</p><form id="bc-auth-form"><label>Username<input name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]{3,24}" required placeholder="nama_pemain"></label><label>Kata laluan<input name="password" type="password" autocomplete="current-password" minlength="8" required placeholder="Sekurang-kurangnya 8 aksara"></label><div class="bc-auth-actions"><button type="submit" data-mode="login">Log masuk</button><button type="submit" data-mode="signup" class="secondary">Daftar akaun</button></div><input type="hidden" name="mode" value="login"></form><div id="bc-cloud-actions" hidden><button id="bc-cloud-upload" type="button">Backup Awan</button><button id="bc-cloud-restore" type="button" class="secondary">Pulihkan Backup</button><button id="bc-auth-logout" type="button" class="secondary">Log keluar</button></div><p id="bc-auth-status" role="status" aria-live="polite">Mod tetamu aktif. Log masuk pilihan sahaja.</p><p class="bc-auth-note">Save tempatan tidak dipadam apabila log keluar. Simpan salinan export sebelum memulihkan backup.</p></div>';
     document.body.append(panel);
     let accountCard = panel.querySelector(".bc-auth-card");
-    document.addEventListener("boundless-open-account-settings", (event) => {
-      const target = event.detail?.target;
+    window.__boundlessOpenAccountSettings = (target) => {
       const card = accountCard || panel.querySelector(".bc-auth-card") || document.querySelector(".bc-auth-settings-card");
-      if (!target || !card) return;
+      if (!target || !card) return false;
       accountCard = card;
       panel.hidden = true;
       target.replaceChildren(card);
@@ -221,7 +220,9 @@
       const close = card.querySelector("#bc-auth-close");
       if (close) close.hidden = true;
       renderAccount();
-    });
+      return true;
+    };
+    document.addEventListener("boundless-open-account-settings", (event) => window.__boundlessOpenAccountSettings?.(event.detail?.target));
 
     panel.querySelector("#bc-auth-close").addEventListener("click", closePanel);
     panel.querySelector("#bc-auth-form").addEventListener("click", (event) => {
