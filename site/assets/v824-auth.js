@@ -270,6 +270,36 @@
       currentUser = null; renderAccount();
       return this.status();
     },
+    async accountProgress() {
+      if (!supabase || !currentUser) throw new Error("Log masuk diperlukan untuk melihat tingkatan akaun.");
+      const [progressResult, achievementResult] = await Promise.all([
+        supabase.from("boundless_account_progress")
+          .select("account_tier,account_exp,requested_tier,request_note,request_status,created_at,updated_at")
+          .eq("user_id", currentUser.id).maybeSingle(),
+        supabase.from("boundless_account_achievements")
+          .select("achievement_code,awarded_at")
+          .eq("user_id", currentUser.id).order("awarded_at", { ascending: false }).limit(50)
+      ]);
+      if (progressResult.error) throw progressResult.error;
+      if (achievementResult.error) throw achievementResult.error;
+      return { progress: progressResult.data || null, achievements: achievementResult.data || [] };
+    },
+    async requestAccountTier(tier, note = "") {
+      if (!supabase || !currentUser) throw new Error("Log masuk diperlukan untuk memohon kenaikan tingkatan.");
+      if (!["cultivator", "immortal"].includes(tier)) throw new Error("Tingkatan yang diminta tidak sah.");
+      const { data: existing, error: readError } = await supabase.from("boundless_account_progress")
+        .select("account_tier").eq("user_id", currentUser.id).maybeSingle();
+      if (readError) throw readError;
+      const current = existing?.account_tier || "mortal";
+      if (tier === "cultivator" && current !== "mortal") throw new Error("Akaun ini tidak layak memohon tingkatan tersebut.");
+      if (tier === "immortal" && current !== "cultivator") throw new Error("Immortal hanya boleh dimohon selepas akaun mencapai Cultivator.");
+      const { error } = await supabase.from("boundless_account_progress").update({
+        requested_tier: tier,
+        request_note: String(note || "").trim().slice(0, 500)
+      }).eq("user_id", currentUser.id);
+      if (error) throw error;
+      return await this.accountProgress();
+    },
     async backup() { await uploadCloud(); return true; },
     async restore() { await restoreCloud(); return true; }
   };
