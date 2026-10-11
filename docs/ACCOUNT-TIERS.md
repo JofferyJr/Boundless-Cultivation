@@ -108,4 +108,4 @@ values ('VERIFIED-USER-UUID', 'dev', 'Authorized developer access')
 on conflict (user_id) do update set special_role = excluded.special_role, note = excluded.note;
 ```
 
-Grant ADMIN through the existing admin allowlist or special-role table only to the verified project owner/admin. A special-role ADMIN record is also recognized by the server-side admin check. Revoke a special role by deleting that account's row from `public.boundless_account_special_roles`. Keep role assignment outside public client APIs.
+Grant ADMIN only to the verified project owner/admin. Insert the account into `public.boundless_account_admins` to authorize server-side admin operations, and also set `special_role = 'admin'` in `public.boundless_account_special_roles` if you want the explicit special-role badge. The allowlist is still required by the database EXP/achievement award RPCs. Revoke special-role display by deleting the role row; revoke admin capabilities by also deleting the row from `public.boundless_account_admins`. Keep role assignment outside public client APIs.
