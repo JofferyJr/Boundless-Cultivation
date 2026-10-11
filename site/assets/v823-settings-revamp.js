@@ -56,6 +56,7 @@ function showDiagnostics(scope,root){
  btn?.addEventListener("click",()=>{const report=["Boundless Cultivation · Diagnostik",...rows.map(r=>r[0]+": "+r[1]+" — "+(r[2]?"TERSEDIA":"SEMAK"))].join("\n");if(navigator.clipboard?.writeText)navigator.clipboard.writeText(report).then(()=>setStatus(root,"LAPORAN DISALIN")).catch(()=>fallbackCopy(report,root));else fallbackCopy(report,root)});
 }
 function showContent(scope,root,value){
+ if(value==="dev"&&!["dev","admin"].includes(window.__boundlessSpecialAccountRole)){showDashboard(scope,root);setStatus(root,"Akses DEV memerlukan tingkatan akaun khas DEV atau ADMIN.");return}
  root.dataset.view="content:"+value;
  const trigger=nativeTab(value,scope);
  root.hidden=true;root.style.display="none";root.setAttribute("aria-hidden","true");
@@ -182,7 +183,8 @@ function mount(forceDashboard=false){
  }
  tabbar.setAttribute("aria-label","Navigasi tetapan asal");tabbar.style.display="none";if(!root.dataset.view||forceDashboard||root.dataset.view==="dashboard")showDashboard(scope,root);if(root.dataset.view==="content:game")enhanceGamePanel(scope);syncSpecialRole(root);return true
 }
-async function syncSpecialRole(root){const card=root?.querySelector('[data-action="dev"]');if(!card)return;const api=window.__boundlessAccountService;if(!api?.accountProgress){card.hidden=true;return}try{const state=api.status();if(!state.user){window.__boundlessSpecialAccountRole=null;card.hidden=true;return}const result=await api.accountProgress();window.__boundlessSpecialAccountRole=result.specialRole||null;card.hidden=!(result.isDev||result.isAdmin)}catch(_){card.hidden=true}}\nlet scheduled=false;function scheduleMount(forceDashboard=false){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;mount(forceDashboard)})}
+async function syncSpecialRole(root){const card=root?.querySelector('[data-action="dev"]');if(!card)return;const api=window.__boundlessAccountService;if(!api?.accountProgress){card.hidden=true;return}try{const state=api.status();if(!state.user){window.__boundlessSpecialAccountRole=null;card.hidden=true;return}const result=await api.accountProgress();window.__boundlessSpecialAccountRole=result.specialRole||null;card.hidden=!(result.isDev||result.isAdmin)}catch(_){card.hidden=true}}
+let scheduled=false;function scheduleMount(forceDashboard=false){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;mount(forceDashboard)})}
 function boot(){
  document.addEventListener("click",e=>{const trigger=e.target?.closest?.("button[data-slot='sheet-trigger'],button[aria-haspopup='dialog']");if(trigger&&/tetapan|settings/i.test((trigger.textContent||"")+" "+(trigger.getAttribute("aria-label")||""))){setTimeout(()=>scheduleMount(true),30);setTimeout(()=>scheduleMount(true),150);setTimeout(()=>scheduleMount(true),400)}},true);
  const observer=new MutationObserver(()=>scheduleMount(false));observer.observe(document.documentElement,{childList:true,subtree:true});scheduleMount();window.__boundlessSettingsRevamp=scheduleMount
