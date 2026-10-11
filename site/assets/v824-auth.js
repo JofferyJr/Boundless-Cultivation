@@ -253,15 +253,31 @@
     if (url && anonKey && /^https:\/\//i.test(url)) {
       try {
         const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
-        supabase = createClient(url, anonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+        supabase = createClient(url, anonKey, {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true,
+            storage: window.localStorage,
+            storageKey: "boundless-cultivation-auth-v1",
+            flowType: "pkce"
+          }
+        });
+        // Restore the existing Supabase session before showing the account state.
         const { data, error } = await supabase.auth.getSession();
         if (error) throw error;
         currentUser = data.session?.user || null;
+        renderAccount();
+        if (currentUser) {
+          syncAfterLogin().catch((e) => {
+            console.warn("[Boundless Auth] Could not load cloud-save status:", e?.message || e);
+            setStatus("Anda masih log masuk. Status backup awan tidak dapat dimuatkan; cuba lagi apabila sambungan pulih.", true);
+          });
+        }
         supabase.auth.onAuthStateChange((_event, session) => {
           currentUser = session?.user || null;
           renderAccount();
         });
-        renderAccount();
       } catch (e) {
         console.error("[Boundless Auth] Supabase initialization failed:", e);
         setStatus("Sambungan Supabase gagal. Semak URL dan anon key.", true);
