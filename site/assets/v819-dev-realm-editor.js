@@ -42,7 +42,8 @@ function saveCurrentRealm(box){
   save.realm=v.realm;save.realmPhase=PHASES[v.phase];
   if(v.realm===1)save.qiLayer=v.layer;else delete save.qiLayer;
   localStorage.setItem("boundless-save",JSON.stringify(save));
-  try{window.__boundlessLoadCurrent?.()}catch(e){console.warn("[Boundless DEV Realm] refresh",e)}
+  // Do not reload the entire save here: it can rehydrate unrelated family/NPC state from a stale snapshot.
+  // The realm change is persisted safely; the next normal game load will read it from boundless-save.
   window.dispatchEvent(new CustomEvent("boundless-dev-realm-changed",{detail:{...v,realmName:REALMS[v.realm],phaseName:PHASES[v.phase]}}));
   box.querySelector("#bc-dev-current-status").textContent="✓ Ranah watak semasa ditukar kepada "+REALMS[v.realm]+" · "+PHASES[v.phase]+(v.realm===1?" · Lapisan "+v.layer:"")+".";
  }catch(e){console.warn("[Boundless DEV Realm]",e);box.querySelector("#bc-dev-current-status").textContent="Gagal menyimpan perubahan ranah. Semak konsol untuk ralat."}
