@@ -159,7 +159,7 @@ as $$
 declare v_inserted integer;
 begin
   if p_user_id is null or p_admin_id is null or coalesce(length(trim(p_achievement_code)),0)<1 or length(p_achievement_code)>100 then raise exception 'Invalid achievement award.'; end if;
-  if not exists (select 1 from public.boundless_account_admins where user_id=p_admin_id) then raise exception 'Admin authorization required.'; end if;
+  if not exists (select 1 from public.boundless_account_admins where user_id=p_admin_id) and not exists (select 1 from public.boundless_account_special_roles where user_id=p_admin_id and special_role='admin') then raise exception 'Admin authorization required.'; end if;
   insert into public.boundless_account_achievements(user_id,achievement_code,metadata,awarded_by)
     values(p_user_id,trim(p_achievement_code),coalesce(p_metadata,'{}'::jsonb),p_admin_id)
     on conflict(user_id,achievement_code) do nothing;
