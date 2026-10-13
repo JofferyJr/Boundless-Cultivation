@@ -56,7 +56,7 @@ function showDiagnostics(scope,root){
  btn?.addEventListener("click",()=>{const report=["Boundless Cultivation · Diagnostik",...rows.map(r=>r[0]+": "+r[1]+" — "+(r[2]?"TERSEDIA":"SEMAK"))].join("\n");if(navigator.clipboard?.writeText)navigator.clipboard.writeText(report).then(()=>setStatus(root,"LAPORAN DISALIN")).catch(()=>fallbackCopy(report,root));else fallbackCopy(report,root)});
 }
 function showContent(scope,root,value){
- if(value==="dev"&&window.__boundlessSpecialAccountRole!=="dev"){showDashboard(scope,root);setStatus(root,"Akses Editor Ranah DEV memerlukan akaun khas DEV.");return}
+ if(value==="dev"&&window.__boundlessSpecialAccountRole!=="dev"&&sessionStorage.getItem("boundless-dev-mode")!=="1"){showDashboard(scope,root);setStatus(root,"Akses DEV memerlukan akaun khas DEV atau kunci DEV yang sah.");return}
  root.dataset.view="content:"+value;
  const trigger=nativeTab(value,scope);
  root.hidden=true;root.style.display="none";root.setAttribute("aria-hidden","true");
