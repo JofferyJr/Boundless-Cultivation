@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Reserved title catalogue for Boundless. Stored for later use; not connected to gameplay, character creation, or title assignment yet.",
+  "fields": {
+    "chinese": "Traditional title characters as provided",
+    "pinyin": "Mandarin pinyin as provided",
+    "malay": "Malay display title as provided",
+    "english": "English display title as provided"
+  },
+  "titles": [
+    {
+      "id": "cultivation-title-01",
+      "chinese": "断天一剑",
+      "pinyin": "Duàn Tiān Yī Jiàn",
+      "malay": "Satu Pedang Pemutus Langit",
+      "english": "One Sword That Severs Heaven"
+    },
+    {
+      "id": "cultivation-title-02",
+      "chinese": "无影剑仙",
+      "pinyin": "Wú Yǐng Jiàn Xiān",
+      "malay": "Pedang Abadi Tanpa Bayang",
+      "english": "Shadowless Sword Immortal"
+    },
+    {
+      "id": "cultivation-title-03",
+      "chinese": "凌霄剑尊",
+      "pinyin": "Líng Xiāo Jiàn Zūn",
+      "malay": "Yang Mulia Pedang Puncak Langit",
+      "english": "Soaring Sky Sword Sovereign"
+    },
+    {
+      "id": "cultivation-title-04",
+      "chinese": "忘川剑主",
+      "pinyin": "Wàng Chuān Jiàn Zhǔ",
+      "malay": "Tuan Pedang Sungai Lupa",
+      "english": "Lord Of The River Of Forgetfulness"
+    },
+    {
+      "id": "cultivation-title-05",
+      "chinese": "焚天炎帝",
+      "pinyin": "Fén Tiān Yán Dì",
+      "malay": "Kaisar Api Pembakar Langit",
+      "english": "Sky Burning Flame Emperor"
+    },
+    {
+      "id": "cultivation-title-06",
+      "chinese": "九焰丹皇",
+      "pinyin": "Jiǔ Yàn Dān Huáng",
+      "malay": "Maharaja Pil Sembilan Api",
+      "english": "Nine Flames Pill Monarch"
+    },
+    {
+      "id": "cultivation-title-07",
+      "chinese": "不朽丹圣",
+      "pinyin": "Bù Xiǔ Dān Shèng",
+      "malay": "Orang Suci Pil Abadi",
+      "english": "Immortal Pill Saint"
+    },
+    {
+      "id": "cultivation-title-08",
+      "chinese": "寒天尊",
+      "pinyin": "Hán Tiān Zūn",
+      "malay": "Yang Mulia Langit Beku",
+      "english": "Frost Heaven Sovereign"
+    },
+    {
+      "id": "cultivation-title-09",
+      "chinese": "紫霄雷尊",
+      "pinyin": "Zǐ Xiāo Léi Zūn",
+      "malay": "Yang Mulia Petir Ungu Langit",
+      "english": "Purple Heavens Thunder Sovereign"
+    },
+    {
+      "id": "cultivation-title-10",
+      "chinese": "千符道人",
+      "pinyin": "Qiān Fú Dào Rén",
+      "malay": "Pertapa Seribu Jimat",
+      "english": "Thousand Talismans Daoist"
+    },
+    {
+      "id": "cultivation-title-11",
+      "chinese": "铁血魔僧",
+      "pinyin": "Tiě Xuè Mó Sēng",
+      "malay": "Biksu Iblis Darah Besi",
+      "english": "Iron Blood Demon Monk"
+    },
+    {
+      "id": "cultivation-title-12",
+      "chinese": "血魔尊",
+      "pinyin": "Xuè Mó Zūn",
+      "malay": "Yang Mulia Iblis Darah",
+      "english": "Blood Demon Sovereign"
+    },
+    {
+      "id": "cultivation-title-13",
+      "chinese": "白骨邪帝",
+      "pinyin": "Bái Gǔ Xié Dì",
+      "malay": "Kaisar Sesat Tulang Putih",
+      "english": "White Bone Evil Emperor"
+    },
+    {
+      "id": "cultivation-title-14",
+      "chinese": "吞月天魔",
+      "pinyin": "Tūn Yuè Tiān Mó",
+      "malay": "Iblis Langit Penelan Bulan",
+      "english": "Moon Swallowing Sky Demon"
+    },
+    {
+      "id": "cultivation-title-15",
+      "chinese": "永夜君皇",
+      "pinyin": "Yǒng Yè Jūn Huáng",
+      "malay": "Maharaja Malam Abadi",
+      "english": "Eternal Night Monarch"
+    },
+    {
+      "id": "cultivation-title-16",
+      "chinese": "幽影夜皇",
+      "pinyin": "Yōu Yǐng Yè Huáng",
+      "malay": "Maharaja Bayang Malam",
+      "english": "Monarch Of Nightly Shadows"
+    },
+    {
+      "id": "cultivation-title-17",
+      "chinese": "九幽鬼皇",
+      "pinyin": "Jiǔ Yōu Guǐ Huáng",
+      "malay": "Maharaja Hantu Sembilan Neraka",
+      "english": "Nine Nether Ghost Monarch"
+    },
+    {
+      "id": "cultivation-title-18",
+      "chinese": "玉莲剑仙子",
+      "pinyin": "Yù Lián Jiàn Xiān Zǐ",
+      "malay": "Peri Pedang Teratai Giok",
+      "english": "Jade Lotus Sword Fairy"
+    },
+    {
+      "id": "cultivation-title-19",
+      "chinese": "冰月仙子",
+      "pinyin": "Bīng Yuè Xiān Zǐ",
+      "malay": "Peri Bulan Beku",
+      "english": "Frost Moon Fairy"
+    },
+    {
+      "id": "cultivation-title-20",
+      "chinese": "凤凰仙子",
+      "pinyin": "Fèng Huáng Xiān Zǐ",
+      "malay": "Peri Phoenix",
+      "english": "Phoenix Fairy"
+    },
+    {
+      "id": "cultivation-title-21",
+      "chinese": "万道帝师",
+      "pinyin": "Wàn Dào Dì Shī",
+      "malay": "Guru Kaisar Sepuluh Ribu Dao",
+      "english": "Emperor Teacher Of Ten Thousand Daos"
+    },
+    {
+      "id": "cultivation-title-22",
+      "chinese": "太虚剑帝",
+      "pinyin": "Tài Xū Jiàn Dì",
+      "malay": "Kaisar Pedang Kekosongan Agung",
+      "english": "Great Void Sword Emperor"
+    },
+    {
+      "id": "cultivation-title-23",
+      "chinese": "长生大帝",
+      "pinyin": "Cháng Shēng Dà Dì",
+      "malay": "Kaisar Agung Keabadian",
+      "english": "Great Emperor Of Longevity"
+    },
+    {
+      "id": "cultivation-title-24",
+      "chinese": "轮回之主",
+      "pinyin": "Lún Huí Zhī Zhǔ",
+      "malay": "Penguasa Reinkarnasi",
+      "english": "Lord Of Reincarnation"
+    },
+    {
+      "id": "cultivation-title-25",
+      "chinese": "混沌之主",
+      "pinyin": "Hùn Dùn Zhī Zhǔ",
+      "malay": "Penguasa Kekacauan Primordial",
+      "english": "Lord Of Primordial Chaos"
+    }
+  ]
+}
