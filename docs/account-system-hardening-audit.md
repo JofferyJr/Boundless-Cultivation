@@ -37,6 +37,7 @@
 - Player-facing policies on progression, achievements, EXP ledger and cloud saves restrict access to rows owned by `auth.uid()`.
 - The admin allowlist, special-role and tier-requirement tables intentionally have no user-facing policies, so browser users cannot access them directly; the Edge Function uses its server-side service role after checking the authenticated user's admin status. Keep service-role credentials server-side.
 - Supabase Security Advisor reported leaked-password protection disabled. The available connected tools do not expose this Auth dashboard setting, so it remains an explicit dashboard action: enable leaked-password protection in Supabase Auth password/security settings.
+- The new version-history table is protected by owner-scoped SELECT/INSERT RLS policies and has no UPDATE/DELETE policies. A privilege check also showed inherited table grants for TRUNCATE, REFERENCES and TRIGGER on the authenticated role. Those privileges are not needed by the browser feature and should be narrowed after a controlled privilege-migration review; the connected migration action rejected the revocation attempt, so this least-privilege cleanup is still open.
 - Re-run Security Advisor after the deployment and review any changed findings. RLS alone does not prove the Edge Function's complete authorization logic is correct.
 
 ## Multiplayer audit
