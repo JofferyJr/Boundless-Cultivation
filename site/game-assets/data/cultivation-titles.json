@@ -182,6 +182,146 @@
       "pinyin": "Hùn Dùn Zhī Zhǔ",
       "malay": "Penguasa Kekacauan Primordial",
       "english": "Lord Of Primordial Chaos"
+    },
+    {
+      "id": "cultivation-title-26",
+      "chinese": "斩岳剑主",
+      "pinyin": "Zhǎn Yuè Jiàn Zhǔ",
+      "malay": "Tuan Pedang Pemotong Gunung",
+      "english": "Mountain Severing Sword Lord"
+    },
+    {
+      "id": "cultivation-title-27",
+      "chinese": "无痕剑客",
+      "pinyin": "Wú Hén Jiàn Kè",
+      "malay": "Pendekar Pedang Tanpa Jejak",
+      "english": "Traceless Swordsman"
+    },
+    {
+      "id": "cultivation-title-28",
+      "chinese": "赤焰刀主",
+      "pinyin": "Chì Yàn Dāo Zhǔ",
+      "malay": "Tuan Sabre Api Merah",
+      "english": "Crimson Flame Saber Lord"
+    },
+    {
+      "id": "cultivation-title-29",
+      "chinese": "玄剑真人",
+      "pinyin": "Xuán Jiàn Zhēn Rén",
+      "malay": "Sejati Pedang Misteri",
+      "english": "Profound Sword True Person"
+    },
+    {
+      "id": "cultivation-title-30",
+      "chinese": "烈阳散人",
+      "pinyin": "Liè Yáng Sǎn Rén",
+      "malay": "Pertapa Bebas Matahari Membara",
+      "english": "Blazing Sun Wanderer"
+    },
+    {
+      "id": "cultivation-title-31",
+      "chinese": "寒渊道人",
+      "pinyin": "Hán Yuān Dào Rén",
+      "malay": "Pertapa Jurang Beku",
+      "english": "Frost Abyss Daoist"
+    },
+    {
+      "id": "cultivation-title-32",
+      "chinese": "紫雷上人",
+      "pinyin": "Zǐ Léi Shàng Rén",
+      "malay": "Yang Mulia Petir Ungu",
+      "english": "Purple Thunder Reverend"
+    },
+    {
+      "id": "cultivation-title-33",
+      "chinese": "血手真人",
+      "pinyin": "Xuè Shǒu Zhēn Rén",
+      "malay": "Sejati Tangan Darah",
+      "english": "Blood Hand True Person"
+    },
+    {
+      "id": "cultivation-title-34",
+      "chinese": "毒龙居士",
+      "pinyin": "Dú Lóng Jū Shì",
+      "malay": "Pertapa Racun Naga",
+      "english": "Poison Dragon Hermit"
+    },
+    {
+      "id": "cultivation-title-35",
+      "chinese": "御兽山主",
+      "pinyin": "Yù Shòu Shān Zhǔ",
+      "malay": "Tuan Gunung Penjinak Binatang",
+      "english": "Beast Taming Mountain Lord"
+    },
+    {
+      "id": "cultivation-title-36",
+      "chinese": "千面鬼手",
+      "pinyin": "Qiān Miàn Guǐ Shǒu",
+      "malay": "Tangan Hantu Seribu Wajah",
+      "english": "Thousand Faced Ghost Hand"
+    },
+    {
+      "id": "cultivation-title-37",
+      "chinese": "破阵子",
+      "pinyin": "Pò Zhèn Zǐ",
+      "malay": "Pemecah Formasi",
+      "english": "Formation Breaker"
+    },
+    {
+      "id": "cultivation-title-38",
+      "chinese": "丹心上人",
+      "pinyin": "Dān Xīn Shàng Rén",
+      "malay": "Yang Mulia Hati Pil",
+      "english": "Pill Heart Reverend"
+    },
+    {
+      "id": "cultivation-title-39",
+      "chinese": "青莲剑仙子",
+      "pinyin": "Qīng Lián Jiàn Xiān Zǐ",
+      "malay": "Peri Pedang Teratai Biru",
+      "english": "Azure Lotus Sword Fairy"
+    },
+    {
+      "id": "cultivation-title-40",
+      "chinese": "冰魄仙子",
+      "pinyin": "Bīng Pò Xiān Zǐ",
+      "malay": "Peri Jiwa Es",
+      "english": "Ice Soul Fairy"
+    },
+    {
+      "id": "cultivation-title-41",
+      "chinese": "夜鸦道人",
+      "pinyin": "Yè Yā Dào Rén",
+      "malay": "Pertapa Gagak Malam",
+      "english": "Night Crow Daoist"
+    },
+    {
+      "id": "cultivation-title-42",
+      "chinese": "铁骨真人",
+      "pinyin": "Tiě Gǔ Zhēn Rén",
+      "malay": "Sejati Tulang Besi",
+      "english": "Iron Bone True Person"
+    },
+    {
+      "id": "cultivation-title-43",
+      "chinese": "逍遥散人",
+      "pinyin": "Xiāo Yáo Sǎn Rén",
+      "malay": "Pertapa Bebas Tanpa Ikatan",
+      "english": "Carefree Wanderer"
+    },
+    {
+      "id": "cultivation-title-44",
+      "chinese": "一字剑主",
+      "pinyin": "Yī Zì Jiàn Zhǔ",
+      "malay": "Tuan Satu Tebasan",
+      "english": "One Word Sword Lord"
+    },
+    {
+      "id": "cultivation-title-45",
+      "chinese": "焚城刀主",
+      "pinyin": "Fén Chéng Dāo Zhǔ",
+      "malay": "Tuan Sabre Pembakar Kota",
+      "english": "City Burning Saber Lord"
     }
   ]
 }
