@@ -3,7 +3,7 @@
 const DEV_KEY="boundless-dev-mode",PENDING_KEY="boundless-dev-start-realm";
 const REALMS=["Body Refinement","Qi Condensation","Foundation Establishment","Core Formation","Nascent Soul","Soul Transformation","Void Refinement","Dao Integration","Tribulation Transcendence","Immortal Ascension"];
 const PHASES=["Tahap Awal","Tahap Pertengahan","Tahap Akhir","Kesempurnaan Agung"];
-const unlocked=()=>true; // The DEV slot and Realm Editor are available to all players.
+const unlocked=()=>window.__boundlessSpecialAccountRole==="dev"||sessionStorage.getItem(DEV_KEY)==="1"; // Realm Editor follows the exact DEV unlock state.
 const pending=()=>{try{return JSON.parse(sessionStorage.getItem(PENDING_KEY)||"null")}catch{return null}};
 const setPending=v=>sessionStorage.setItem(PENDING_KEY,JSON.stringify(v));
 const clearPending=()=>sessionStorage.removeItem(PENDING_KEY);
@@ -16,6 +16,7 @@ function activeDevPanel(){
 }
 function normalize(p){const realm=Math.max(0,Math.min(9,Number(p?.realm)||0));const phase=Math.max(0,Math.min(3,Number(p?.phase)||0));const layer=realm===1?Math.max(1,Math.min(13,Number(p?.layer)||1)):1;return{realm,phase,layer}}
 function remove(){document.getElementById("bc-dev-realm-editor")?.remove()}
+function requireDevAccess(){if(unlocked())return true;remove();return false}
 function applyToSave(){
  const raw=localStorage.getItem("boundless-save"),p=pending();if(!raw||!p)return false;
  try{const save=JSON.parse(raw),v=normalize(p);save.realm=v.realm;save.realmPhase=PHASES[v.phase];if(v.realm===1)save.qiLayer=v.layer;else delete save.qiLayer;localStorage.setItem("boundless-save",JSON.stringify(save));clearPending();window.__boundlessLoadCurrent?.();return true}catch(e){console.warn("[Boundless DEV Realm]",e);return false}
@@ -69,9 +70,9 @@ function editor(panel){
  panel.appendChild(box);
  box.querySelector("#bc-dev-close").onclick=()=>{box.hidden=true};
  box.querySelector("#bc-dev-realm").addEventListener("change",()=>controls(box));
- box.querySelector("#bc-dev-arm").onclick=()=>{const v=normalize({realm:box.querySelector("#bc-dev-realm").value,phase:box.querySelector("#bc-dev-phase").value,layer:box.querySelector("#bc-dev-layer").value});setPending(v);sync(box)};
+ box.querySelector("#bc-dev-arm").onclick=()=>{if(!requireDevAccess())return;const v=normalize({realm:box.querySelector("#bc-dev-realm").value,phase:box.querySelector("#bc-dev-phase").value,layer:box.querySelector("#bc-dev-layer").value});setPending(v);sync(box)};
  box.querySelector("#bc-dev-current-realm").addEventListener("change",()=>currentControls(box));
- box.querySelector("#bc-dev-apply-current").onclick=()=>saveCurrentRealm(box);
+ box.querySelector("#bc-dev-apply-current").onclick=()=>{if(!requireDevAccess())return;saveCurrentRealm(box)};
  syncCurrent(box);
  return box;
 }
@@ -84,9 +85,8 @@ function sync(){
 }
 function start(){
  armStartHook();
- document.addEventListener("click",e=>{
-  const trigger=e.target?.closest?.('[data-value="dev"][role="tab"],button[value="dev"],[data-state][data-value="dev"]');
-  if(!trigger)return;
+ document.addEventListener("click",()=>{
+  // Re-check after Settings interactions; Realm Editor must close whenever DEV becomes locked.
   requestAnimationFrame(sync);setTimeout(sync,60);
  },true);
  document.addEventListener("boundless-open-dev",()=>{requestAnimationFrame(sync);setTimeout(sync,60)});
