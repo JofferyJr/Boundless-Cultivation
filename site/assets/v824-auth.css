@@ -22,3 +22,9 @@
 .bc-account-settings-loading{padding:16px;border:1px solid #29443a;border-radius:10px;color:#9fb4a8}
 .bc-auth-settings-card .bc-auth-head h2{font-size:clamp(1.2rem,3vw,1.6rem)}
 @media(max-width:600px){.bc-auth-settings-card{padding:15px}}
+
+#bc-cloud-version-list{display:grid;gap:8px;flex-basis:100%;margin-top:8px}
+.bc-cloud-version-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border:1px solid #40584a;border-radius:9px;background:#0a140f;color:#d7dfd8;font-size:12px}
+.bc-cloud-version-row span{min-width:0;overflow-wrap:anywhere}
+.bc-cloud-version-row button{flex-shrink:0}
+@media(max-width:520px){.bc-cloud-version-row{align-items:stretch;flex-direction:column}.bc-cloud-version-row button{width:100%}}

@@ -1,3 +1,5 @@
+import { MAX_SAVE_SLOTS } from "./v815-save-manager-core.mjs";
+
 (() => {
   "use strict";
   const CONFIG = window.BOUNDLESS_SUPABASE_CONFIG || {};
@@ -19,7 +21,7 @@
       const value = localStorage.getItem(key);
       if (value !== null) saves[key] = value;
     }
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= MAX_SAVE_SLOTS; i++) {
       const key = PREFIX + i;
       const value = localStorage.getItem(key);
       if (value !== null) saves[key] = value;
@@ -81,20 +83,99 @@
     return data || null;
   }
 
+  function stableStringify(value) {
+    if (Array.isArray(value)) return "[" + value.map(stableStringify).join(",") + "]";
+    if (value && typeof value === "object") {
+      return "{" + Object.keys(value).sort().map((key) => JSON.stringify(key) + ":" + stableStringify(value[key])).join(",") + "}";
+    }
+    return JSON.stringify(value);
+  }
+
+  async function payloadHash(payload) {
+    const bytes = new TextEncoder().encode(stableStringify(payload || {}));
+    const digest = await crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+
+  async function archivePayload(payload, source) {
+    if (!supabase || !currentUser || !payload || typeof payload !== "object") return;
+    const { error } = await supabase.from("boundless_cloud_save_versions").insert({
+      user_id: currentUser.id,
+      payload,
+      payload_hash: await payloadHash(payload),
+      source
+    });
+    if (error) throw error;
+  }
+
+  function isSlotKey(key) {
+    return SAVE_KEYS.includes(key) || new RegExp("^" + PREFIX + "[1-" + MAX_SAVE_SLOTS + "]$").test(key);
+  }
+
   async function uploadCloud(showStatus = true) {
-    if (!supabase || !currentUser) return;
+    if (!supabase || !currentUser) throw new Error("Log masuk diperlukan untuk backup awan.");
     const payload = collectSaves();
     if (!hasLocalSaves(payload)) {
       if (showStatus) setStatus("Belum ada save tempatan untuk disandarkan.", true);
-      return;
+      return false;
     }
-    const { error } = await supabase.from("boundless_cloud_saves").upsert({
-      user_id: currentUser.id,
-      payload,
-      updated_at: new Date().toISOString()
-    }, { onConflict: "user_id" });
-    if (error) throw error;
-    if (showStatus) setStatus("Backup awan berjaya dikemas kini.");
+
+    const existing = await fetchCloud();
+    const localHash = await payloadHash(payload);
+    if (existing?.payload && await payloadHash(existing.payload) === localHash) {
+      if (showStatus) setStatus("Backup awan sudah sepadan dengan save pada peranti ini.");
+      return true;
+    }
+
+    if (existing?.payload) {
+      if (!showStatus) {
+        setStatus("Perubahan tempatan belum disandarkan kerana backup awan berbeza. Buka Akaun dan pilih Backup Awan untuk menyemak konflik.", true);
+        return false;
+      }
+      if (!window.confirm("Backup awan berbeza daripada save pada peranti ini. Gantikan backup awan dengan save tempatan? Versi cloud lama akan disimpan dalam sejarah dahulu.")) return false;
+      await archivePayload(existing.payload, "pre_replace");
+      const { data, error } = await supabase.from("boundless_cloud_saves")
+        .update({ payload, updated_at: new Date().toISOString() })
+        .eq("user_id", currentUser.id)
+        .eq("updated_at", existing.updated_at)
+        .select("user_id")
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) {
+        setStatus("Konflik dikesan: backup awan berubah pada peranti lain. Tiada data cloud ditimpa. Muat semula status dan cuba semula.", true);
+        return false;
+      }
+    } else {
+      const { error } = await supabase.from("boundless_cloud_saves").insert({
+        user_id: currentUser.id,
+        payload,
+        updated_at: new Date().toISOString()
+      });
+      if (error) {
+        if (error.code === "23505") {
+          setStatus("Backup awan baru dicipta pada peranti lain. Muat semula status sebelum mencuba lagi.", true);
+          return false;
+        }
+        throw error;
+      }
+    }
+    if (showStatus) setStatus("Backup awan berjaya dikemas kini. Versi terdahulu dikekalkan apabila backup diganti.");
+    return true;
+  }
+
+  async function applyCloudPayload(payload) {
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("Format backup awan tidak sah.");
+    const local = collectSaves();
+    if (hasLocalSaves(local)) await archivePayload(local, "restore_point");
+    const accepted = Object.keys(payload).filter(isSlotKey);
+    for (const key of [...SAVE_KEYS, ...Array.from({ length: MAX_SAVE_SLOTS }, (_, i) => PREFIX + (i + 1))]) {
+      if (!accepted.includes(key)) localStorage.removeItem(key);
+    }
+    for (const key of accepted) {
+      const value = payload[key];
+      if (typeof value === "string") localStorage.setItem(key, value);
+    }
+    setStatus("Backup dipulihkan. Muat semula halaman untuk memuatkan keadaan permainan.");
   }
 
   async function restoreCloud() {
@@ -103,16 +184,58 @@
       setStatus("Belum ada backup awan. Muat naik save tempatan dahulu.");
       return;
     }
-    const local = collectSaves();
-    const hasLocal = hasLocalSaves(local);
-    if (hasLocal && !window.confirm("Pulihkan backup awan? Save tempatan yang sepadan akan digantikan. Sebaiknya export save dahulu.")) return;
-    for (const key of Object.keys(cloud.payload)) {
-      if (SAVE_KEYS.includes(key) || new RegExp("^" + PREFIX + "[1-5]$").test(key)) {
-        const value = cloud.payload[key];
-        if (typeof value === "string") localStorage.setItem(key, value);
-      }
+    if (!window.confirm("Pulihkan backup awan ini? Save tempatan akan disimpan sebagai titik pemulihan sebelum diganti.")) return;
+    await applyCloudPayload(cloud.payload);
+  }
+
+  async function renderCloudVersions() {
+    if (!supabase || !currentUser) throw new Error("Log masuk diperlukan.");
+    const host = document.querySelector("#bc-cloud-version-list");
+    if (!host) return;
+    const { data, error } = await supabase.from("boundless_cloud_save_versions")
+      .select("id,source,created_at,payload_hash")
+      .eq("user_id", currentUser.id)
+      .order("created_at", { ascending: false })
+      .limit(10);
+    if (error) throw error;
+    host.replaceChildren();
+    host.hidden = false;
+    if (!data?.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "Belum ada versi backup terdahulu.";
+      host.append(empty);
+      return;
     }
-    setStatus("Backup dipulihkan. Muat semula halaman untuk memuatkan keadaan permainan.");
+    for (const version of data) {
+      const row = document.createElement("div");
+      row.className = "bc-cloud-version-row";
+      const label = document.createElement("span");
+      const date = new Date(version.created_at);
+      label.textContent = (Number.isNaN(date.getTime()) ? version.created_at : date.toLocaleString()) + " · " + ({
+        pre_replace: "Backup sebelum diganti",
+        restore_point: "Titik pemulihan peranti",
+        manual_backup: "Backup manual"
+      }[version.source] || version.source);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "secondary";
+      button.textContent = "Pulihkan versi";
+      button.addEventListener("click", () => restoreCloudVersion(version.id).catch((e) => setStatus(e.message || "Gagal memulihkan versi.", true)));
+      row.append(label, button);
+      host.append(row);
+    }
+  }
+
+  async function restoreCloudVersion(versionId) {
+    if (!supabase || !currentUser) throw new Error("Log masuk diperlukan.");
+    const { data, error } = await supabase.from("boundless_cloud_save_versions")
+      .select("id,payload,created_at")
+      .eq("id", versionId)
+      .eq("user_id", currentUser.id)
+      .single();
+    if (error) throw error;
+    if (!data?.payload || !window.confirm("Pulihkan versi backup terdahulu? Save semasa akan disimpan sebagai titik pemulihan dahulu.")) return;
+    await applyCloudPayload(data.payload);
   }
 
   function scheduleSync() {
@@ -130,11 +253,13 @@
     const cloud = await fetchCloud();
     const local = collectSaves();
     if (cloud && cloud.payload && hasLocalSaves(local)) {
-      setStatus("Save tempatan ditemui. Pilih sama ada mahu menghantar save ini ke awan atau memulihkan backup awan.");
+      const [localHash, cloudHash] = await Promise.all([payloadHash(local), payloadHash(cloud.payload)]);
+      if (localHash === cloudHash) setStatus("Save tempatan sepadan dengan backup awan.");
+      else setStatus("Save tempatan dan backup awan berbeza. Pilih Backup Awan untuk menyimpan versi lama dahulu, atau Pulihkan Backup untuk menggunakan versi cloud.");
     } else if (cloud && cloud.payload) {
       setStatus("Backup awan ditemui. Tekan Pulihkan Backup untuk memuatkannya.");
     } else if (hasLocalSaves(local)) {
-      setStatus("Save tempatan ditemui. Tekan Backup Awan untuk menyandarkannya.");
+      setStatus("Save tempatan ditemui. Tekan Backup Awan untuk membuat sandaran pertama.");
     } else {
       setStatus("Akaun sedia. Permainan tetamu dan save tempatan masih tersedia.");
     }
@@ -209,7 +334,7 @@
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-modal", "false");
     panel.setAttribute("aria-labelledby", "bc-auth-title");
-    panel.innerHTML = '<div class="bc-auth-card"><div class="bc-auth-head"><div><p class="bc-auth-eyebrow">BOUNDLESS CULTIVATION</p><h2 id="bc-auth-title">Akaun & Backup Awan</h2></div><button id="bc-auth-close" type="button" aria-label="Tutup">×</button></div><p id="bc-auth-account">Anda sedang bermain sebagai tetamu. Save tempatan kekal aktif.</p><form id="bc-auth-form"><label>Username<input name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]{3,24}" required placeholder="nama_pemain"></label><label>Kata laluan<input name="password" type="password" autocomplete="current-password" minlength="8" required placeholder="Sekurang-kurangnya 8 aksara"></label><div class="bc-auth-actions"><button type="submit" data-mode="login">Log masuk</button><button type="submit" data-mode="signup" class="secondary">Daftar akaun</button></div><input type="hidden" name="mode" value="login"></form><div id="bc-cloud-actions" hidden><button id="bc-cloud-upload" type="button">Backup Awan</button><button id="bc-cloud-restore" type="button" class="secondary">Pulihkan Backup</button><button id="bc-auth-logout" type="button" class="secondary">Log keluar</button></div><p id="bc-auth-status" role="status" aria-live="polite">Mod tetamu aktif. Log masuk pilihan sahaja.</p><p class="bc-auth-note">Save tempatan tidak dipadam apabila log keluar. Simpan salinan export sebelum memulihkan backup.</p></div>';
+    panel.innerHTML = '<div class="bc-auth-card"><div class="bc-auth-head"><div><p class="bc-auth-eyebrow">BOUNDLESS CULTIVATION</p><h2 id="bc-auth-title">Akaun & Backup Awan</h2></div><button id="bc-auth-close" type="button" aria-label="Tutup">×</button></div><p id="bc-auth-account">Anda sedang bermain sebagai tetamu. Save tempatan kekal aktif.</p><form id="bc-auth-form"><label>Username<input name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]{3,24}" required placeholder="nama_pemain"></label><label>Kata laluan<input name="password" type="password" autocomplete="current-password" minlength="8" required placeholder="Sekurang-kurangnya 8 aksara"></label><div class="bc-auth-actions"><button type="submit" data-mode="login">Log masuk</button><button type="submit" data-mode="signup" class="secondary">Daftar akaun</button></div><input type="hidden" name="mode" value="login"></form><div id="bc-cloud-actions" hidden><button id="bc-cloud-upload" type="button">Backup Awan</button><button id="bc-cloud-restore" type="button" class="secondary">Pulihkan Backup</button><button id="bc-cloud-versions" type="button" class="secondary">Sejarah Backup</button><button id="bc-auth-logout" type="button" class="secondary">Log keluar</button><div id="bc-cloud-version-list" hidden></div></div><p id="bc-auth-status" role="status" aria-live="polite">Mod tetamu aktif. Log masuk pilihan sahaja.</p><p class="bc-auth-note">Save tempatan tidak dipadam apabila log keluar. Simpan salinan export sebelum memulihkan backup.</p></div>';
     document.body.append(panel);
     let accountCard = panel.querySelector(".bc-auth-card");
     window.__boundlessOpenAccountSettings = (target) => {
@@ -234,6 +359,7 @@
     panel.querySelector("#bc-auth-form").addEventListener("submit", onSubmit);
     panel.querySelector("#bc-cloud-upload").addEventListener("click", () => uploadCloud().catch((e) => setStatus(e.message, true)));
     panel.querySelector("#bc-cloud-restore").addEventListener("click", () => restoreCloud().catch((e) => setStatus(e.message, true)));
+    panel.querySelector("#bc-cloud-versions").addEventListener("click", () => renderCloudVersions().catch((e) => setStatus(e.message || "Gagal memuat sejarah backup.", true)));
     panel.querySelector("#bc-auth-logout").addEventListener("click", async () => {
       try {
         const { error } = await supabase.auth.signOut();
@@ -298,15 +424,16 @@
     async adminSetRequirements(tier, minimumExp, minimumAchievements) {
       return await this.progression("admin-set-requirements", { tier, minimumExp: Number(minimumExp), minimumAchievements: Number(minimumAchievements) });
     },
-    async backup() { await uploadCloud(); return true; },
-    async restore() { await restoreCloud(); return true; }
+    async backup() { return await uploadCloud(true); },
+    async restore() { await restoreCloud(); return true; },
+    async backupVersions() { await renderCloudVersions(); return true; }
   };
 
   function patchLocalStorage() {
     const original = Storage.prototype.setItem;
     Storage.prototype.setItem = function(key, value) {
       const result = original.call(this, key, value);
-      if (this === localStorage && (SAVE_KEYS.includes(String(key)) || new RegExp("^" + PREFIX + "[1-5]$").test(String(key)))) scheduleSync();
+      if (this === localStorage && (SAVE_KEYS.includes(String(key)) || new RegExp("^" + PREFIX + "[1-" + MAX_SAVE_SLOTS + "]$").test(String(key)))) scheduleSync();
       return result;
     };
   }
