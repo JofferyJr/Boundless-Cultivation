@@ -84,8 +84,9 @@ function showContent(scope,root,value){
    window.dispatchEvent(new CustomEvent("boundless-open-dev"));
    window.__boundlessSyncDevRealm?.();
   }
-  let back=target.querySelector(".bc-revamp-back");
-  if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}
+  const ensureBack=()=>{let back=[...target.children].find(el=>el.classList?.contains("bc-revamp-back"));if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}return back};
+  ensureBack();
+  if(value==="dev"){requestAnimationFrame(()=>ensureBack());setTimeout(()=>{if(target.isConnected&&root.dataset.view==="content:dev")ensureBack()},100)}
  };
  if(trigger){try{const init={bubbles:true,cancelable:true,view:window,button:0,buttons:1};trigger.focus();trigger.dispatchEvent(new MouseEvent("mousedown",init));trigger.click();}catch(e){console.warn("[Boundless Settings] Tab activation failed",e);try{trigger.click()}catch(_){}} }
  requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>reveal(0))));
