@@ -84,9 +84,14 @@ function showContent(scope,root,value){
    window.dispatchEvent(new CustomEvent("boundless-open-dev"));
    window.__boundlessSyncDevRealm?.();
   }
-  const ensureBack=()=>{let back=[...target.children].find(el=>el.classList?.contains("bc-revamp-back"));if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.textContent="← Kembali ke Pusat Tetapan";back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}return back};
+  const ensureBack=()=>{if(!target.isConnected||root.dataset.view!=="content:"+value)return null;let back=[...target.children].find(el=>el.classList?.contains("bc-revamp-back")&&el.dataset.bcPersistentBack==="true");if(!back){back=document.createElement("button");back.type="button";back.className="bc-revamp-back";back.dataset.bcPersistentBack="true";back.textContent="← Kembali ke Pusat Tetapan";back.setAttribute("aria-label","Kembali ke Pusat Tetapan");back.addEventListener("click",()=>showDashboard(scope,root));target.insertAdjacentElement("afterbegin",back)}return back};
   ensureBack();
-  if(value==="dev"){requestAnimationFrame(()=>ensureBack());setTimeout(()=>{if(target.isConnected&&root.dataset.view==="content:dev")ensureBack()},100)}
+  if(value==="dev"){
+   const keepBack=new MutationObserver(()=>{if(root.dataset.view!=="content:dev"){keepBack.disconnect();return}ensureBack()});
+   keepBack.observe(target,{childList:true});
+   requestAnimationFrame(()=>ensureBack());
+   [100,300,700,1400,2400].forEach(ms=>setTimeout(()=>{if(target.isConnected&&root.dataset.view==="content:dev")ensureBack();else keepBack.disconnect()},ms));
+  }
  };
  if(trigger){try{const init={bubbles:true,cancelable:true,view:window,button:0,buttons:1};trigger.focus();trigger.dispatchEvent(new MouseEvent("mousedown",init));trigger.click();}catch(e){console.warn("[Boundless Settings] Tab activation failed",e);try{trigger.click()}catch(_){}} }
  requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>reveal(0))));
