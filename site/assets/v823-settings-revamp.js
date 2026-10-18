@@ -56,8 +56,8 @@ function showDiagnostics(scope,root){
  btn?.addEventListener("click",()=>{const report=["Boundless Cultivation · Diagnostik",...rows.map(r=>r[0]+": "+r[1]+" — "+(r[2]?"TERSEDIA":"SEMAK"))].join("\n");if(navigator.clipboard?.writeText)navigator.clipboard.writeText(report).then(()=>setStatus(root,"LAPORAN DISALIN")).catch(()=>fallbackCopy(report,root));else fallbackCopy(report,root)});
 }
 function showContent(scope,root,value){
- // DEV and its Realm Editor share one lock: DEV-ranked accounts bypass the key; everyone else needs the existing key.
- if(value==="dev"&&window.__boundlessSpecialAccountRole!=="dev"&&sessionStorage.getItem("boundless-dev-mode")!=="1"){showDashboard(scope,root);setStatus(root,"DEV dikunci. Buka kunci DEV sedia ada untuk menggunakan DEV dan Editor Ranah.");return}
+ // Keep the DEV panel navigable while locked; the Realm Editor itself still enforces the DEV key.
+ const devLocked=value==="dev"&&window.__boundlessSpecialAccountRole!=="dev"&&sessionStorage.getItem("boundless-dev-mode")!=="1";
  root.dataset.view="content:"+value;
  const trigger=nativeTab(value,scope);
  root.hidden=true;root.style.display="none";root.setAttribute("aria-hidden","true");
@@ -76,6 +76,10 @@ function showContent(scope,root,value){
   for(const p of list){const active=p===target;p.hidden=!active;p.style.display=active?"block":"none";p.removeAttribute("inert");p.setAttribute("aria-hidden",active?"false":"true")}
   if(value==="game")delete target.dataset.bcSaveOnly;
   enhanceNativePanel(scope,value);
+  if(value==="dev"&&devLocked){
+   let lockNote=target.querySelector("[data-bc-dev-lock-note]");
+   if(!lockNote){lockNote=document.createElement("div");lockNote.dataset.bcDevLockNote="true";lockNote.className="bc-dev-lock-note";lockNote.style.cssText="margin:12px 0;padding:14px 16px;border:1px solid #8b7444;border-radius:12px;background:rgba(139,116,68,.12);color:inherit;line-height:1.5";const title=document.createElement("strong");title.textContent="DEV masih terkunci";const message=document.createElement("p");message.textContent="Panel ini kini boleh dibuka. Untuk menggunakan Editor Ranah, buka kunci DEV sedia ada dahulu. Editor Ranah akan muncul secara automatik selepas kunci aktif.";message.style.marginTop="6px";lockNote.append(title,message);target.insertBefore(lockNote,target.firstChild)}
+  }else if(value==="dev"){target.querySelector("[data-bc-dev-lock-note]")?.remove()}
   if(value==="dev"){
    window.dispatchEvent(new CustomEvent("boundless-open-dev"));
    window.__boundlessSyncDevRealm?.();
