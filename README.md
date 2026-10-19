@@ -29,6 +29,7 @@ The repository is maintained as the standalone Boundless project. **Boundless Cu
 
 - [Game systems](#game-systems)
 - [Character creation](#character-creation)
+- [Game modes and Server 1](#game-modes-and-server-1)
 - [Spiritual Root](#spiritual-root-and-reroll-rates)
 - [World maps](#world-maps)
 - [Inventory and item atlases](#inventory-and-item-atlases)
@@ -68,6 +69,32 @@ The face-selection interface is intended to present portraits in an album-style 
 ### True Love
 
 The game's stated rule is that **True Love is only available to characters aged 18 or older**. Partner and family/lineage outcomes depend on the character's relationship state and the applicable background rules.
+
+## Game modes and Server 1
+
+Character creation includes a game-mode selector intended to appear above the **Lembaran Takdir** form:
+
+- **Singleplayer** — choose a solo session.
+- **Multiplayer** — reveal the server selector.
+- **Server 1 · Gateway Dalam Talian** — join the shared online presence channel.
+
+The selector is implemented in `site/assets/v825-game-mode-selector.js`; the online presence gateway is implemented in `site/assets/v826-server1-gateway.js`. The entry point loads these modules from `site/index.html`.
+
+### Multiplayer scope
+
+Server 1 currently provides a shared **online presence** channel, including connection state and the list/count of players present. This does **not** by itself synchronize gameplay. Player movement, world changes, combat, inventory, quests, and other game actions require additional shared-state and server-authoritative logic before they can be considered fully multiplayer.
+
+### Character-creation layout troubleshooting
+
+If the old **Lembaran Takdir** card appears but the game-mode selector is missing or flashes and disappears:
+
+1. Hard-refresh the deployed site with `Ctrl+Shift+R`.
+2. Confirm the latest GitHub Pages deployment completed successfully.
+3. Check that `site/index.html` references the current version of `v825-game-mode-selector.js`.
+4. Inspect the browser console for JavaScript errors or hydration/rendering conflicts.
+5. Confirm that the game-mode selector appears above the original Lembaran Takdir card and remains visible after the page finishes loading.
+
+The selector should not replace or duplicate the original character-creation form.
 
 ## Spiritual Root and reroll rates
 
