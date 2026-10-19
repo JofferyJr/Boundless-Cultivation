@@ -15,8 +15,20 @@ function installStyle(){if(document.getElementById(STYLE_ID))return;const s=docu
 .bc-mode-option-copy{display:grid;gap:5px}
 .bc-mode-option-copy strong{font-size:.9rem;color:#f4e9d1}
 .bc-mode-option-copy small{font-size:.72rem;line-height:1.5;color:#9eafa1}
-.bc-mode-status{margin:12px 0 0;color:#d5bd7b;font-size:.72rem;line-height:1.5}
-@media(max-width:520px){.bc-mode-options{grid-template-columns:1fr}.bc-mode-choice{padding:14px}}
+.bc-mode-status{margin:8px 0 0;color:#d5bd7b;font-size:.68rem;line-height:1.4}
+/* Balanced proportions: compact mode picker, wider destiny sheet. */
+.bc-mode-choice{padding:12px;margin-bottom:12px;border-radius:13px}
+.bc-mode-eyebrow{margin-bottom:4px;font-size:.59rem;letter-spacing:.14em}
+.bc-mode-title{font-size:clamp(1.05rem,1.8vw,1.35rem)}
+.bc-mode-subtitle{margin:4px 0 9px;font-size:.74rem;line-height:1.4}
+.bc-mode-options{gap:8px}
+.bc-mode-option{gap:8px;padding:9px;border-radius:10px}
+.bc-mode-icon{width:29px;height:29px;border-radius:8px;font-size:.95rem}
+.bc-mode-option-copy{gap:3px}
+.bc-mode-option-copy strong{font-size:.82rem}
+.bc-mode-option-copy small{font-size:.66rem;line-height:1.35}
+@media(min-width:1024px){.bc-creation-shell{grid-template-columns:minmax(260px,.52fr) minmax(0,1.48fr)!important;column-gap:1.5rem!important}.bc-creation-shell>.dao-card{min-width:0}.bc-creation-shell>.bc-mode-choice{min-width:0}}
+@media(max-width:520px){.bc-mode-options{grid-template-columns:1fr}.bc-mode-choice{padding:11px}.bc-mode-option{padding:10px}}
 `;document.head.appendChild(s)}
 function mount(){const all=[...document.querySelectorAll("h2,h3,[data-slot='card-title']")];const heading=all.find(el=>(el.textContent||"").trim()==="Lembaran Takdir");if(!heading)return false;const card=heading.closest(".dao-card")||heading.closest("[data-slot='card']")||heading.parentElement?.parentElement;if(!card||!card.parentElement)return false;if(document.querySelector(".bc-mode-choice"))return true;installStyle();
 const box=document.createElement("section");box.className="bc-mode-choice";box.setAttribute("aria-labelledby","bc-mode-title");box.innerHTML='<p class="bc-mode-eyebrow">LANGKAH 01 · JENIS PERMAINAN</p><h2 class="bc-mode-title" id="bc-mode-title">Pilih Game Mode</h2><p class="bc-mode-subtitle">Pilih cara anda mahu memulakan perjalanan di Boundless.</p><div class="bc-mode-options"><button type="button" class="bc-mode-option" data-game-mode="singleplayer" aria-pressed="false"><span class="bc-mode-icon" aria-hidden="true">◈</span><span class="bc-mode-option-copy"><strong>Singleplayer</strong><small>Main sendiri pada sesi permainan ini.</small></span></button><button type="button" class="bc-mode-option" data-game-mode="multiplayer" aria-pressed="false"><span class="bc-mode-icon" aria-hidden="true">♧</span><span class="bc-mode-option-copy"><strong>Multiplayer</strong><small>Pilihan mod berbilang pemain; sambungan sesi masa nyata belum diaktifkan.</small></span></button></div><p class="bc-mode-status" aria-live="polite"></p>';
