@@ -456,6 +456,7 @@ import { MAX_SAVE_SLOTS } from "./v815-save-manager-core.mjs";
             flowType: "pkce"
           }
         });
+        window.__boundlessSupabaseClient = supabase;
         // Restore the existing Supabase session before showing the account state.
         const { data, error } = await supabase.auth.getSession();
         if (error) throw error;
@@ -469,6 +470,7 @@ import { MAX_SAVE_SLOTS } from "./v815-save-manager-core.mjs";
         }
         supabase.auth.onAuthStateChange((_event, session) => {
           currentUser = session?.user || null;
+          window.__boundlessSupabaseClient = supabase;
           renderAccount();
         });
       } catch (e) {
