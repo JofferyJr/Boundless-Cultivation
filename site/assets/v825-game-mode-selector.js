@@ -17,7 +17,7 @@ function installStyle(){if(document.getElementById(STYLE_ID))return;const s=docu
 .bc-mode-option-copy small{font-size:.72rem;line-height:1.5;color:#9eafa1}
 .bc-mode-status{margin:8px 0 0;color:#d5bd7b;font-size:.68rem;line-height:1.4}
 /* Balanced proportions: compact mode picker, wider destiny sheet. */
-.bc-mode-choice{padding:12px;margin-bottom:12px;border-radius:13px}
+.bc-creation-form-column{display:grid;grid-template-columns:minmax(0,1fr);align-content:start;min-width:0}.bc-mode-choice{padding:12px;margin-bottom:12px;border-radius:13px}
 .bc-mode-eyebrow{margin-bottom:4px;font-size:.59rem;letter-spacing:.14em}
 .bc-mode-title{font-size:clamp(1.05rem,1.8vw,1.35rem)}
 .bc-mode-subtitle{margin:4px 0 9px;font-size:.74rem;line-height:1.4}
@@ -32,7 +32,7 @@ function installStyle(){if(document.getElementById(STYLE_ID))return;const s=docu
 `;document.head.appendChild(s)}
 function mount(){const all=[...document.querySelectorAll("h2,h3,[data-slot='card-title']")];const heading=all.find(el=>(el.textContent||"").trim()==="Lembaran Takdir");if(!heading)return false;const card=heading.closest(".dao-card")||heading.closest("[data-slot='card']")||heading.parentElement?.parentElement;if(!card||!card.parentElement)return false;if(document.querySelector(".bc-mode-choice"))return true;installStyle();
 const box=document.createElement("section");box.className="bc-mode-choice";box.setAttribute("aria-labelledby","bc-mode-title");box.innerHTML='<p class="bc-mode-eyebrow">LANGKAH 01 · JENIS PERMAINAN</p><h2 class="bc-mode-title" id="bc-mode-title">Pilih Game Mode</h2><p class="bc-mode-subtitle">Pilih cara anda mahu memulakan perjalanan di Boundless.</p><div class="bc-mode-options"><button type="button" class="bc-mode-option" data-game-mode="singleplayer" aria-pressed="false"><span class="bc-mode-icon" aria-hidden="true">◈</span><span class="bc-mode-option-copy"><strong>Singleplayer</strong><small>Main sendiri pada sesi permainan ini.</small></span></button><button type="button" class="bc-mode-option" data-game-mode="multiplayer" aria-pressed="false"><span class="bc-mode-icon" aria-hidden="true">♧</span><span class="bc-mode-option-copy"><strong>Multiplayer</strong><small>Pilihan mod berbilang pemain; sambungan sesi masa nyata belum diaktifkan.</small></span></button></div><p class="bc-mode-status" aria-live="polite"></p>';
-card.parentElement.insertBefore(box,card);
+card.parentElement.insertBefore(box,card);const column=document.createElement("div");column.className="bc-creation-form-column";card.parentElement.insertBefore(column,box);column.append(box,card);
 const buttons=[...box.querySelectorAll("[data-game-mode]")],status=box.querySelector(".bc-mode-status");
 let current="singleplayer";try{const saved=localStorage.getItem(KEY);if(saved==="singleplayer"||saved==="multiplayer")current=saved}catch(_){}
 function choose(mode){current=mode;try{localStorage.setItem(KEY,mode)}catch(_){}box.dataset.gameMode=mode;buttons.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.gameMode===mode)));status.textContent=mode==="singleplayer"?"Dipilih: Singleplayer. Pilihan disimpan pada peranti ini.":"Dipilih: Multiplayer. Pilihan disimpan, tetapi permainan dalam talian masa nyata belum tersedia.";window.__boundlessGameMode=mode;window.dispatchEvent(new CustomEvent("boundless-game-mode-change",{detail:{mode}}))}
