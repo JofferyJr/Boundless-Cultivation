@@ -74,15 +74,26 @@ The game's stated rule is that **True Love is only available to characters aged 
 
 Character creation includes a game-mode selector intended to appear above the **Lembaran Takdir** form:
 
-- **Singleplayer** — choose a solo session.
-- **Multiplayer** — reveal the server selector.
-- **Server 1 · Gateway Dalam Talian** — join the shared online presence channel.
+- **Singleplayer** — play a solo session.
+- **Multiplayer** — choose Server 1 and sign in to join its authenticated online room.
 
-The selector is implemented in `site/assets/v825-game-mode-selector.js`; the online presence gateway is implemented in `site/assets/v826-server1-gateway.js`. The entry point loads these modules from `site/index.html`.
+### Current multiplayer features
 
-### Multiplayer scope
+The online layer is implemented in `site/assets/v826-server1-gateway.js` and `site/assets/v828-multiplayer-social.js`, with Supabase tables and RPC functions:
 
-Server 1 currently provides a shared **online presence** channel, including connection state and the list/count of players present. This does **not** by itself synchronize gameplay. Player movement, world changes, combat, inventory, quests, and other game actions require additional shared-state and server-authoritative logic before they can be considered fully multiplayer.
+- Authenticated online presence and a list of currently connected characters.
+- Public player profile summaries (character name, age, gender, realm, stage and region).
+- Shared Server 1 chat stored in the database and updated in real time.
+- Family-tree links based on the first word of the character name, which is treated as the family surname. When a different account registers a character with an existing surname, the server has a **35% chance** to link it to an existing family group. The generated relationship may be sibling, cousin, aunt/uncle, or niece/nephew. Matching surnames alone do not guarantee kinship.
+- Challenge requests with accept/decline state.
+- Trade offers with accept/decline state.
+- A position-update API through `window.__boundlessMultiplayer.moveTo({region, x, y})` and the `boundless-world-position` event.
+
+### Multiplayer limitations that remain
+
+This is a functional online social foundation, **not yet a fully synchronized MMO**. Challenge acceptance does not resolve combat or synchronize health/skills. Trade offers do not transfer inventory items. The main world-map movement UI has not yet been wired to the position-update API, and there is no authoritative combat simulation. These systems need integration with the existing game state and inventory before they can be described as complete multiplayer gameplay.
+
+Multiplayer social features require a logged-in Supabase account. The current family profile is one active character per account; separate save-slot character profiles are not yet mapped to separate multiplayer identities.
 
 ### Character-creation layout troubleshooting
 
