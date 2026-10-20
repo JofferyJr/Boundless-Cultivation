@@ -72,6 +72,8 @@
       document.body.appendChild(card);
     }
     const state = readState();
+    card.dataset.habitat = habitat;
+    card.style.display = "";
     card.innerHTML =
       '<div class="bcid-head"><strong>🐾 Binatang Roh di Kawasan Ini</strong><button class="bcid-close" type="button" aria-label="Tutup">×</button></div>' +
       '<img class="bcid-art" src="' + IMAGE + '" alt="冰魄灵鹿仙君 — Rusa Roh Jiwa Ais" loading="lazy">' +
@@ -83,7 +85,7 @@
       '<div><b>Keadaan:</b> ' + (state.lastObservedDay === (Number(readSave()?.day) || 1) ? 'Sedang diperhatikan' : 'Kelihatan di kawasan ini') + '</div>' +
       '<div class="bcid-actions"><button type="button" data-observe>Perhatikan</button><button type="button" data-record>' + (state.recorded ? '✓ Dicatat dalam Bestiary' : 'Catat Bestiary') + '</button></div>' +
       '<div class="bcid-note" data-note>' + (state.recorded ? 'Rekod penemuan disimpan pada peranti ini.' : 'Ia boleh diperhatikan apabila watak berada di habitatnya.') + '</div></div>';
-    card.querySelector(".bcid-close").addEventListener("click", () => card.remove());
+    card.querySelector(".bcid-close").addEventListener("click", () => { card.style.display = "none"; });
     card.querySelector("[data-observe]").addEventListener("click", () => {
       const s = readState();
       s.sightings = (Number(s.sightings) || 0) + 1;
@@ -114,7 +116,7 @@
       card?.remove();
       return;
     }
-    if (!card) render(habitat, currentLocation(save));
+    if (!card || card.dataset.habitat !== habitat) render(habitat, currentLocation(save));
   }
   function boot() {
     update();
