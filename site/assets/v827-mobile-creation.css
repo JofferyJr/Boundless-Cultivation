@@ -1,0 +1,92 @@
+/* Boundless mobile character-creation layout — touch-first, single-column, no clipped controls. */
+@media (max-width: 760px) {
+  html, body { width:100%; min-width:0; max-width:100%; overflow-x:hidden; }
+  body { margin:0; }
+  .bc-character-creation {
+    min-height:100svh;
+    height:auto;
+    overflow-x:clip !important;
+    overflow-y:visible !important;
+  }
+  .bc-creation-header {
+    box-sizing:border-box;
+    width:100%;
+    max-width:none;
+    padding:12px 14px !important;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .bc-creation-header > div:first-child { min-width:0; flex:1 1 180px; }
+  .bc-creation-header > div:last-child { gap:6px; flex-wrap:wrap; }
+  .bc-creation-header [data-slot="sheet-trigger"] { min-height:42px; padding-inline:11px; }
+  .bc-creation-shell {
+    box-sizing:border-box;
+    display:flex !important;
+    flex-direction:column;
+    gap:14px !important;
+    width:100%;
+    max-width:none;
+    padding:8px 12px 28px !important;
+    margin:0 auto;
+  }
+  /* Put the mode selector and the actual creation form before decorative intro content. */
+  .bc-creation-shell > .bc-mode-choice { order:0; width:100%; box-sizing:border-box; }
+  .bc-creation-shell > .dao-card { order:1; width:100%; min-width:0; box-sizing:border-box; }
+  .bc-creation-shell > div:first-child { order:2; width:100%; min-width:0; }
+  .bc-creation-shell > div:first-child > .dao-card { margin-top:12px !important; }
+  .bc-creation-shell > div:first-child > p.eyebrow { margin-top:4px; }
+  .bc-creation-shell h1 { margin-top:8px !important; font-size:clamp(1.8rem,8vw,2.65rem) !important; line-height:1.08 !important; }
+  .bc-creation-shell > div:first-child > p:not(.eyebrow) { margin-top:10px !important; line-height:1.6; }
+  .bc-creation-shell > .dao-card { gap:0 !important; padding-top:0 !important; padding-bottom:0 !important; }
+  .bc-creation-shell > .dao-card > [data-slot="card-header"] { padding:16px 15px !important; }
+  .bc-creation-shell > .dao-card > [data-slot="card-content"] { padding:14px !important; }
+  .bc-creation-shell > .dao-card [data-slot="card-title"] { font-size:1.35rem !important; line-height:1.25; }
+  .bc-creation-shell > .dao-card [data-slot="card-content"] { min-width:0; }
+  .bc-creation-shell > .dao-card .space-y-8 { --mobile-section-gap: 1.1rem; }
+  .bc-creation-shell .grid { min-width:0; }
+  .bc-creation-shell .grid.gap-5,
+  .bc-creation-shell .grid.sm\:grid-cols-2 { grid-template-columns:minmax(0,1fr) !important; }
+  .bc-creation-shell input:not([type="checkbox"]):not([type="radio"]),
+  .bc-creation-shell select,
+  .bc-creation-shell button[role="combobox"],
+  .bc-creation-shell textarea {
+    box-sizing:border-box;
+    max-width:100%;
+    min-height:44px;
+    font-size:16px !important;
+  }
+  .bc-creation-shell label { line-height:1.4; }
+  .bc-creation-shell button { touch-action:manipulation; }
+  .bc-creation-shell button[data-slot="button"] { min-height:48px; white-space:normal; line-height:1.35; }
+  .player-portrait-picker,
+  .player-portrait-layout,
+  .player-age-control,
+  .player-portrait-options { min-width:0; max-width:100%; }
+  .player-portrait-heading { display:flex; flex-direction:column; align-items:flex-start; gap:10px; }
+  .player-portrait-layout { display:flex !important; flex-direction:column; gap:14px !important; }
+  .player-age-control { width:100%; box-sizing:border-box; padding:12px !important; }
+  .player-portrait-options { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:9px !important; }
+  .player-portrait-option { min-width:0; width:100%; box-sizing:border-box; padding:8px !important; }
+  .player-portrait-option b { overflow-wrap:anywhere; font-size:.82rem; }
+  .player-portrait-option small { font-size:.68rem; line-height:1.35; overflow-wrap:anywhere; }
+  .player-portrait-art { width:100%; max-width:100%; }
+  .player-portrait-art img { max-width:100%; }
+  .bc-mode-choice { padding:13px !important; margin:0 !important; }
+  .bc-mode-options { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
+  .bc-mode-option { min-width:0; min-height:76px; padding:10px !important; }
+  .bc-mode-option-copy { min-width:0; }
+  .bc-mode-option-copy strong { font-size:.8rem !important; }
+  .bc-mode-option-copy small { font-size:.68rem !important; overflow-wrap:anywhere; }
+  .bc-server-picker { min-width:0; box-sizing:border-box; }
+  .bc-server1-live { overflow-wrap:anywhere; }
+  .bc-creation-shell .overflow-x-auto { max-width:100%; }
+}
+@media (max-width: 380px) {
+  .bc-creation-header { padding-inline:10px !important; }
+  .bc-creation-shell { padding-inline:8px !important; }
+  .bc-creation-shell > .dao-card > [data-slot="card-content"] { padding:11px !important; }
+  .bc-mode-options { grid-template-columns:minmax(0,1fr) !important; }
+  .player-portrait-options { gap:7px !important; }
+  .player-portrait-option { padding:6px !important; }
+}
