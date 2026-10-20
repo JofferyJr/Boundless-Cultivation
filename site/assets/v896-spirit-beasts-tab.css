@@ -1,0 +1,20 @@
+/* Boundless v8.9.6 — main-game Haiwan Roh tab */
+.spirit-beast-toolbar{margin:0 0 1rem;padding:clamp(1rem,2.5vw,1.5rem);border:1px solid #4b614f;border-radius:16px;background:radial-gradient(ellipse at 100% 0%,rgba(174,139,67,.12),transparent 48%),linear-gradient(135deg,#101f18,#0b1511);color:#f4ead1}
+.spirit-beast-toolbar-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.spirit-beast-kicker{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:#d6b467}
+.spirit-beast-toolbar h2{margin:.35rem 0 0;font:600 clamp(1.25rem,2.8vw,1.75rem)/1.25 Georgia,serif;color:#f4ead1}
+.spirit-beast-toolbar p{margin:.45rem 0 0;max-width:52rem;font-size:.83rem;line-height:1.6;color:#a9b9ad}
+.spirit-beast-count{display:flex;min-width:6.2rem;flex-direction:column;align-items:center;justify-content:center;padding:.7rem .9rem;border:1px solid #655333;border-radius:12px;background:#19190f}
+.spirit-beast-count strong{font-size:1.55rem;line-height:1.2;color:#e3c477;font-variant-numeric:tabular-nums}
+.spirit-beast-count span{margin-top:.2rem;font-size:.68rem;color:#b8b29b;text-align:center}
+.spirit-beast-controls{display:grid;grid-template-columns:minmax(12rem,2fr) minmax(9rem,1fr) minmax(9rem,1fr) auto;align-items:end;gap:.65rem;margin-top:1rem}
+.spirit-beast-controls label{display:flex;min-width:0;flex-direction:column;gap:.35rem}
+.spirit-beast-controls label>span{font-size:.7rem;color:#b7c5b9}
+.spirit-beast-controls input,.spirit-beast-controls select{width:100%;min-height:42px;border:1px solid #3b5949;border-radius:9px;padding:.55rem .7rem;background:#09130f;color:#f4ead1;font:inherit;font-size:.82rem;outline-offset:2px}
+.spirit-beast-controls input:focus,.spirit-beast-controls select:focus{outline:2px solid #c7a65c}
+.spirit-beast-controls button{min-height:42px;padding:.55rem .85rem;border:1px solid #685832;border-radius:9px;background:#201d12;color:#e6d4a2;font-size:.8rem;cursor:pointer}
+.spirit-beast-controls button:hover{background:#302817}
+.spirit-beast-results{margin:.75rem 0 0!important;font-size:.75rem!important;color:#92a99a!important}
+.contracted-beast[hidden]{display:none!important}
+@media(max-width:760px){.spirit-beast-controls{grid-template-columns:1fr 1fr}.spirit-beast-search{grid-column:1/-1}.spirit-beast-controls button{width:100%}.spirit-beast-toolbar-heading{align-items:center}}
+@media(max-width:420px){.spirit-beast-controls{grid-template-columns:1fr}.spirit-beast-search{grid-column:auto}.spirit-beast-count{min-width:5.3rem;padding:.55rem}.spirit-beast-toolbar-heading{gap:.5rem}}
