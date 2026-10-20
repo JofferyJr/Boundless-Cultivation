@@ -12,7 +12,8 @@
   function readConfig() { try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || "null") || {}; } catch (_) { return {}; } }
   function currentBeast() { return Object.assign({}, BEAST, readConfig()); }
   function currentHabitats() { const h = readConfig().habitats; return Array.isArray(h) ? h : HABITATS; }
-  const IMAGE = "/Boundless-Cultivation/game-assets/beasts/" + encodeURIComponent("冰魄灵鹿仙君_Beast.webp");
+  const BEAST_ASSET_BASE = "/Boundless-Cultivation/game-assets/beasts/" + encodeURIComponent("冰魄灵鹿仙君_Beast") + "/";
+  const IMAGES = { baby: BEAST_ASSET_BASE + "baby.webp", adolescent: BEAST_ASSET_BASE + "adolescent.webp", adult: BEAST_ASSET_BASE + "adult.webp" };
   const HABITATS = ["Dataran Beiming", "Puncak Xuefeng", "Gunung Tianbing", "Pulau Xuanshuang"];
   const BEAST = {
     id: "ice-soul-spirit-deer",
@@ -91,9 +92,9 @@
     card.innerHTML =
       '<div class="bcid-head"><strong>🐾 Binatang Roh di Kawasan Ini</strong><button class="bcid-close" type="button" aria-label="Tutup">×</button></div>' +
       '<div class="bcid-herd" role="group" aria-label="Tiga peringkat Rusa Roh Jiwa Ais">' +
-      '<div class="bcid-deer-crop young"><img src="' + IMAGE + '" alt="Rusa Roh Jiwa Ais muda di hadapan" loading="lazy"><span>Muda · Depan</span></div>' +
-      '<div class="bcid-deer-crop middle"><img src="' + IMAGE + '" alt="Rusa Roh Jiwa Ais remaja di tengah" loading="lazy"><span>Remaja · Tengah</span></div>' +
-      '<div class="bcid-deer-crop mature"><img src="' + IMAGE + '" alt="Rusa Roh Jiwa Ais dewasa di belakang" loading="lazy"><span>Dewasa · Belakang</span></div>' +
+      '<div class="bcid-deer-crop young"><img src="' + IMAGES.baby + '" alt="冰魄灵鹿仙君 peringkat bayi" loading="lazy"><span>Bayi · 幼年</span></div>' +
+      '<div class="bcid-deer-crop middle"><img src="' + IMAGES.adolescent + '" alt="冰魄灵鹿仙君 peringkat remaja" loading="lazy"><span>Remaja · 少年</span></div>' +
+      '<div class="bcid-deer-crop mature"><img src="' + IMAGES.adult + '" alt="冰魄灵鹿仙君 peringkat dewasa" loading="lazy"><span>Dewasa · 成年</span></div>' +
       '</div>' +
       '<div class="bcid-body"><div class="bcid-name">' + esc(beast.name) + '</div>' +
       '<div class="bcid-sub">' + esc(beast.localName) + '</div>' +
