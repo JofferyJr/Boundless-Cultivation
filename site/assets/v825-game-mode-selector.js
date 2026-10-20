@@ -35,7 +35,7 @@ const box=document.createElement("section");box.className="bc-mode-choice";box.s
 card.parentElement.insertBefore(box,card);
 const buttons=[...box.querySelectorAll("[data-game-mode]")],status=box.querySelector(".bc-mode-status");
 let current="singleplayer";try{const saved=localStorage.getItem(KEY);if(saved==="singleplayer"||saved==="multiplayer")current=saved}catch(_){}
-function choose(mode){current=mode;try{localStorage.setItem(KEY,mode)}catch(_){}box.dataset.gameMode=mode;buttons.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.gameMode===mode)));status.textContent=mode==="singleplayer"?"Dipilih: Singleplayer. Pilihan disimpan pada peranti ini.":"Dipilih: Multiplayer. Pilih Server 1 untuk masuk ke gerbang dalam talian.";window.__boundlessGameMode=mode;window.dispatchEvent(new CustomEvent("boundless-game-mode-change",{detail:{mode}}));}
+function choose(mode){current=mode;try{localStorage.setItem(KEY,mode)}catch(_){}box.dataset.gameMode=mode;buttons.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.gameMode===mode)));status.textContent=mode==="singleplayer"?"Dipilih: Singleplayer. Pilihan disimpan pada peranti ini.":"Dipilih: Multiplayer. Tab Multiplayer akan tersedia di dalam dunia permainan.";window.__boundlessGameMode=mode;window.dispatchEvent(new CustomEvent("boundless-game-mode-change",{detail:{mode}}));}
 buttons.forEach(b=>b.addEventListener("click",()=>choose(b.dataset.gameMode)));choose(current);document.documentElement.classList.add("bc-layout-ready");return true}
 function boot(){
   let queued=false;
