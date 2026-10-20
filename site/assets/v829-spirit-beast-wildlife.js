@@ -49,7 +49,16 @@
       #bc-ice-deer-card .bcid-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid #31545a}
       #bc-ice-deer-card .bcid-head strong{font-size:14px;color:#d6f4f4}
       #bc-ice-deer-card .bcid-close{border:1px solid #45656a;border-radius:8px;background:#122326;color:#e8f6f5;padding:2px 9px;cursor:pointer}
-      #bc-ice-deer-card .bcid-art{display:block;width:100%;height:210px;object-fit:contain;background:radial-gradient(ellipse,#d8f3f41a,transparent 70%);padding:6px}
+      #bc-ice-deer-card .bcid-herd{display:flex;align-items:flex-end;justify-content:center;gap:7px;padding:12px 12px 8px;min-height:150px;background:radial-gradient(ellipse,#d8f3f41a,transparent 72%)}
+      #bc-ice-deer-card .bcid-deer-crop{display:block;flex:1;min-width:0;overflow:hidden;border-radius:8px;background:#d8f3f408;position:relative}
+      #bc-ice-deer-card .bcid-deer-crop img{display:block;width:100%;height:100%;object-fit:cover;padding:3px}
+      #bc-ice-deer-card .bcid-deer-crop.young{height:76px;max-width:76px}
+      #bc-ice-deer-card .bcid-deer-crop.young img{object-position:50% 90%;transform:scale(.76)}
+      #bc-ice-deer-card .bcid-deer-crop.middle{height:105px;max-width:92px}
+      #bc-ice-deer-card .bcid-deer-crop.middle img{object-position:50% 55%;transform:scale(.9)}
+      #bc-ice-deer-card .bcid-deer-crop.mature{height:128px;max-width:110px}
+      #bc-ice-deer-card .bcid-deer-crop.mature img{object-position:50% 35%}
+      #bc-ice-deer-card .bcid-deer-crop span{position:absolute;left:4px;right:4px;bottom:3px;text-align:center;font-size:10px;color:#d6f4f4;text-shadow:0 1px 3px #000;background:#081416a8;border-radius:5px;padding:1px 2px}
       #bc-ice-deer-card .bcid-body{padding:0 13px 13px}
       #bc-ice-deer-card .bcid-name{font-size:18px;font-weight:750;color:#e5f7f7}
       #bc-ice-deer-card .bcid-sub{color:#a9d5dc;margin-bottom:7px}
@@ -58,7 +67,7 @@
       #bc-ice-deer-card .bcid-actions button{flex:1;border:1px solid #659da5;border-radius:8px;padding:8px 9px;background:#183337;color:#eafafa;cursor:pointer;font-weight:650}
       #bc-ice-deer-card .bcid-actions button:hover{background:#24464b}
       #bc-ice-deer-card .bcid-note{color:#b4d3d6;font-size:11px;margin-top:8px}
-      @media(max-width:480px){#bc-ice-deer-card{left:8px;bottom:8px;width:calc(100vw - 16px)}#bc-ice-deer-card .bcid-art{height:165px}}
+      @media(max-width:480px){#bc-ice-deer-card{left:8px;bottom:8px;width:calc(100vw - 16px)}#bc-ice-deer-card .bcid-herd{min-height:124px;padding:8px}#bc-ice-deer-card .bcid-deer-crop.young{height:62px}#bc-ice-deer-card .bcid-deer-crop.middle{height:84px}#bc-ice-deer-card .bcid-deer-crop.mature{height:104px}}
     `;
     document.head.appendChild(style);
   }
@@ -76,7 +85,11 @@
     card.style.display = "";
     card.innerHTML =
       '<div class="bcid-head"><strong>🐾 Binatang Roh di Kawasan Ini</strong><button class="bcid-close" type="button" aria-label="Tutup">×</button></div>' +
-      '<img class="bcid-art" src="' + IMAGE + '" alt="冰魄灵鹿仙君 — Rusa Roh Jiwa Ais" loading="lazy">' +
+      '<div class="bcid-herd" role="group" aria-label="Tiga peringkat Rusa Roh Jiwa Ais">' +
+      '<div class="bcid-deer-crop young"><img src="' + IMAGE + '" alt="Rusa Roh Jiwa Ais muda di hadapan" loading="lazy"><span>Muda · Depan</span></div>' +
+      '<div class="bcid-deer-crop middle"><img src="' + IMAGE + '" alt="Rusa Roh Jiwa Ais remaja di tengah" loading="lazy"><span>Remaja · Tengah</span></div>' +
+      '<div class="bcid-deer-crop mature"><img src="' + IMAGE + '" alt="Rusa Roh Jiwa Ais dewasa di belakang" loading="lazy"><span>Dewasa · Belakang</span></div>' +
+      '</div>' +
       '<div class="bcid-body"><div class="bcid-name">' + esc(BEAST.name) + '</div>' +
       '<div class="bcid-sub">' + esc(BEAST.localName) + '</div>' +
       '<span class="bcid-tag">' + esc(BEAST.type) + '</span><span class="bcid-tag">' + esc(BEAST.rarity) + '</span>' +
