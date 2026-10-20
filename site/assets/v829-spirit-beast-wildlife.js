@@ -8,6 +8,10 @@
 
   const SAVE_KEY = "boundless-save";
   const STATE_KEY = "boundless-spirit-deer-v1";
+  const CONFIG_KEY = "boundless-spirit-beast-config-v1";
+  function readConfig() { try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || "null") || {}; } catch (_) { return {}; } }
+  function currentBeast() { return Object.assign({}, BEAST, readConfig()); }
+  function currentHabitats() { const h = readConfig().habitats; return Array.isArray(h) ? h : HABITATS; }
   const IMAGE = "/Boundless-Cultivation/game-assets/beasts/" + encodeURIComponent("冰魄灵鹿仙君_Beast.webp");
   const HABITATS = ["Dataran Beiming", "Puncak Xuefeng", "Gunung Tianbing", "Pulau Xuanshuang"];
   const BEAST = {
@@ -37,7 +41,7 @@
     return String(save.location || save.region || save.currentRegion || save.currentLocation || "");
   }
   function findHabitat(location) {
-    return HABITATS.find(name => location === name || location.includes(name)) || "";
+    return currentHabitats().find(name => location === name || location.includes(name)) || "";
   }
   function ensureStyle() {
     if (document.getElementById("bc-ice-deer-style")) return;
@@ -81,8 +85,9 @@
       document.body.appendChild(card);
     }
     const state = readState();
+    const beast = currentBeast();
     card.dataset.habitat = habitat;
-    card.style.display = "";
+    card.style.display = currentBeast().enabled === false ? "none" : "";
     card.innerHTML =
       '<div class="bcid-head"><strong>🐾 Binatang Roh di Kawasan Ini</strong><button class="bcid-close" type="button" aria-label="Tutup">×</button></div>' +
       '<div class="bcid-herd" role="group" aria-label="Tiga peringkat Rusa Roh Jiwa Ais">' +
@@ -90,14 +95,17 @@
       '<div class="bcid-deer-crop middle"><img src="' + IMAGE + '" alt="Rusa Roh Jiwa Ais remaja di tengah" loading="lazy"><span>Remaja · Tengah</span></div>' +
       '<div class="bcid-deer-crop mature"><img src="' + IMAGE + '" alt="Rusa Roh Jiwa Ais dewasa di belakang" loading="lazy"><span>Dewasa · Belakang</span></div>' +
       '</div>' +
-      '<div class="bcid-body"><div class="bcid-name">' + esc(BEAST.name) + '</div>' +
-      '<div class="bcid-sub">' + esc(BEAST.localName) + '</div>' +
-      '<span class="bcid-tag">' + esc(BEAST.type) + '</span><span class="bcid-tag">' + esc(BEAST.rarity) + '</span>' +
-      '<p>' + esc(BEAST.description) + '</p>' +
+      '<div class="bcid-body"><div class="bcid-name">' + esc(beast.name) + '</div>' +
+      '<div class="bcid-sub">' + esc(beast.localName) + '</div>' +
+      '<span class="bcid-tag">' + esc(beast.type) + '</span><span class="bcid-tag">' + esc(beast.rarity) + '</span>' +
+      '<p>' + esc(beast.description) + '</p>' +
       '<div><b>Habitat:</b> ' + esc(habitat) + '</div>' +
       '<div><b>Keadaan:</b> ' + (state.lastObservedDay === (Number(readSave()?.day) || 1) ? 'Sedang diperhatikan' : 'Kelihatan di kawasan ini') + '</div>' +
       '<div class="bcid-actions"><button type="button" data-observe>Perhatikan</button><button type="button" data-record>' + (state.recorded ? '✓ Dicatat dalam Bestiary' : 'Catat Bestiary') + '</button></div>' +
       '<div class="bcid-note" data-note>' + (state.recorded ? 'Rekod penemuan disimpan pada peranti ini.' : 'Ia boleh diperhatikan apabila watak berada di habitatnya.') + '</div></div>';
+    const cfg = readConfig();
+    const crops = card.querySelectorAll(".bcid-deer-crop img");
+    [cfg.youngPosition ?? 90, cfg.middlePosition ?? 55, cfg.maturePosition ?? 35].forEach((pos, i) => { if (crops[i]) crops[i].style.objectPosition = "50% " + Math.max(0, Math.min(100, Number(pos) || 0)) + "%"; });
     card.querySelector(".bcid-close").addEventListener("click", () => { card.style.display = "none"; });
     card.querySelector("[data-observe]").addEventListener("click", () => {
       const s = readState();
@@ -125,7 +133,7 @@
     const save = readSave();
     const habitat = findHabitat(currentLocation(save));
     const card = document.getElementById("bc-ice-deer-card");
-    if (!save || !habitat) {
+    if (!save || !habitat || currentBeast().enabled === false) {
       card?.remove();
       return;
     }
@@ -134,13 +142,14 @@
   function boot() {
     update();
     window.addEventListener("storage", update);
+    window.addEventListener("boundless-spirit-beast-config-updated", () => { const card = document.getElementById("bc-ice-deer-card"); if (card) card.remove(); update(); });
     const observer = new MutationObserver(() => update());
     observer.observe(document.documentElement, { childList: true, subtree: true });
     window.setInterval(update, 1800);
     window.BoundlessSpiritBeasts = {
       version: "8.9.4",
-      list: () => [Object.assign({}, BEAST)],
-      habitats: () => HABITATS.slice(),
+      list: () => [Object.assign({}, currentBeast())],
+      habitats: () => currentHabitats().slice(),
       getState: readState
     };
   }
