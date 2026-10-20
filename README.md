@@ -79,7 +79,7 @@ Character creation includes a game-mode selector intended to appear above the **
 
 ### Current multiplayer features
 
-The online layer is implemented in `site/assets/v826-server1-gateway.js` and `site/assets/v828-multiplayer-social.js`, with Supabase tables and RPC functions:
+The online layer is implemented in `site/assets/v826-server1-gateway.js` and `site/assets/v828-multiplayer-social.js`, with Supabase tables and RPC functions. Its floating **Multiplayer · Server 1** launcher appears in the in-game world-map view; it is not part of character creation:
 
 - Authenticated online presence and a list of currently connected characters.
 - Public player profile summaries (character name, age, gender, realm, stage and region).
