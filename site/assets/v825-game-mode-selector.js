@@ -39,6 +39,33 @@ const buttons=[...box.querySelectorAll("[data-game-mode]")],status=box.querySele
 let current="singleplayer";try{const saved=localStorage.getItem(KEY);if(saved==="singleplayer"||saved==="multiplayer")current=saved}catch(_){}
 function choose(mode){current=mode;try{localStorage.setItem(KEY,mode)}catch(_){}box.dataset.gameMode=mode;buttons.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.gameMode===mode)));serverPanel.hidden=mode!=="multiplayer";status.textContent=mode==="singleplayer"?"Dipilih: Singleplayer. Pilihan disimpan pada peranti ini.":"Dipilih: Multiplayer. Pilih Server 1 untuk masuk ke gerbang dalam talian.";if(mode==="singleplayer")window.__boundlessServer1Gateway?.leave();window.__boundlessGameMode=mode;window.dispatchEvent(new CustomEvent("boundless-game-mode-change",{detail:{mode}}));if(mode==="multiplayer"&&serverSelect?.value==="server-1")window.__boundlessServer1Gateway?.connect()}
 buttons.forEach(b=>b.addEventListener("click",()=>choose(b.dataset.gameMode)));const serverSelect=serverPanel.querySelector("#bc-server-select"),serverNote=serverPanel.querySelector(".bc-server-empty");try{serverSelect.value=localStorage.getItem("boundless-selected-server")||""}catch(_){}serverSelect.addEventListener("change",()=>{try{localStorage.setItem("boundless-selected-server",serverSelect.value)}catch(_){}if(serverSelect.value==="server-1"){serverNote.textContent="Menyambung ke Server 1…";window.dispatchEvent(new CustomEvent("boundless-server-selected",{detail:{serverId:"server-1"}}));window.__boundlessServer1Gateway?.connect()}else{serverNote.textContent="Pilih Server 1 untuk menyertai ruang dalam talian bersama pemain lain.";window.__boundlessServer1Gateway?.leave()}});choose(current);document.documentElement.classList.add("bc-layout-ready");return true}
-function boot(){if(mount())return;const observer=new MutationObserver(()=>{if(mount())observer.disconnect()});observer.observe(document.documentElement,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),20000)}
+function boot(){
+  let queued=false;
+  const ensure=()=>{
+    queued=false;
+    const heading=[...document.querySelectorAll("h2,h3,[data-slot='card-title']")].find(el=>(el.textContent||"").trim()==="Lembaran Takdir");
+    if(!heading)return;
+    const card=heading.closest(".dao-card")||heading.closest("[data-slot='card']")||heading.parentElement?.parentElement;
+    if(!card||!card.parentElement)return;
+    const existing=document.querySelector(".bc-mode-choice");
+    if(existing){
+      if(existing.parentElement!==card.parentElement||existing.nextElementSibling!==card){
+        card.parentElement.insertBefore(existing,card);
+      }
+      document.documentElement.classList.add("bc-layout-ready");
+      return;
+    }
+    mount();
+  };
+  const observer=new MutationObserver(()=>{
+    if(queued)return;
+    queued=true;
+    queueMicrotask(ensure);
+  });
+  observer.observe(document.documentElement,{childList:true,subtree:true});
+  ensure();
+  /* React hydration can replace server-rendered nodes after first mount. Keep
+     observing for the page lifetime so the selector is restored, not lost. */
+}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
 })();
