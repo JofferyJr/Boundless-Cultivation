@@ -17,6 +17,8 @@
 - `boundless_multiplayer_chat`: persistent Server 1 chat messages.
 - `boundless_multiplayer_challenges`: challenge requests with pending/accepted/declined/cancelled states.
 - `boundless_multiplayer_trade_offers`: inventory-backed trade offers with item IDs, item category, quantity, optional offered currency and optional requested currency.
+- `boundless_sects` and `boundless_sect_members`: Server 1 sects and membership; one account can join one sect at a time.
+- `boundless_pvp_battles`: persistent server-authoritative PvP battle state, turn ownership, HP, winner and action log.
 
 RLS is enabled on multiplayer and Server 1 clock/session tables. Profile/chat reads are available to authenticated players; challenge and trade records are visible only to participants. Character registration, chat insertion, position updates, Server 1 heartbeat and disconnect go through RPC functions that require `auth.uid()`. Anonymous/public execution of the Server 1 RPCs is revoked, and clients cannot directly mutate session leases.
 
@@ -43,6 +45,15 @@ Challenge acceptance remains a request state only; it does not execute combat. T
 7. Register characters with the same surname on new accounts repeatedly to observe the probabilistic family grouping. A single attempt may create a separate family by design.
 8. Check the browser console and Supabase Realtime/database logs for errors.
 
+## Sect and PvP behavior
+
+- The Multiplayer UI adds **Sekte** and **Pertarungan** tabs without replacing the existing player, chat, family, trade or challenge tabs.
+- Sect operations are authenticated RPCs: `boundless_sect_create`, `boundless_sect_join`, and `boundless_sect_leave`. The database enforces one membership per account and promotes another member to leader when the current leader leaves; an empty sect is disbanded.
+- Accepting a challenge calls `boundless_server1_challenge_accept` and creates a persistent battle with both players at 100 HP. The challenger takes the first turn.
+- Each turn is validated server-side by `boundless_server1_battle_action`. Actions are normal attack, heavy attack (with a miss chance), special technique (variable damage), or guard (reduces the opponent's next attack). The server enforces participant identity, turn order, valid actions and terminal victory state; clients cannot directly write battle rows.
+- Battle HP, turn, winner and action log are stored in Supabase. Realtime listeners refresh battles and sect lists when the tables change.
+- Combat is currently a **turn-based PvP foundation**, not yet connected to the main game's full cultivation-derived stats, equipment, skills, consumable items, sect wars, NPC AI or ranked rewards. Those integrations need separate work before describing it as the complete Boundless combat system.
+
 ## Real trade transaction behavior
 
 - The browser builds the item selector from the active local save (`boundless-save`), including all entries in `inventory` and `spiritBeasts`. The server does not trust the displayed item name: acceptance rechecks the item ID and quantity in the sender's cloud save.
@@ -61,6 +72,9 @@ Challenge acceptance remains a request state only; it does not execute combat. T
 
 ## Verification status
 
-- Shared-world clock migrations and real-trade migrations were applied to the connected Supabase project.
+- Shared-world clock, real-trade and sect/PvP migrations were applied to the connected Supabase project.
 - Database transaction tests passed in rollback-only transactions for item quantity transfer, `stones`/`gold` transfer, and spirit-beast transfer. Test data was rolled back and no test inventory changes were retained.
-- JavaScript syntax/browser runtime and a live two-account trade test still need to be verified after deployment.
+- JavaScript syntax check passed after the sect/PvP UI update.
+- Rollback-only SQL integration test passed for sect creation, a second member joining, challenge acceptance creating a battle, the first attack changing HP and turn ownership, and the opponent's next action. All test data was rolled back; current sect, member, battle and challenge table counts are zero.
+- RPC privilege checks passed: `anon` cannot execute the sect/PvP functions; `authenticated` can.
+- A live two-browser UI test remains necessary. PvP stats are currently fixed at 100 HP and server-defined action damage; cultivation/equipment integration remains unfinished.
