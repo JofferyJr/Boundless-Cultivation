@@ -16,7 +16,7 @@
 - `boundless_family_relationships`: reciprocal relationship edges between accounts.
 - `boundless_multiplayer_chat`: persistent Server 1 chat messages.
 - `boundless_multiplayer_challenges`: challenge requests with pending/accepted/declined/cancelled states.
-- `boundless_multiplayer_trade_offers`: item-name offers with pending/accepted/declined/cancelled states.
+- `boundless_multiplayer_trade_offers`: inventory-backed trade offers with item IDs, item category, quantity, optional offered currency and optional requested currency.
 
 RLS is enabled on multiplayer and Server 1 clock/session tables. Profile/chat reads are available to authenticated players; challenge and trade records are visible only to participants. Character registration, chat insertion, position updates, Server 1 heartbeat and disconnect go through RPC functions that require `auth.uid()`. Anonymous/public execution of the Server 1 RPCs is revoked, and clients cannot directly mutate session leases.
 
@@ -30,7 +30,7 @@ The social layer requires a signed-in account. The profile table currently store
 
 The movement API is exposed as `window.__boundlessMultiplayer.moveTo({region, x, y})` and listens for `boundless-world-position`. The main world-map controls have not yet been connected to this event, so this API alone does not make map movement visible in the world.
 
-Challenge acceptance is a request state only; it does not execute combat. Trade acceptance records the offer status only; it does not move items into another player's inventory. These must be integrated with the game combat and inventory state before those features can be called complete.
+Challenge acceptance remains a request state only; it does not execute combat. Trade acceptance now calls `boundless_server1_trade`, which locks the offer and both cloud-save rows, validates the current stored inventory/balances, then atomically transfers the selected item and currency in `boundless-save`. Inventory items and `spiritBeasts` are supported; spirit beasts transfer one at a time. The four existing currency fields (`stones`, `gold`, `silver`, `copper`) are reused. Offers created before the real-trade migration lack item IDs and cannot be accepted as real transfers; create a new offer instead. Same-currency amounts cannot be both offered and requested in one trade; use a single direction for that currency.
 
 ## Manual smoke-test checklist
 
@@ -39,9 +39,17 @@ Challenge acceptance is a request state only; it does not execute combat. Trade 
 3. Verify both character names appear in each other's player list.
 4. Send a chat message from one account and verify it appears in the other.
 5. Send a challenge and verify the target can accept or decline it.
-6. Send a trade offer and verify the target can accept or decline it; do not expect inventory changes yet.
+6. Select an inventory item or spirit beast, optionally add offered/requested currency, and send a trade offer. Accepting it should update both cloud saves; the accepting client and the sending client refresh their active save after the completed trade.
 7. Register characters with the same surname on new accounts repeatedly to observe the probabilistic family grouping. A single attempt may create a separate family by design.
 8. Check the browser console and Supabase Realtime/database logs for errors.
+
+## Real trade transaction behavior
+
+- The browser builds the item selector from the active local save (`boundless-save`), including all entries in `inventory` and `spiritBeasts`. The server does not trust the displayed item name: acceptance rechecks the item ID and quantity in the sender's cloud save.
+- The transfer RPC is `public.boundless_server1_trade(uuid,text)` with `accept`, `decline`, or `cancel` actions. Only the intended recipient can accept/decline; only the sender can cancel. Public/anonymous execution is revoked.
+- The database transaction moves inventory quantities, unique spirit beasts, and the selected existing currency fields together. If any item or balance check fails, the transaction raises an error and no part of the trade commits.
+- The cloud save is authoritative for the transaction. If the local game state has not been saved/synced to `boundless-save`, an offer may be rejected at acceptance because the server cannot find the item/balance. The UI refreshes the active save from cloud after a completed trade.
+- Automated database transaction tests were run in rollback-only transactions for a stacked inventory item plus `stones`/`gold`, and for a spirit beast. A real two-browser UI acceptance test is still required.
 
 ## Shared world clock behavior
 
@@ -53,5 +61,6 @@ Challenge acceptance is a request state only; it does not execute combat. Trade 
 
 ## Verification status
 
-- SQL migration was applied to the connected Supabase project.
-- JavaScript syntax and runtime wiring checks must pass after deployment; a live two-account session/disconnect test is still required.
+- Shared-world clock migrations and real-trade migrations were applied to the connected Supabase project.
+- Database transaction tests passed in rollback-only transactions for item quantity transfer, `stones`/`gold` transfer, and spirit-beast transfer. Test data was rolled back and no test inventory changes were retained.
+- JavaScript syntax/browser runtime and a live two-account trade test still need to be verified after deployment.
