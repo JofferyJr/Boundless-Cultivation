@@ -129,7 +129,7 @@
 .bc-mode-choice .bc-mode-status{font-size:.59rem!important}
 .bc-mode-choice .bc-mode-server{gap:10px;margin-top:8px;font-size:.7rem}
 .bc-mode-choice .bc-mode-server select{min-height:32px;padding:5px 9px!important;border-radius:8px!important}
-@media(min-width:761px){.bc-creation-shell>.bc-mode-choice{grid-column:2!important}.bc-creation-shell>.dao-card{grid-column:2!important}.bc-creation-shell>div:first-child{grid-column:1;grid-row:1 / span 3}.bc-creation-shell>.bc-mode-choice{grid-row:1}.bc-creation-shell>.dao-card{grid-row:2}}
+@media(min-width:761px){.bc-creation-shell>.bc-mode-choice{grid-column:2!important}.bc-creation-shell>.dao-card{grid-column:2!important}.bc-creation-shell>div:first-child{grid-column:1;grid-row:1 / span 2}.bc-creation-shell>.bc-mode-choice{grid-row:1}.bc-creation-shell>.dao-card{grid-row:2}}
 @media(max-width:760px){
  .bc-creation-header{border-bottom:1px solid rgba(181,151,82,.13)}
  .bc-creation-shell{display:flex!important;flex-direction:column!important;gap:12px!important;padding-top:12px!important}
