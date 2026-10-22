@@ -29,20 +29,22 @@ function installStyle(){if(document.getElementById(STYLE_ID))return;const s=docu
 .bc-mode-option-copy small{font-size:.59rem;line-height:1.25}
 @media(min-width:1024px){.bc-creation-shell{grid-template-columns:minmax(260px,.52fr) minmax(0,1.48fr)!important;column-gap:1.5rem!important}.bc-creation-shell>.dao-card{grid-column:2;min-width:0}.bc-creation-shell>.bc-mode-choice{grid-column:2;min-width:0}}
 @media(max-width:520px){.bc-mode-options{grid-template-columns:repeat(2,minmax(0,1fr))}.bc-mode-choice{padding:6px 8px}.bc-mode-option{padding:5px 6px}.bc-mode-option-copy small{font-size:.56rem}}
-/* Extra-compact card: reclaim vertical space without hiding multiplayer server choice. */
-.bc-mode-choice{padding:4px 6px!important;margin:0 0 5px!important;border-radius:7px!important}
-.bc-mode-title{font-size:.88rem!important;line-height:1.15!important}
-.bc-mode-subtitle{display:none!important}
-.bc-mode-options{gap:4px!important}
-.bc-mode-option{gap:4px!important;padding:4px 5px!important;border-radius:6px!important}
+/* Force the mode picker to size to its contents; never stretch into a tall empty panel. */
+.bc-mode-choice{display:block!important;box-sizing:border-box!important;height:auto!important;min-height:0!important;max-height:none!important;align-self:start!important;flex:none!important;grid-row:auto!important;grid-column:auto!important;padding:5px 7px!important;margin:0 0 6px!important;overflow:visible!important}
+.bc-mode-choice *{box-sizing:border-box}
+.bc-mode-title{margin:0 0 4px!important;font-size:.88rem!important;line-height:1.15!important}
+.bc-mode-subtitle,.bc-mode-eyebrow{display:none!important}
+.bc-mode-options{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important}
+.bc-mode-option{min-height:0!important;height:auto!important;align-items:center!important;gap:4px!important;padding:4px 5px!important;border-radius:6px!important}
 .bc-mode-icon{width:18px!important;height:18px!important;font-size:.65rem!important;border-radius:5px!important}
 .bc-mode-option-copy{gap:1px!important}
 .bc-mode-option-copy strong{font-size:.68rem!important;line-height:1.15!important}
 .bc-mode-option-copy small{font-size:.54rem!important;line-height:1.2!important}
-.bc-mode-status{font-size:.54rem!important;margin-top:3px!important}
+.bc-mode-status{margin:3px 0 0!important;font-size:.54rem!important;line-height:1.2!important}
 .bc-mode-server{margin-top:3px!important;font-size:.58rem!important}
 .bc-mode-server select{padding:3px 5px!important}
 @media(max-width:520px){.bc-mode-choice{padding:4px 5px!important}.bc-mode-option{padding:4px!important}.bc-mode-option-copy small{font-size:.5rem!important}}
+
 `;document.head.appendChild(s)}
 function mount(){const all=[...document.querySelectorAll("h2,h3,[data-slot='card-title']")];const heading=all.find(el=>(el.textContent||"").trim()==="Lembaran Takdir");if(!heading)return false;const card=heading.closest(".dao-card")||heading.closest("[data-slot='card']")||heading.parentElement?.parentElement;if(!card||!card.parentElement)return false;if(document.querySelector(".bc-mode-choice")){document.documentElement.classList.add("bc-layout-ready");return true}installStyle();
 const box=document.createElement("section");box.className="bc-mode-choice";box.setAttribute("aria-labelledby","bc-mode-title");box.innerHTML='<h2 class="bc-mode-title" id="bc-mode-title">Pilih Game Mode</h2><div class="bc-mode-options"><button type="button" class="bc-mode-option" data-game-mode="singleplayer" aria-pressed="false"><span class="bc-mode-icon" aria-hidden="true">◈</span><span class="bc-mode-option-copy"><strong>Singleplayer</strong><small>Main sendiri pada sesi permainan ini.</small></span></button><button type="button" class="bc-mode-option" data-game-mode="multiplayer" aria-pressed="false"><span class="bc-mode-icon" aria-hidden="true">♧</span><span class="bc-mode-option-copy"><strong>Multiplayer</strong><small>Masuk ke gerbang dalam talian yang sama dengan pemain lain.</small></span></button></div><div class="bc-mode-server" hidden><label for="bc-mode-server-select">Server</label><select id="bc-mode-server-select" aria-label="Pilih server"><option value="server-1">Server 1 · Dunia Bersama</option></select></div><p class="bc-mode-status" aria-live="polite"></p>';
