@@ -2,7 +2,7 @@
 
 ## Runtime entry points
 
-- `site/assets/v826-server1-gateway.js` maintains the initial Server 1 presence gateway.
+- `site/assets/v828-multiplayer-social.js` manages authenticated Supabase Realtime presence and sends a server-validated heartbeat for the shared Server 1 world clock.
 - `site/assets/v828-multiplayer-social.js` adds authenticated character registration, presence, shared chat, profile cards, family-tree links, challenge requests, trade offers, and a position update API.
 - `site/index.html` loads the multiplayer layer after the gateway.
 - Supabase project: `Boundless-Cultivation` (project ref `axwfojhcdjfuixixepnt`).
@@ -11,12 +11,14 @@
 
 - `boundless_families`: family groups indexed by normalized surname.
 - `boundless_multiplayer_characters`: one active multiplayer character profile per authenticated account, including family, realm, stage, region and normalized position.
+- `boundless_server1_state`: persistent Server 1 world-clock state; time advances only on authenticated heartbeats while a prior session lease is still active.
+- `boundless_server1_sessions`: short-lived authenticated session leases, refreshed every 15 seconds and considered stale after 35 seconds.
 - `boundless_family_relationships`: reciprocal relationship edges between accounts.
 - `boundless_multiplayer_chat`: persistent Server 1 chat messages.
 - `boundless_multiplayer_challenges`: challenge requests with pending/accepted/declined/cancelled states.
 - `boundless_multiplayer_trade_offers`: item-name offers with pending/accepted/declined/cancelled states.
 
-RLS is enabled on all multiplayer tables. Profile/chat reads are available to authenticated players; challenge and trade records are visible only to participants. Character registration, chat insertion, and position updates go through RPC functions that require `auth.uid()`. Public/anonymous execution of those RPCs is revoked.
+RLS is enabled on multiplayer and Server 1 clock/session tables. Profile/chat reads are available to authenticated players; challenge and trade records are visible only to participants. Character registration, chat insertion, position updates, Server 1 heartbeat and disconnect go through RPC functions that require `auth.uid()`. Anonymous/public execution of the Server 1 RPCs is revoked, and clients cannot directly mutate session leases.
 
 ## Family generation rule
 
@@ -40,3 +42,16 @@ Challenge acceptance is a request state only; it does not execute combat. Trade 
 6. Send a trade offer and verify the target can accept or decline it; do not expect inventory changes yet.
 7. Register characters with the same surname on new accounts repeatedly to observe the probabilistic family grouping. A single attempt may create a separate family by design.
 8. Check the browser console and Supabase Realtime/database logs for errors.
+
+## Shared world clock behavior
+
+- A successful Multiplayer connection creates a per-tab UUID session lease and immediately calls `boundless_server1_heartbeat`; a heartbeat is then sent every 15 seconds.
+- The database stores the world clock in seconds and serializes clock updates by locking the Server 1 state row.
+- Each heartbeat advances at most 15 seconds and only if the same session or another session was seen within the previous 35 seconds. A new session after a stale/offline gap starts the world without adding the offline gap to the clock.
+- Explicit disconnect removes that session and pauses the world when no fresh session leases remain. Abrupt browser closure is handled by lease expiry on the next heartbeat; world time does not advance by itself in the database between heartbeats.
+- This clock is the authoritative shared-world time foundation. It does **not yet automatically gate every local cultivation timer or every gameplay subsystem**. Any gameplay progression that derives rewards from local save timestamps must be separately audited and changed to use this server clock before claiming all offline progression is blocked.
+
+## Verification status
+
+- SQL migration was applied to the connected Supabase project.
+- JavaScript syntax and runtime wiring checks must pass after deployment; a live two-account session/disconnect test is still required.
