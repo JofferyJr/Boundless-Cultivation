@@ -209,3 +209,100 @@
   .family-waist>.spouse-connector{min-width:1.8rem!important}
 }
 @media(prefers-reduced-motion:reduce){.family-member,.family-tree-controls button{transition:none!important}.family-member:hover,.family-tree-controls button:hover{transform:none}}
+
+
+/* ARCHIVE PANELS — wide editorial cards instead of a tall stack */
+.family-history-panel,
+.family-inheritance-panel,
+.family-succession-panel{
+  position:relative!important;min-width:0!important;overflow:hidden!important;
+  margin:1.15rem clamp(1rem,2.6vw,2.25rem)!important;
+  padding:clamp(1.1rem,2.2vw,1.8rem)!important;
+  border:1px solid #c7b48e!important;border-radius:5px!important;
+  background:linear-gradient(145deg,rgba(255,251,240,.98),rgba(238,226,203,.96))!important;
+  color:#30271d!important;box-shadow:0 7px 18px rgba(70,50,25,.07)!important;
+}
+.family-history-panel:before,
+.family-inheritance-panel:before,
+.family-succession-panel:before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:#7f3028;
+}
+.family-history-panel h3,
+.family-inheritance-panel h3,
+.family-succession-panel h3{
+  display:flex;align-items:center;gap:.65rem;margin:0!important;padding:0 0 .7rem!important;
+  border-bottom:1px solid #d8c8a8!important;color:#6e2b24!important;
+  font-family:Georgia,"Noto Serif",serif!important;font-size:clamp(1.25rem,2vw,1.7rem)!important;
+  font-weight:600!important;line-height:1.25!important;letter-spacing:-.025em;
+}
+.family-history-panel h3:before{content:"卷";display:inline-grid;place-items:center;width:2rem;height:2rem;border:1px solid #b9a078;color:#7f3028;font-size:1rem}
+.family-inheritance-panel h3:before{content:"印";display:inline-grid;place-items:center;width:2rem;height:2rem;border:1px solid #b9a078;color:#7f3028;font-size:1rem}
+.family-succession-panel h3:before{content:"序";display:inline-grid;place-items:center;width:2rem;height:2rem;border:1px solid #b9a078;color:#7f3028;font-size:1rem}
+.family-history-panel>p,
+.family-inheritance-panel>p,
+.family-succession-panel>p{
+  max-width:88ch;margin:.65rem 0 0!important;color:#75664f!important;
+  font-family:Arial,sans-serif;font-size:.88rem!important;line-height:1.7!important;
+}
+.family-history-panel>div:last-child{
+  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))!important;
+  gap:.8rem!important;margin-top:1rem!important;
+}
+.family-history-panel article{
+  min-width:0;padding:1rem!important;border:1px solid #d2c09c!important;border-radius:4px!important;
+  background:rgba(255,252,244,.9)!important;box-shadow:inset 3px 0 #b08a43!important;
+}
+.family-history-panel article b{
+  display:block;color:#3a2b20!important;font-family:Georgia,"Noto Serif",serif;font-size:1rem;line-height:1.4;
+}
+.family-history-panel article p{margin:.45rem 0 0!important;color:#75664f!important;font-size:.85rem;line-height:1.7}
+.family-inheritance-panel>div:last-of-type{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:.8rem!important;margin-top:1rem!important;
+}
+.family-inheritance-panel>div:last-of-type>p{
+  min-width:0;min-height:6.2rem;display:flex;flex-direction:column;justify-content:center;gap:.45rem;
+  margin:0!important;padding:1rem!important;border:1px solid #d2c09c!important;border-radius:4px!important;
+  background:rgba(255,252,244,.94)!important;color:#423427!important;
+  font-family:Arial,sans-serif;font-size:.9rem;line-height:1.65;overflow-wrap:anywhere;
+}
+.family-inheritance-panel>div:last-of-type>p:before{
+  content:"REKOD WATAK";color:#9a7a43;font-size:.63rem;font-weight:800;letter-spacing:.14em;
+}
+.family-inheritance-panel>div:last-of-type>p:nth-child(2):before{content:"BLOODLINE"}
+.family-inheritance-panel>div:last-of-type>p:nth-child(3):before{content:"AKAR SPIRITUAL"}
+.family-inheritance-panel>div:last-of-type>p b{color:#6e2b24!important;font-size:.8rem}
+.family-inheritance-panel>div:last-of-type>p:nth-child(3){grid-column:auto!important}
+.family-inheritance-panel>p:last-child{
+  margin-top:.8rem!important;padding:.7rem .9rem!important;border-left:3px solid #b08a43!important;
+  background:#e8ddc5!important;color:#65553e!important;font-size:.78rem!important;
+}
+.family-succession-panel>div:last-child{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:.7rem!important;margin-top:1rem!important;
+}
+.family-succession-panel>div:last-child>p{
+  position:relative;display:flex;flex-direction:column;justify-content:center;gap:.3rem;
+  min-width:0;min-height:6rem;margin:0!important;padding:1rem .9rem!important;
+  border:1px solid #d2c09c!important;border-radius:4px!important;
+  background:rgba(255,252,244,.96)!important;color:#75664f!important;
+  font-family:Arial,sans-serif;font-size:.78rem!important;line-height:1.55!important;
+  overflow-wrap:anywhere;box-shadow:0 3px 7px rgba(63,43,20,.04)!important;
+}
+.family-succession-panel>div:last-child>p:before{
+  content:"CALON WARIS";color:#9a7a43;font-size:.6rem;font-weight:800;letter-spacing:.13em;
+}
+.family-succession-panel>div:last-child>p b{
+  color:#35271d!important;font-family:Georgia,"Noto Serif",serif;font-size:1rem!important;line-height:1.35;
+}
+@media(max-width:900px){
+  .family-inheritance-panel>div:last-of-type{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .family-succession-panel>div:last-child{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:620px){
+  .family-history-panel,.family-inheritance-panel,.family-succession-panel{margin:.8rem!important;padding:1rem!important}
+  .family-inheritance-panel>div:last-of-type{grid-template-columns:1fr!important}
+  .family-inheritance-panel>div:last-of-type>p{min-height:0}
+  .family-succession-panel>div:last-child{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .family-history-panel>div:last-child{grid-template-columns:1fr!important}
+}
