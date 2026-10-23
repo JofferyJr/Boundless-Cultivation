@@ -163,3 +163,61 @@
   writing-mode:horizontal-tb!important;
   text-orientation:mixed!important;
 }
+
+/* V10.2 — explicit horizontal layout for archive, succession list and relationship legend */
+.family-tree-card{
+  width:100%!important;min-width:0!important;max-width:none!important;
+  writing-mode:horizontal-tb!important;direction:ltr!important;
+}
+.family-tree-card .family-tree-heading,
+.family-tree-card .family-tree-heading *{
+  writing-mode:horizontal-tb!important;direction:ltr!important;
+}
+.family-tree-card .family-history-panel>div{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch!important;gap:1rem!important;
+}
+.family-tree-card .family-history-panel article{width:100%!important;min-width:0!important}
+.family-tree-card .family-succession-panel>div:last-child{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:stretch!important;gap:.75rem!important;width:100%!important;min-width:0!important;
+}
+.family-tree-card .family-succession-panel>div:last-child>p{
+  display:block!important;width:100%!important;min-width:0!important;max-width:none!important;
+  margin:0!important;padding:.85rem!important;align-self:stretch!important;
+  writing-mode:horizontal-tb!important;text-orientation:mixed!important;
+  white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;
+  text-align:left!important;line-height:1.55!important;
+}
+.family-tree-card .family-succession-panel>div:last-child>p b{
+  display:block!important;width:auto!important;max-width:100%!important;
+  writing-mode:horizontal-tb!important;white-space:normal!important;overflow-wrap:anywhere!important;
+}
+.family-tree-card .family-tree-branches{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  writing-mode:horizontal-tb!important;min-width:760px!important;width:100%!important;
+}
+.family-tree-card .family-branch-grid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%!important;align-items:start!important;
+}
+.family-tree-card .family-waist{
+  display:grid!important;grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr)!important;
+  width:100%!important;max-width:760px!important;margin-inline:auto!important;
+}
+.family-tree-card .family-grid.children{
+  display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
+  justify-content:center!important;align-items:stretch!important;
+}
+.family-tree-card .family-grid.children>.family-member{
+  flex:1 1 190px!important;max-width:calc(33.333% - .75rem)!important;
+}
+.family-tree-card .family-lineage-note{
+  display:flex!important;flex-direction:row!important;align-items:flex-start!important;
+}
+@media(max-width:760px){
+ .family-tree-card .family-succession-panel>div:last-child{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .family-tree-card .family-history-panel>div{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .family-tree-card .family-tree-branches{min-width:760px!important}
+ .family-tree-card .family-grid.children>.family-member{max-width:calc(50% - .5rem)!important}
+}
