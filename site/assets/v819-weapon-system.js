@@ -221,18 +221,19 @@ function mountInventoryWeaponMenu(){
 }
 function observeInventoryWeaponMenu(){
   let scheduled=false;
+  const mountAll=()=>{mountInventoryWeaponMenu();mountSectForgeEntry();mountMapForgeEntry();};
   const ensure=()=>{
     if(scheduled)return;
     scheduled=true;
-    requestAnimationFrame(()=>{scheduled=false;mountInventoryWeaponMenu();});
+    requestAnimationFrame(()=>{scheduled=false;mountAll();});
   };
   const observer=new MutationObserver(records=>{
     if(records.some(r=>r.type==="childList"))ensure();
   });
   observer.observe(document.body,{childList:true,subtree:true});
   let tries=0;
-  const timer=setInterval(()=>{mountInventoryWeaponMenu();if(++tries>=240)clearInterval(timer);},250);
-  mountInventoryWeaponMenu();
+  const timer=setInterval(()=>{mountAll();if(++tries>=240)clearInterval(timer);},250);
+  mountAll();
 }
 window.__boundlessOpenWeaponForge=open;
 window.__boundlessWeaponState=()=>state;
