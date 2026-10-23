@@ -1,115 +1,23 @@
-/* BOUNDLESS SALASILAH — FULL REBUILD
-   Independent layout rules for the family tree, archive and succession list.
-   No vertical writing, narrow character columns, or inherited text orientation. */
+/* SALASILAH RESET — only the existing introduction is retained.
+   All previous Salasilah layout and component styling has been removed. */
 .family-tree-card{
-  --st-bg:#071811;--st-panel:#0e241a;--st-panel2:#122d21;--st-border:#355b43;
-  --st-gold:#d9b66b;--st-text:#f5f0df;--st-muted:#b6c6b8;
-  display:flex!important;flex-direction:column!important;align-items:stretch!important;
-  width:100%!important;max-width:100%!important;min-width:0!important;
-  box-sizing:border-box!important;overflow-x:auto!important;overflow-y:visible!important;
-  padding:clamp(16px,2.5vw,32px)!important;border:1px solid var(--st-border)!important;
-  border-radius:18px!important;color:var(--st-text)!important;background:#071811!important;
-  font-family:inherit!important;font-size:16px!important;line-height:1.6!important;
+  display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+  box-sizing:border-box!important;padding:20px!important;
+  color:inherit!important;background:transparent!important;border:0!important;
+  box-shadow:none!important;overflow:visible!important;
+}
+.family-tree-card>.family-tree-heading{
+  display:block!important;width:100%!important;margin:0!important;padding:0!important;
+}
+.family-tree-card .family-tree-heading>div:first-child{
+  display:block!important;width:100%!important;min-width:0!important;
+}
+.family-tree-card .family-tree-heading>div:first-child>*:not(.eyebrow){display:none!important}
+.family-tree-card .family-tree-heading .eyebrow{
+  display:block!important;margin:0!important;padding:0!important;
+  font-size:1rem!important;line-height:1.6!important;white-space:normal!important;
   writing-mode:horizontal-tb!important;direction:ltr!important;text-orientation:mixed!important;
 }
-.family-tree-card,.family-tree-card *{
-  box-sizing:border-box!important;
-  writing-mode:horizontal-tb!important;direction:ltr!important;text-orientation:mixed!important;
-  text-combine-upright:none!important;word-break:normal!important;
-}
-.family-tree-card :is(h1,h2,h3,h4,p,span,b,strong,small,label,button,a,li,dt,dd){
-  display:revert;max-width:100%;white-space:normal!important;
-  overflow-wrap:break-word!important;word-break:normal!important;
-  writing-mode:horizontal-tb!important;text-orientation:mixed!important;
-  line-height:1.55!important;
-}
-.family-tree-card .family-tree-heading{
-  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
-  align-items:start!important;gap:16px!important;width:100%!important;min-width:0!important;
-}
-.family-tree-card .family-tree-heading>div{min-width:0!important;width:100%!important}
-.family-tree-card .family-tree-heading .eyebrow{font-size:.9rem!important;color:var(--st-gold)!important}
-.family-tree-card .family-tree-heading h1,.family-tree-card .family-tree-heading h2,.family-tree-card .family-tree-heading h3{
-  display:block!important;font-size:clamp(1.25rem,2vw,2rem)!important;line-height:1.25!important;
-}
-.family-tree-card .family-tree-heading p,.family-tree-card .family-lineage-note{
-  display:block!important;width:100%!important;font-size:.95rem!important;color:var(--st-muted)!important;
-}
-.family-tree-card .family-tree-controls{display:flex!important;flex-wrap:wrap!important;gap:8px!important;width:100%!important}
-.family-tree-card .family-tree-viewport{display:block!important;width:100%!important;max-width:100%!important;overflow:auto!important}
-.family-tree-card .family-tree{display:block!important;width:100%!important;min-width:760px!important}
-.family-tree-card .family-tree-branches{display:flex!important;flex-direction:column!important;gap:24px!important;width:100%!important;min-width:760px!important}
-.family-tree-card .family-branch-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:24px!important;width:100%!important}
-.family-tree-card .family-branch{display:flex!important;flex-direction:column!important;align-items:stretch!important;min-width:0!important;gap:12px!important}
-.family-tree-card .family-generation{display:flex!important;flex-direction:row!important;justify-content:center!important;align-items:flex-start!important;flex-wrap:wrap!important;gap:12px!important;width:100%!important}
-.family-tree-card .family-peer-line{display:flex!important;flex-direction:row!important;justify-content:center!important;align-items:stretch!important;flex-wrap:wrap!important;gap:12px!important;width:100%!important}
-.family-tree-card .family-waist{display:flex!important;flex-direction:row!important;justify-content:center!important;align-items:center!important;gap:12px!important;width:100%!important}
-.family-tree-card .family-grid.children{display:flex!important;flex-direction:row!important;justify-content:center!important;align-items:stretch!important;flex-wrap:wrap!important;gap:12px!important;width:100%!important}
-.family-tree-card .family-member{
-  display:flex!important;flex-direction:column!important;align-items:center!important;gap:6px!important;
-  width:auto!important;min-width:140px!important;max-width:220px!important;flex:1 1 140px!important;
-  padding:12px!important;border:1px solid var(--st-border)!important;border-radius:12px!important;
-  background:var(--st-panel)!important;color:var(--st-text)!important;text-align:center!important;
-  white-space:normal!important;overflow-wrap:break-word!important;
-}
-.family-tree-card .family-member b,.family-tree-card .family-member strong,
-.family-tree-card .family-member span,.family-tree-card .family-member small,
-.family-tree-card .family-member p{display:block!important;width:100%!important;white-space:normal!important;overflow-wrap:break-word!important}
-.family-tree-card .family-avatar{max-width:100%!important}
-.family-tree-card .family-history-panel,.family-tree-card .family-inheritance-panel,.family-tree-card .family-succession-panel{
-  display:block!important;float:none!important;clear:both!important;
-  width:100%!important;max-width:100%!important;min-width:0!important;
-  margin:20px 0 0!important;padding:clamp(12px,2vw,20px)!important;
-  border:1px solid var(--st-border)!important;border-radius:12px!important;
-  background:var(--st-panel)!important;color:var(--st-text)!important;
-  writing-mode:horizontal-tb!important;direction:ltr!important;
-}
-.family-tree-card .family-history-panel h3,.family-tree-card .family-inheritance-panel h3,.family-tree-card .family-succession-panel h3{
-  display:block!important;width:100%!important;margin:0 0 8px!important;color:var(--st-gold)!important;font-size:1.2rem!important;
-}
-.family-tree-card .family-history-panel>p,.family-tree-card .family-inheritance-panel>p,.family-tree-card .family-succession-panel>p{
-  display:block!important;width:100%!important;margin:0 0 14px!important;color:var(--st-muted)!important;font-size:.92rem!important;
-}
-.family-tree-card .family-history-panel>div{
-  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;width:100%!important;
-}
-.family-tree-card .family-history-panel article{
-  display:block!important;min-width:0!important;width:100%!important;padding:12px!important;
-  border:1px solid var(--st-border)!important;border-radius:9px!important;background:#0a1d14!important;
-}
-.family-tree-card .family-history-panel article b{display:block!important;color:var(--st-gold)!important}
-.family-tree-card .family-history-panel article p{display:block!important;margin-top:6px!important}
-.family-tree-card .family-inheritance-panel>div:last-of-type{
-  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;width:100%!important;
-}
-.family-tree-card .family-inheritance-panel>div:last-of-type>*{
-  min-width:0!important;padding:12px!important;border:1px solid var(--st-border)!important;border-radius:8px!important;background:#0a1d14!important;
-}
-.family-tree-card .family-succession-panel .salasilah-succession-grid,
-.family-tree-card .family-succession-panel>div:last-child{
-  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important;
-  width:100%!important;max-width:100%!important;min-width:0!important;
-}
-.family-tree-card .family-succession-panel .salasilah-succession-item,
-.family-tree-card .family-succession-panel>div:last-child>p{
-  display:block!important;min-width:0!important;width:100%!important;margin:0!important;padding:12px!important;
-  border:1px solid var(--st-border)!important;border-radius:9px!important;background:#0a1d14!important;
-  color:var(--st-text)!important;font-size:.92rem!important;line-height:1.6!important;text-align:left!important;
-  white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important;
-}
-.family-tree-card .family-succession-panel .salasilah-succession-item b,
-.family-tree-card .family-succession-panel>div:last-child>p b{
-  display:block!important;width:100%!important;margin-bottom:4px!important;color:var(--st-gold)!important;
-  white-space:normal!important;overflow-wrap:break-word!important;
-}
-@media(max-width:760px){
-  .family-tree-card .family-tree-heading{grid-template-columns:minmax(0,1fr)!important}
-  .family-tree-card .family-history-panel>div{grid-template-columns:minmax(0,1fr)!important}
-  .family-tree-card .family-inheritance-panel>div:last-of-type{grid-template-columns:minmax(0,1fr)!important}
-  .family-tree-card .family-succession-panel .salasilah-succession-grid,
-  .family-tree-card .family-succession-panel>div:last-child{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
-@media(max-width:420px){
-  .family-tree-card .family-succession-panel .salasilah-succession-grid,
-  .family-tree-card .family-succession-panel>div:last-child{grid-template-columns:minmax(0,1fr)!important}
-}
+.family-tree-card>.family-tree-heading>div:not(:first-child),
+.family-tree-card>.family-tree-heading~*,
+.family-tree-card .family-tree-viewport{display:none!important}
