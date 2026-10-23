@@ -171,6 +171,33 @@ function render(){
  detail.innerHTML='<div class="bc-wpn-name"><b>'+esc(w.name)+'</b><button id="bc-wpn-rename">Nama</button></div><div class="bc-wpn-stats"><span>⚔ Power <b>'+weaponPower(w)+'</b></span><span>🛡 Guard <b>'+defense(w)+'</b></span><span>❤ Durability <b>'+w.durability+'/'+w.maxDurability+'</b></span><span>✦ Purity <b>'+w.purity+'%</b></span><span>◈ Stability <b>'+w.stability+'%</b></span><span>☯ Karma <b>'+esc(KARMA[w.karma].name)+'</b></span></div><div class="bc-wpn-progress"><label>Mastery '+w.mastery+'%</label><div><i style="width:'+w.mastery+'%"></i></div><label>Resonance '+w.resonance+'%</label><div><i style="width:'+w.resonance+'%"></i></div></div><p><b>Intent:</b> '+esc(INTENT[w.intent])+' · <b>Element:</b> '+esc(w.element)+'</p><p><b>Affixes:</b> '+w.affixes.map(esc).join(" · ")+'</p><p><b>Dao Runes:</b> '+(w.runes.length?w.runes.map(r=>esc(r[1])).join(" · "):"Tiada")+'</p><div class="bc-wpn-actions"><button id="wp-refine">Refine +'+(w.refine+1)+'</button><button id="wp-temper">Temper</button><button id="wp-rune">Inscribe Rune</button><button id="wp-intent">Awaken Intent</button><button id="wp-mastery">Train Mastery</button><button id="wp-repair">Repair</button></div><details><summary>Technical data</summary><pre>'+esc(JSON.stringify(w,null,2))+'</pre></details>';
  o.querySelector("#bc-wpn-rename").onclick=rename;o.querySelector("#wp-refine").onclick=refine;o.querySelector("#wp-temper").onclick=temper;o.querySelector("#wp-rune").onclick=inscribe;o.querySelector("#wp-intent").onclick=awakenIntent;o.querySelector("#wp-mastery").onclick=gainMastery;o.querySelector("#wp-repair").onclick=repair;
 }
+function mountSectForgeEntry(){
+  const visible=el=>!!(el&&el.getClientRects().length);
+  const headings=[...document.querySelectorAll("h1,h2,h3,h4,[role='heading']")].filter(visible);
+  const heading=headings.find(el=>/Dewan Penempaan/i.test(el.textContent||""));
+  if(!heading)return false;
+  let host=heading.closest("[role='dialog']")||heading.parentElement?.parentElement||heading.parentElement;
+  if(!host||host.querySelector(".boundless-sect-forge-button"))return !!host;
+  const button=document.createElement("button");
+  button.type="button";button.className="boundless-weapon-menu-button boundless-sect-forge-button";
+  button.textContent="⚔️ Buka Weapon Forge & Arsenal";
+  button.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();open();});
+  host.appendChild(button);return true;
+}
+function mountMapForgeEntry(){
+  const visible=el=>!!(el&&el.getClientRects().length);
+  const labels=[...document.querySelectorAll("h1,h2,h3,h4,[role='heading'],button,[data-location-name]")].filter(visible);
+  const label=labels.find(el=>/Pasar Lingmu/i.test(el.textContent||"")||/Kedai Penempa/i.test(el.textContent||""));
+  if(!label)return false;
+  let host=label.closest("[role='dialog']")||label.parentElement?.parentElement||label.parentElement;
+  if(!host||host.querySelector(".boundless-map-forge-button"))return !!host;
+  const button=document.createElement("button");
+  button.type="button";button.className="boundless-weapon-menu-button boundless-map-forge-button";
+  button.textContent="⚒️ Kedai Penempa · Weapon Forge";
+  button.setAttribute("aria-label","Buka penempaan senjata di lokasi pasar");
+  button.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();open();});
+  host.appendChild(button);return true;
+}
 function mountInventoryWeaponMenu(){
   const sections=[...document.querySelectorAll(".equipment-section")];
   const section=sections.find(el=>el.offsetParent!==null)||sections[0];
@@ -194,18 +221,19 @@ function mountInventoryWeaponMenu(){
 }
 function observeInventoryWeaponMenu(){
   let scheduled=false;
+  const mountAll=()=>{mountInventoryWeaponMenu();mountSectForgeEntry();mountMapForgeEntry();};
   const ensure=()=>{
     if(scheduled)return;
     scheduled=true;
-    requestAnimationFrame(()=>{scheduled=false;mountInventoryWeaponMenu();});
+    requestAnimationFrame(()=>{scheduled=false;mountAll();});
   };
   const observer=new MutationObserver(records=>{
     if(records.some(r=>r.type==="childList"))ensure();
   });
   observer.observe(document.body,{childList:true,subtree:true});
   let tries=0;
-  const timer=setInterval(()=>{mountInventoryWeaponMenu();if(++tries>=240)clearInterval(timer);},250);
-  mountInventoryWeaponMenu();
+  const timer=setInterval(()=>{mountAll();if(++tries>=240)clearInterval(timer);},250);
+  mountAll();
 }
 window.__boundlessOpenWeaponForge=open;
 window.__boundlessWeaponState=()=>state;
