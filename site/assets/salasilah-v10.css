@@ -128,3 +128,38 @@
  .family-tree-branches{min-width:680px!important;padding:.5rem!important}
 }
 @media(prefers-reduced-motion:reduce){.family-tree-card *{scroll-behavior:auto!important;transition:none!important}}
+
+/* V10.1 — prevent vertical/letter-stacked text in every Salasilah component */
+.family-tree-card,.family-tree-card *{
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  word-break:normal!important;
+  overflow-wrap:anywhere!important;
+  hyphens:auto;
+}
+.family-tree-card :is(h1,h2,h3,h4,h5,h6,p,span,b,strong,small,label,button,a,li,dt,dd){
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  word-break:normal!important;
+  white-space:normal!important;
+  line-height:1.5!important;
+}
+.family-tree-card :is(.family-member,.family-member>*,.family-history-panel,.family-history-panel *,
+ .family-inheritance-panel,.family-inheritance-panel *, .family-succession-panel,.family-succession-panel *,
+ .family-tree-heading,.family-tree-heading *, .family-lineage-note){
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  word-break:normal!important;
+  overflow-wrap:anywhere!important;
+}
+.family-tree-card :is(.family-member b,.family-member strong,.family-member span,.family-member small){
+  display:block!important;
+  width:auto!important;
+  max-width:100%!important;
+  white-space:normal!important;
+  letter-spacing:normal!important;
+}
+.family-tree-card .family-tree-branches *{
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+}
