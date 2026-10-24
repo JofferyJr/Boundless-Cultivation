@@ -270,7 +270,7 @@
         archive.history = safeArray(archive.history);
         if (!archive.history.some(function (h) { return h.id === event.id; })) {
           archive.history.push({ id: event.id, kind: event.type || "other", title: event.title || "Peristiwa keluarga", description: event.description || "", memberName: event.memberName || null, relatedMemberName: event.relatedMemberName || null, createdAt: event.createdAt || Date.now(), worldDay: event.day || 0, status: event.status || "Direkodkan" });
-          archive.history = archive.history.slice(-200);
+          /* Sejarah asal dikekalkan; paparan sahaja yang dipendekkan. */
         }
       }
       archive.members = safeArray(archive.members);
@@ -331,7 +331,7 @@
     function addEvent(type, title, description, status, personId) {
       var stamp = Date.now();
       var event = { id: "salasilah-event-" + hash(worldKey + "|" + type + "|" + currentDay + "|" + stamp + "|" + title), type: type, title: title, description: description, status: status || "Dalam pemeriksaan", day: currentDay, createdAt: stamp, personIds: personId ? [personId] : [] };
-      var next = Object.assign({}, data, { events: safeArray(data.events).concat([event]).slice(-300) });
+      var next = Object.assign({}, data, { events: safeArray(data.events).concat([event]) });
       if (type === "branch") {
         var name = String(ui.branchName || "").trim();
         if (!name) { setNotice("Masukkan nama cabang sebelum menghantar cadangan."); return; }
@@ -435,7 +435,7 @@
           if (!next.events.some(function (event) { return event.id === id; })) next.events.push({ id: id, type: "simulation", title: "Penilaian berkala Hari " + d, description: "Kelayakan pasangan NPC dinilai. Pasangan pemain tidak menghasilkan anak secara automatik; hubungan terlindung tidak diubah tanpa peristiwa sah.", status: "Selesai", day: d, createdAt: Date.now(), personIds: [] });
         }
       }
-      next.events = next.events.slice(-300);
+      /* Jangan buang peristiwa lama daripada rekod dunia. */
       next.lastSimulatedDay = currentDay;
       persistData(worldKey, next);
       data = next;
