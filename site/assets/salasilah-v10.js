@@ -101,8 +101,8 @@
       if (!people.some(function (x) { return x.id === p.id; })) people.push(p);
       return p;
     }
-    var father = add(surname + " " + GIVEN[parseInt(hash(seed + "|father"), 36) % GIVEN.length], "Ayah pasangan", -1, "Cabang pasangan", 55, "Keadaan tidak diketahui", "father");
-    var mother = add(surname + " " + GIVEN[parseInt(hash(seed + "|mother"), 36) % GIVEN.length], "Ibu pasangan", -1, "Cabang pasangan", 52, "Keadaan tidak diketahui", "mother");
+    var father = add(surname + " " + GIVEN[parseInt(hash(seed + "|father"), 36) % GIVEN.length], "Ayah pasangan", -1, "Cabang pasangan", 55, "Hidup", "father");
+    var mother = add(surname + " " + GIVEN[parseInt(hash(seed + "|mother"), 36) % GIVEN.length], "Ibu pasangan", -1, "Cabang pasangan", 52, "Hidup", "mother");
     var gf = add(surname + " " + GIVEN[parseInt(hash(seed + "|gf"), 36) % GIVEN.length], "Datuk sebelah ayah pasangan", -2, "Cabang pasangan", 78, "Keadaan tidak diketahui", "gf");
     var gm = add(surname + " " + GIVEN[parseInt(hash(seed + "|gm"), 36) % GIVEN.length], "Nenek sebelah ayah pasangan", -2, "Cabang pasangan", 75, "Keadaan tidak diketahui", "gm");
     var gmf = add(surname + " " + GIVEN[parseInt(hash(seed + "|gmf"), 36) % GIVEN.length], "Datuk sebelah ibu pasangan", -2, "Cabang pasangan", 79, "Keadaan tidak diketahui", "gmf");
@@ -115,6 +115,7 @@
     addRelation(relations, "parent-child", gmm.id, mother.id, day);
     addRelation(relations, "parent-child", father.id, spousePerson.id, day);
     addRelation(relations, "parent-child", mother.id, spousePerson.id, day);
+    addRelation(relations, "marriage", father.id, mother.id, day);
     var siblingCount = parseInt(hash(seed + "|siblings"), 36) % 3;
     for (var i = 0; i < siblingCount; i++) {
       var sibling = add(surname + " " + GIVEN[parseInt(hash(seed + "|sibling|" + i), 36) % GIVEN.length], i === 0 ? "Adik pasangan" : "Saudara pasangan", 0, "Cabang pasangan", 18 + (parseInt(hash(seed + "|age|" + i), 36) % 20), "Hidup", "sibling-" + i);
@@ -159,6 +160,11 @@
       var parent = people.find(function (p) { return p.id === String(raw.id || "") && p.familySide === "main"; }) || people.find(function (p) { return p.name === raw.name && p.familySide === "main" && p.generation === -1; });
       if (parent) addRelation(relationships, "parent-child", parent.id, player.id, day);
     });
+    if (parents.length >= 2) {
+      var parentA = people.find(function (p) { return p.id === String(parents[0].id || "") && p.familySide === "main"; }) || people.find(function (p) { return p.name === parents[0].name && p.familySide === "main" && p.generation === -1; });
+      var parentB = people.find(function (p) { return p.id === String(parents[1].id || "") && p.familySide === "main"; }) || people.find(function (p) { return p.name === parents[1].name && p.familySide === "main" && p.generation === -1; });
+      if (parentA && parentB) addRelation(relationships, "marriage", parentA.id, parentB.id, day);
+    }
     grandparents.forEach(function (raw) {
       var gp = people.find(function (p) { return p.id === String(raw.id || "") && p.familySide === "main"; }) || people.find(function (p) { return p.name === raw.name && p.familySide === "main" && p.generation === -2; });
       var branch = String(raw.branch || raw.familyBranch || "").toLowerCase();
@@ -334,11 +340,57 @@
     function simulateWorldTime() {
       var last = Number(data.lastSimulatedDay) || 0;
       if (currentDay <= last) return;
-      var next = Object.assign({}, data, { events: data.events.slice() });
+      var next = Object.assign({}, data, { people: data.people.slice(), relationships: data.relationships.slice(), events: data.events.slice() });
       var start = Math.max(last + 1, currentDay - 29);
+      function ageAt(person, day) {
+        if (person.age == null) return null;
+        return Number(person.age) + Math.floor(Math.max(0, day - (Number(person.createdDay) || 0)) / 360);
+      }
+      function fatherFirst(a, b) {
+        var aFather = /ayah|bapa|datuk/i.test(a.relationLabel || "");
+        var bFather = /ayah|bapa|datuk/i.test(b.relationLabel || "");
+        if (aFather !== bFather) return aFather ? [a, b] : [b, a];
+        return [a, b];
+      }
+      function simulateNpcBirth(day) {
+        var marriages = next.relationships.filter(function (rel) { return rel.type === "marriage" && rel.verified !== false; });
+        marriages.forEach(function (marriage) {
+          var a = next.people.find(function (p) { return p.id === marriage.fromId; });
+          var b = next.people.find(function (p) { return p.id === marriage.toId; });
+          if (!a || !b || a.id === playerId() || b.id === playerId() || a.id === spouseId() || b.id === spouseId()) return;
+          if (a.lifeStatus !== "Hidup" || b.lifeStatus !== "Hidup") return;
+          var ageA = ageAt(a, day), ageB = ageAt(b, day);
+          if (ageA == null || ageB == null || ageA < 18 || ageA > 60 || ageB < 18 || ageB > 60) return;
+          var coupleKey = [a.id, b.id].sort().join("|");
+          var childIds = new Set(next.relationships.filter(function (rel) {
+            return rel.type === "parent-child" && (rel.fromId === a.id || rel.fromId === b.id);
+          }).map(function (rel) { return rel.toId; }));
+          if (childIds.size >= 4) return;
+          var cycle = Math.floor(day / 30);
+          var roll = parseInt(hash(worldKey + "|npc-birth|" + coupleKey + "|" + cycle), 36) % 100;
+          if (roll >= 12) return;
+          var childId = "npc-child-" + hash(worldKey + "|" + coupleKey + "|" + cycle);
+          if (next.people.some(function (p) { return p.id === childId; })) return;
+          var pair = fatherFirst(a, b), father = pair[0], mother = pair[1];
+          var surname = father.surname || mother.surname || "Li";
+          var givenName = GIVEN[parseInt(hash(childId + "|name"), 36) % GIVEN.length];
+          var child = makePerson({ id: childId, name: surname + " " + givenName, surname: surname, relation: "Anak simulasi", generation: Math.max(Number(father.generation) || 0, Number(mother.generation) || 0) + 1, age: 0, status: "Hidup", origin: "Simulasi berkala", portraitIndex: parseInt(hash(childId + "|portrait"), 36) % 16, bornDay: day }, father.familySide, Math.max(Number(father.generation) || 0, Number(mother.generation) || 0) + 1, "Anak simulasi", worldKey, childId);
+          child.id = childId;
+          child.createdDay = day;
+          child.branch = father.branch || mother.branch || "Cabang utama";
+          next.people.push(child);
+          addRelation(next.relationships, "parent-child", father.id, child.id, day);
+          addRelation(next.relationships, "parent-child", mother.id, child.id, day);
+          var birthEvent = { id: "simulation-birth-" + childId, type: "birth", title: "Kelahiran NPC direkodkan", description: child.name + " dilahirkan melalui simulasi berkala bagi pasangan NPC yang memenuhi syarat. ID dan hubungan ibu bapa disimpan sekali sahaja.", status: "Disahkan", day: day, createdAt: Date.now(), personIds: [father.id, mother.id, child.id] };
+          if (!next.events.some(function (event) { return event.id === birthEvent.id; })) next.events.push(birthEvent);
+        });
+      }
       for (var d = start; d <= currentDay; d++) {
-        var id = "simulation-" + hash(worldKey + "|" + d);
-        if (!next.events.some(function (event) { return event.id === id; })) next.events.push({ id: id, type: "simulation", title: "Semakan simulasi Hari " + d, description: "Semakan masa dunia selesai. Hubungan terlindung tidak diubah tanpa peristiwa dan pengesahan yang sah.", status: "Selesai", day: d, createdAt: Date.now(), personIds: [] });
+        if (d > 0 && d % 30 === 0) {
+          simulateNpcBirth(d);
+          var id = "simulation-" + hash(worldKey + "|" + d);
+          if (!next.events.some(function (event) { return event.id === id; })) next.events.push({ id: id, type: "simulation", title: "Penilaian berkala Hari " + d, description: "Kelayakan pasangan NPC dinilai. Pasangan pemain tidak menghasilkan anak secara automatik; hubungan terlindung tidak diubah tanpa peristiwa sah.", status: "Selesai", day: d, createdAt: Date.now(), personIds: [] });
+        }
       }
       next.events = next.events.slice(-300);
       next.lastSimulatedDay = currentDay;
@@ -346,10 +398,6 @@
       data = next;
       saveUi();
     }
-    ensureSpouseFamily();
-    syncChildren();
-    simulateWorldTime();
-
     function personById(id) { return data.people.find(function (p) { return p.id === id; }); }
     function playerId() {
       var p = data.people.find(function (person) { return person.relationLabel === "Watak utama"; });
