@@ -468,7 +468,71 @@
         '<span class="salasilah-avatar"><img src="' + esc(portrait) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'"><span>' + esc((p.name || "?").slice(0, 1)) + '</span></span>' +
         '<span class="salasilah-person-copy"><strong>' + esc(p.name) + '</strong><small>' + esc(p.relationLabel) + '</small><em class="salasilah-status">' + esc(p.lifeStatus) + '</em></span></button>';
     }
-    function renderChart() {
+    function drawRelationshipLines() {
+    if (typeof document === "undefined" || !root || typeof root.querySelector !== "function") return;
+    var chart = root.querySelector(".salasilah-chart");
+    if (!chart || typeof chart.querySelectorAll !== "function") return;
+    var prior = chart.querySelector(".salasilah-relationship-lines");
+    if (prior && prior.remove) prior.remove();
+    var chartRect = chart.getBoundingClientRect();
+    var width = Math.max(chart.scrollWidth || 0, chartRect.width || 0);
+    var height = Math.max(chart.scrollHeight || 0, chartRect.height || 0);
+    if (!width || !height) return;
+    chart.style.position = "relative";
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "salasilah-relationship-lines");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+    svg.setAttribute("width", String(width));
+    svg.setAttribute("height", String(height));
+    svg.style.position = "absolute";
+    svg.style.left = "0";
+    svg.style.top = "0";
+    svg.style.width = width + "px";
+    svg.style.height = height + "px";
+    svg.style.overflow = "visible";
+    svg.style.pointerEvents = "none";
+    svg.style.zIndex = "0";
+    var cards = Array.from(chart.querySelectorAll(".salasilah-person-card"));
+    function cardFor(id) {
+      return cards.find(function (el) { return el.getAttribute("data-id") === String(id); });
+    }
+    function point(el) {
+      var r = el.getBoundingClientRect();
+      return { left: r.left - chartRect.left, right: r.right - chartRect.left, top: r.top - chartRect.top, bottom: r.bottom - chartRect.top, cx: (r.left + r.right) / 2 - chartRect.left, cy: (r.top + r.bottom) / 2 - chartRect.top };
+    }
+    function line(x1, y1, x2, y2, relation) {
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      var d;
+      if (relation.type === "marriage") {
+        var startX = Math.min(x1, x2), endX = Math.max(x1, x2);
+        d = "M " + startX + " " + y1 + " L " + endX + " " + y2;
+      } else {
+        var midY = y1 + Math.max(12, (y2 - y1) / 2);
+        d = "M " + x1 + " " + y1 + " C " + x1 + " " + midY + ", " + x2 + " " + midY + ", " + x2 + " " + y2;
+      }
+      path.setAttribute("d", d);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", relation.type === "marriage" ? "#d7bb70" : relation.type === "adoption" ? "#8e9fc4" : "#789a7a");
+      path.setAttribute("stroke-width", relation.type === "marriage" ? "1.8" : "1.5");
+      if (relation.verified === false || relation.status === "Dalam pemeriksaan") path.setAttribute("stroke-dasharray", "4 4");
+      path.setAttribute("opacity", relation.type === "marriage" ? "0.9" : "0.72");
+      svg.appendChild(path);
+    }
+    safeArray(data.relationships).forEach(function (relation) {
+      if (!relation || ["parent-child", "adoption", "marriage"].indexOf(relation.type) < 0) return;
+      var from = cardFor(relation.fromId || relation.parentId || relation.personAId);
+      var to = cardFor(relation.toId || relation.childId || relation.personBId);
+      if (!from || !to || from === to) return;
+      var a = point(from), b = point(to);
+      if (relation.type === "marriage") {
+        var left = a.cx <= b.cx ? a : b, right = a.cx <= b.cx ? b : a;
+        line(left.right, (left.cy + right.cy) / 2, right.left, (left.cy + right.cy) / 2, relation);
+      } else line(a.cx, a.bottom, b.cx, b.top, relation);
+    });
+    chart.insertBefore(svg, chart.firstChild);
+  }
+  function renderChart() {
       var list = visiblePeople();
       if (!list.length) return '<div class="salasilah-empty">Tiada individu sepadan dengan carian atau penapis ini.</div>';
       var levels = Array.from(new Set(list.map(function (p) { return Number(p.generation) || 0; }))).sort(function (a, b) { return a - b; });
@@ -539,6 +603,7 @@
       var chartPanel = '<div class="salasilah-chart-toolbar"><div><p class="salasilah-kicker">Carta keturunan dinamik</p><h3>' + (ui.view === "family" ? "Keluarga watak utama" : ui.view === "spouse" ? "Keluarga pasangan" : "Gabungan dua keluarga") + '</h3><p class="salasilah-muted">Leluhur di atas · pasangan utama di tengah · keturunan di bawah. Hubungan yang belum disahkan tidak dianggap fakta muktamad.</p></div>' + filters + '</div><div class="salasilah-chart-scroll"><div class="salasilah-chart">' + renderChart() + '</div></div><div class="salasilah-legend"><span><i class="verified"></i> Rekod disahkan / sejarah permulaan</span><span><i class="pending"></i> Tuntutan menunggu pemeriksaan</span><span><i class="unknown"></i> Keadaan belum diketahui</span></div><div class="salasilah-birth-actions"><div><strong>Peristiwa keturunan</strong><p>Umur dewasa, pasangan, lokasi dan sumber permainan mesti memenuhi syarat.</p></div><button type="button" class="salasilah-button primary" data-action="birth" ' + (canCreateChild ? "" : "disabled") + '>Rekod kelahiran biologi · 20 batu roh</button><button type="button" class="salasilah-button secondary" data-action="adopt" ' + (canAdopt ? "" : "disabled") + '>Terima anak angkat · 20 batu roh</button></div><div class="salasilah-detail-panel">' + renderDetails() + '</div>';
       var panelBody = ui.panel === "chart" ? chartPanel : ui.panel === "history" ? renderHistory() : renderManagement();
       root.innerHTML = '<div class="salasilah-app"><header class="salasilah-header"><div><p class="salasilah-kicker">SALASILAH · V1.0</p><h2>Arkib keturunan dan sejarah keluarga</h2><p>Asal-usul dijana sekali; perubahan berikutnya memerlukan peristiwa yang sah.</p></div><div class="salasilah-header-stats"><span><strong>' + data.people.length + '</strong> individu</span><span><strong>' + data.relationships.length + '</strong> hubungan</span><span><strong>' + data.events.length + '</strong> peristiwa</span></div></header>' + chartViews + panels + '<div class="salasilah-panel-body">' + panelBody + '</div>' + (ui.notice ? '<p class="salasilah-notice" role="status">' + esc(ui.notice) + '</p>' : '') + '<footer class="salasilah-footer">Adat penamaan mengikut setiap keluarga. Jika kedua-dua keluarga seimbang dan tiada adat khusus, nama keluarga bapa menjadi pilihan lalai. Marga yang sama bukan bukti hubungan darah.</footer></div>';
+      drawRelationshipLines();
     }
     function handleClick(event) {
       var button = event.target.closest("[data-action]");
