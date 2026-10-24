@@ -131,6 +131,8 @@
     });
   }
   function update() {
+    // v8.9.8 centralizes all species and regional encounters; suppress the legacy single-deer overlay.
+    if (window.__BOUNDLESS_SPIRIT_ENCOUNTERS_V898__) { document.getElementById("bc-ice-deer-card")?.remove(); return; }
     const save = readSave();
     const habitat = findHabitat(currentLocation(save));
     const card = document.getElementById("bc-ice-deer-card");
