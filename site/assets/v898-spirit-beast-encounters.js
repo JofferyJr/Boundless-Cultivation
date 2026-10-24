@@ -48,7 +48,11 @@
   }
   function currentLocation(save = readSave()) {
     const regions = window.BoundlessSpiritBeastTiers?.regions?.() || [];
-    if (!save || !regions.length) return "";
+    if (!regions.length) return "";
+    const liveRegion = window.BoundlessV815?.getCurrentRegion?.();
+    const liveMatch = regionFromValue(liveRegion, regions);
+    if (liveMatch) return liveMatch;
+    if (!save) return "";
     const candidates = [
       save.location, save.region, save.currentRegion, save.currentLocation,
       save.current_region, save.current_location, save.activeLocalPlace,
