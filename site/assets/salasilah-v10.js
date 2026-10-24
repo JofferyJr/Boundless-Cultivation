@@ -132,6 +132,7 @@
       }
       idMap[String(raw.id || rawId)] = person.id;
       idMap[rawId] = person.id;
+      idMap[String(raw.name)] = person.id;
     });
     function mapped(id) {
       if (!id) return "";
