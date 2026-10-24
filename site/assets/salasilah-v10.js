@@ -107,7 +107,11 @@
     var gm = add(surname + " " + GIVEN[parseInt(hash(seed + "|gm"), 36) % GIVEN.length], "Nenek sebelah ayah pasangan", -2, "Cabang pasangan", 75, "Keadaan tidak diketahui", "gm");
     var gmf = add(surname + " " + GIVEN[parseInt(hash(seed + "|gmf"), 36) % GIVEN.length], "Datuk sebelah ibu pasangan", -2, "Cabang pasangan", 79, "Keadaan tidak diketahui", "gmf");
     var gmm = add(surname + " " + GIVEN[parseInt(hash(seed + "|gmm"), 36) % GIVEN.length], "Nenek sebelah ibu pasangan", -2, "Cabang pasangan", 76, "Keadaan tidak diketahui", "gmm");
-    var spousePerson = people.find(function (p) { return p.id === spouseId; }) || add(spouse.name, "Pasangan", 0, "Cabang pasangan", spouse.age, "Hidup", "spouse");
+    var spousePerson = people.find(function (p) { return p.id === spouseId; });
+    if (!spousePerson) {
+      spousePerson = makePerson(Object.assign({}, spouse, { id: spouseId, status: spouse.status || "Hidup" }), "spouse", 0, "Pasangan", worldKey, "spouse");
+      if (!people.some(function (p) { return p.id === spousePerson.id; })) people.push(spousePerson);
+    }
     spousePerson.familySide = "spouse";
     addRelation(relations, "parent-child", gf.id, father.id, day);
     addRelation(relations, "parent-child", gm.id, father.id, day);
