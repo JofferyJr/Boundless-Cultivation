@@ -25,6 +25,11 @@
 
   function enhance(panel) {
     if (!isBeastsTab(panel)) return;
+    // The v8.9.8 runtime owns regional encounters; remove the old duplicate toolbar.
+    if (window.__BOUNDLESS_SPIRIT_ENCOUNTERS_V898__) {
+      panel.querySelector("#" + BAR_ID)?.remove();
+      return;
+    }
     activePanel = panel;
     if (panel.querySelector("#" + BAR_ID)) {
       refresh(panel);
