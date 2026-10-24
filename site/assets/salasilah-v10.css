@@ -21,3 +21,51 @@
 .family-tree-card>.family-tree-heading>div:not(:first-child),
 .family-tree-card>.family-tree-heading~*,
 .family-tree-card .family-tree-viewport{display:none!important}
+
+
+/* SALASILAH v1.0 — rebuilt interactive family chart */
+.family-tree-card.salasilah-v1{width:100%!important;max-width:none!important;padding:0!important;border:1px solid rgba(177,151,91,.3)!important;border-radius:18px!important;overflow:hidden!important;background-color:#0b1712!important;box-shadow:0 16px 48px rgba(0,0,0,.22)!important}
+.family-tree-card.salasilah-v1>.family-tree-heading{display:block!important;width:100%!important;padding:clamp(14px,2.2vw,28px)!important;box-sizing:border-box!important}
+.family-tree-card.salasilah-v1>.family-tree-heading>div:not(:first-child){display:block!important}
+.family-tree-card.salasilah-v1 .salasilah-intro{display:block!important;margin:0 0 18px!important;color:#ddc88d!important;font-size:1rem!important;line-height:1.5!important}
+.salasilah-shell{color:#f4ead1}
+.salasilah-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:0 0 20px;border-bottom:1px solid rgba(203,177,111,.2)}
+.salasilah-kicker{margin:0 0 7px;color:#bda66d;font-size:.7rem;font-weight:800;letter-spacing:.17em}
+.salasilah-header h2{margin:0;color:#f7e7bf;font-size:clamp(1.3rem,2.2vw,2rem);line-height:1.2}
+.salasilah-description{max-width:720px;margin:9px 0 0;color:#b9c7bb;font-size:.9rem;line-height:1.6}
+.salasilah-counts{flex:0 0 auto;min-width:90px;text-align:center;border:1px solid rgba(203,177,111,.25);border-radius:12px;padding:12px}
+.salasilah-counts strong,.salasilah-counts span{display:block}.salasilah-counts strong{font-size:1.5rem;color:#ead39b}.salasilah-counts span{font-size:.72rem;color:#aab8ad}
+.salasilah-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0;padding:5px;border:1px solid rgba(203,177,111,.16);border-radius:12px;background:rgba(0,0,0,.18)}
+.salasilah-tabs button,.salasilah-zoom button,.salasilah-close-detail,.salasilah-action-buttons button{min-height:40px;border:1px solid rgba(203,177,111,.24);border-radius:9px;background:#14251c;color:#e8ddc0;padding:8px 13px;font:inherit;cursor:pointer}
+.salasilah-tabs button.active{background:#d7bd7a;color:#1a2118;border-color:#d7bd7a;font-weight:800}
+.salasilah-tools{display:flex!important;align-items:end;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.salasilah-search,.salasilah-filter{display:flex;flex:1 1 200px;min-width:0;flex-direction:column;gap:6px;color:#c5d0c6;font-size:.78rem}
+.salasilah-search input,.salasilah-filter select{width:100%;min-height:42px;box-sizing:border-box;border:1px solid rgba(203,177,111,.25);border-radius:9px;background:#101f17;color:#f5ecd6;padding:9px 11px;font:inherit}
+.salasilah-zoom{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#bac8bd;font-size:.78rem}
+.salasilah-zoom button{min-height:36px;padding:5px 10px}.salasilah-zoom strong{min-width:36px;text-align:center}
+.salasilah-workspace{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(240px,300px);gap:14px;align-items:start}
+.salasilah-chart-area{min-width:0;border:1px solid rgba(203,177,111,.18);border-radius:13px;background:rgba(4,13,9,.5);overflow:hidden}
+.salasilah-chart-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 14px;border-bottom:1px solid rgba(203,177,111,.13);color:#9fb0a2;font-size:.75rem}
+.salasilah-chart-scroll{width:100%;max-width:100%;overflow:auto;overscroll-behavior:contain}
+.salasilah-chart{width:calc(100% / var(--salasilah-zoom,1));min-width:100%;transform:scale(var(--salasilah-zoom,1));transform-origin:top left;padding:18px;box-sizing:border-box}
+.salasilah-generation{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0 auto 10px;max-width:100%}
+.salasilah-generation-label{margin:0;color:#bfa96f;text-align:center;font-size:.76rem;font-weight:800;letter-spacing:.04em}
+.salasilah-generation-people{display:flex;justify-content:center;align-items:stretch;gap:10px;flex-wrap:wrap;width:100%}
+.salasilah-person{display:flex;align-items:center;gap:10px;flex:0 1 210px;min-width:155px;max-width:250px;min-height:68px;padding:10px;border:1px solid rgba(190,166,105,.25);border-radius:11px;background:linear-gradient(140deg,rgba(35,58,43,.94),rgba(14,29,21,.98));color:#f3ead5;text-align:left;cursor:pointer;transition:border-color .15s,background .15s}
+.salasilah-person:hover,.salasilah-person.is-selected{border-color:#d9bd78;background:linear-gradient(140deg,rgba(65,75,43,.96),rgba(20,37,26,.98))}
+.salasilah-person-mark{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border:1px solid rgba(218,193,126,.45);border-radius:50%;color:#e4cd8d;background:#172a1d;font-size:1rem}
+.salasilah-person-copy{display:flex;flex-direction:column;gap:3px;min-width:0}.salasilah-person-copy strong{overflow-wrap:anywhere;color:#f3e5c1;font-size:.85rem}.salasilah-person-copy small{overflow-wrap:anywhere;color:#a9b9aa;font-size:.7rem;line-height:1.35}
+.salasilah-connector{height:24px;text-align:center;color:#bda66d;font-size:1.2rem;line-height:24px}
+.salasilah-couple-row{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}.salasilah-couple-row>.salasilah-generation{flex:1 1 200px}.salasilah-couple-link{color:#dfbd79;font-size:1.3rem}
+.salasilah-empty,.salasilah-note{max-width:620px;margin:8px auto;padding:12px;border:1px dashed rgba(203,177,111,.25);border-radius:9px;color:#aebeb0;text-align:center;font-size:.82rem;line-height:1.6}
+.salasilah-footnote{margin:12px 0 0;color:#84978a;font-size:.73rem;line-height:1.5}
+.salasilah-person-detail{position:sticky;top:12px;min-width:0;padding:16px;border:1px solid rgba(203,177,111,.22);border-radius:13px;background:rgba(9,22,15,.94);overflow-wrap:anywhere}
+.salasilah-detail-top{display:flex;justify-content:center;margin-bottom:10px}.salasilah-detail-mark{width:48px;height:48px;font-size:1.2rem}
+.salasilah-person-detail h3{margin:0 0 14px;color:#f0dfb3;font-size:1.2rem;overflow-wrap:anywhere}
+.salasilah-person-detail dl{margin:0}.salasilah-person-detail dl>div{display:grid;grid-template-columns:minmax(70px,.8fr) minmax(0,1fr);gap:8px;padding:9px 0;border-top:1px solid rgba(203,177,111,.12)}.salasilah-person-detail dt{color:#91a495;font-size:.72rem}.salasilah-person-detail dd{margin:0;color:#e4e8dc;font-size:.78rem;overflow-wrap:anywhere}
+.salasilah-close-detail{margin-top:14px;width:100%}
+.salasilah-actions{display:flex!important;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:16px;padding:15px;border:1px solid rgba(203,177,111,.16);border-radius:12px;background:rgba(0,0,0,.14)}
+.salasilah-actions strong{color:#e4d19e}.salasilah-actions p{margin:5px 0 0;color:#9faf9f;font-size:.78rem;line-height:1.5}
+.salasilah-action-buttons{display:flex;gap:8px;flex-wrap:wrap}.salasilah-action-buttons button:disabled{opacity:.4;cursor:not-allowed}.salasilah-action-buttons button:not(:disabled){border-color:#bca365}
+@media(max-width:820px){.salasilah-workspace{grid-template-columns:minmax(0,1fr)}.salasilah-person-detail{position:static}.salasilah-header{align-items:flex-start}.salasilah-counts{min-width:70px;padding:9px}.salasilah-zoom{width:100%}.salasilah-chart{min-width:560px}}
+@media(max-width:520px){.family-tree-card.salasilah-v1>.family-tree-heading{padding:13px!important}.salasilah-header{gap:8px}.salasilah-header h2{font-size:1.25rem}.salasilah-description{font-size:.8rem}.salasilah-counts{min-width:55px}.salasilah-counts strong{font-size:1.2rem}.salasilah-tabs{display:grid;grid-template-columns:1fr;gap:6px}.salasilah-tabs button{width:100%}.salasilah-tools{align-items:stretch}.salasilah-search,.salasilah-filter{flex-basis:100%}.salasilah-zoom{gap:5px}.salasilah-person{min-width:180px;max-width:none;width:100%;flex-basis:100%}.salasilah-actions{align-items:stretch}.salasilah-action-buttons{display:grid;grid-template-columns:1fr}.salasilah-action-buttons button{width:100%}}
