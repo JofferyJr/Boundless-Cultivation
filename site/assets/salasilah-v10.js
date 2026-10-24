@@ -91,41 +91,71 @@
   function makeSpouseRelatives(data, spouse, worldKey, day) {
     if (!spouse || !spouse.name) return data;
     var spouseId = String(spouse.id || ("spouse-" + hash(worldKey + "|" + spouse.name)));
-    if (data.people.some(function (p) { return p.familySide === "spouse" && p.id !== spouseId && p.relationLabel !== "Pasangan"; })) return data;
     var people = data.people.slice(), relations = data.relationships.slice();
-    var surname = spouseSurname(spouse);
-    var seed = worldKey + "|spouse-family|" + spouseId;
-    function add(name, relation, generation, branch, age, status, suffix) {
-      var raw = { id: "spouse-family-" + hash(seed + "|" + suffix), name: name, relation: relation, familyBranch: branch, age: age, status: status, portraitIndex: Math.abs(parseInt(hash(seed + suffix), 36) || 0) % 16 };
-      var p = makePerson(raw, "spouse", generation, relation, worldKey, suffix);
-      if (!people.some(function (x) { return x.id === p.id; })) people.push(p);
-      return p;
+    var spousePerson = people.find(function (p) { return p.id === spouseId || p.relationLabel === "Pasangan"; });
+    if (!spousePerson) return data;
+    var source = spouse.familyArchive || spouse.family || spouse.familyRecords || {};
+    var sourcePeople = safeArray(source.members || source.people || spouse.familyMembers);
+    var sourceRelations = safeArray(source.relationships);
+    var categories = [
+      { key: "grandparents", generation: -2, label: "Leluhur pasangan" },
+      { key: "parents", generation: -1, label: "Ibu bapa pasangan" },
+      { key: "auntsUncles", generation: -1, label: "Pakcik / makcik pasangan" },
+      { key: "siblings", generation: 0, label: "Adik-beradik pasangan" },
+      { key: "cousins", generation: 0, label: "Sepupu pasangan" },
+      { key: "children", generation: 1, label: "Keturunan pasangan" }
+    ];
+    if (!sourcePeople.length) {
+      categories.forEach(function (category) {
+        var records = safeArray(source[category.key] || spouse[category.key]);
+        records.forEach(function (raw) {
+          if (!raw || !raw.name) return;
+          sourcePeople.push(Object.assign({}, raw, {
+            relation: raw.relation || raw.relationLabel || raw.familyRole || category.label,
+            generation: raw.generation == null ? category.generation : raw.generation
+          }));
+        });
+      });
     }
-    var father = add(surname + " " + GIVEN[parseInt(hash(seed + "|father"), 36) % GIVEN.length], "Ayah pasangan", -1, "Cabang pasangan", 55, "Hidup", "father");
-    var mother = add(surname + " " + GIVEN[parseInt(hash(seed + "|mother"), 36) % GIVEN.length], "Ibu pasangan", -1, "Cabang pasangan", 52, "Hidup", "mother");
-    var gf = add(surname + " " + GIVEN[parseInt(hash(seed + "|gf"), 36) % GIVEN.length], "Datuk sebelah ayah pasangan", -2, "Cabang pasangan", 78, "Keadaan tidak diketahui", "gf");
-    var gm = add(surname + " " + GIVEN[parseInt(hash(seed + "|gm"), 36) % GIVEN.length], "Nenek sebelah ayah pasangan", -2, "Cabang pasangan", 75, "Keadaan tidak diketahui", "gm");
-    var gmf = add(surname + " " + GIVEN[parseInt(hash(seed + "|gmf"), 36) % GIVEN.length], "Datuk sebelah ibu pasangan", -2, "Cabang pasangan", 79, "Keadaan tidak diketahui", "gmf");
-    var gmm = add(surname + " " + GIVEN[parseInt(hash(seed + "|gmm"), 36) % GIVEN.length], "Nenek sebelah ibu pasangan", -2, "Cabang pasangan", 76, "Keadaan tidak diketahui", "gmm");
-    var spousePerson = people.find(function (p) { return p.id === spouseId; });
-    if (!spousePerson) {
-      spousePerson = makePerson(Object.assign({}, spouse, { id: spouseId, status: spouse.status || "Hidup" }), "spouse", 0, "Pasangan", worldKey, "spouse");
-      if (!people.some(function (p) { return p.id === spousePerson.id; })) people.push(spousePerson);
+    if (!sourcePeople.length && !sourceRelations.length) return data;
+    var idMap = Object.create(null);
+    sourcePeople.forEach(function (raw, index) {
+      if (!raw || !raw.name) return;
+      var relation = String(raw.relation || raw.relationLabel || raw.familyRole || "Ahli keluarga pasangan");
+      var rawId = String(raw.id || ("spouse-family-" + hash(worldKey + "|" + spouseId + "|" + raw.name + "|" + relation + "|" + index)));
+      if (rawId === spouseId || rawId === spousePerson.id) { idMap[rawId] = spousePerson.id; return; }
+      var person = people.find(function (p) { return p.id === rawId; });
+      if (!person) {
+        person = makePerson(Object.assign({}, raw, { id: rawId, familySide: "spouse" }), "spouse", raw.generation == null ? 0 : raw.generation, relation, worldKey, rawId);
+        person.familySide = "spouse";
+        people.push(person);
+      }
+      idMap[String(raw.id || rawId)] = person.id;
+      idMap[rawId] = person.id;
+    });
+    function mapped(id) {
+      if (!id) return "";
+      return idMap[String(id)] || (String(id) === spouseId ? spousePerson.id : "");
     }
-    spousePerson.familySide = "spouse";
-    addRelation(relations, "parent-child", gf.id, father.id, day);
-    addRelation(relations, "parent-child", gm.id, father.id, day);
-    addRelation(relations, "parent-child", gmf.id, mother.id, day);
-    addRelation(relations, "parent-child", gmm.id, mother.id, day);
-    addRelation(relations, "parent-child", father.id, spousePerson.id, day);
-    addRelation(relations, "parent-child", mother.id, spousePerson.id, day);
-    addRelation(relations, "marriage", father.id, mother.id, day);
-    var siblingCount = parseInt(hash(seed + "|siblings"), 36) % 3;
-    for (var i = 0; i < siblingCount; i++) {
-      var sibling = add(surname + " " + GIVEN[parseInt(hash(seed + "|sibling|" + i), 36) % GIVEN.length], i === 0 ? "Adik pasangan" : "Saudara pasangan", 0, "Cabang pasangan", 18 + (parseInt(hash(seed + "|age|" + i), 36) % 20), "Hidup", "sibling-" + i);
-      addRelation(relations, "parent-child", father.id, sibling.id, day);
-      addRelation(relations, "parent-child", mother.id, sibling.id, day);
-    }
+    sourceRelations.forEach(function (rel) {
+      if (!rel) return;
+      var from = mapped(rel.fromId || rel.parentId || rel.personAId);
+      var to = mapped(rel.toId || rel.childId || rel.personBId);
+      if (from && to) addRelation(relations, String(rel.type || rel.kind || "parent-child"), from, to, rel.createdDay == null ? day : rel.createdDay, rel.verified === false ? "Dalam pemeriksaan" : "Disahkan");
+    });
+    sourcePeople.forEach(function (raw) {
+      if (!raw || !Array.isArray(raw.parentIds)) return;
+      var childId = mapped(raw.id || raw.name);
+      raw.parentIds.forEach(function (parentId) {
+        var parent = mapped(parentId);
+        if (parent && childId) addRelation(relations, "parent-child", parent, childId, day, raw.verified === false ? "Dalam pemeriksaan" : "Disahkan");
+      });
+    });
+    var parentRecords = sourcePeople.filter(function (raw) { return /ibu bapa pasangan|ayah pasangan|ibu pasangan|parent/i.test(String(raw.relation || raw.relationLabel || raw.familyRole || "")); });
+    parentRecords.forEach(function (raw) {
+      var parentId = mapped(raw.id);
+      if (parentId) addRelation(relations, "parent-child", parentId, spousePerson.id, day, raw.verified === false ? "Dalam pemeriksaan" : "Disahkan");
+    });
     return Object.assign({}, data, { people: people, relationships: relations });
   }
   function seedData(props, worldKey) {
