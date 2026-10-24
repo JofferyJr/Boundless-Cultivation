@@ -1,56 +1,51 @@
-/* Boundless regional spirit-beast attribute weights.
- * Ice affinity has a 70% roll in the four cold regions; other affinities share 30%.
- * This module exposes a small shared API for encounter/spawn code and is safe on GitHub Pages.
+/* Boundless v8.9.8 — regional affinity bridge backed by the official Spirit Beast catalogue.
+ * Removes the obsolete hard-coded four-region/70% ice roll. Species affinity and habitat are authoritative.
  */
 (() => {
   "use strict";
-  if (window.BoundlessRegionalSpiritAttributes) return;
+  if (window.__BOUNDLESS_REGIONAL_SPIRIT_ATTRIBUTES_V898__) return;
+  window.__BOUNDLESS_REGIONAL_SPIRIT_ATTRIBUTES_V898__ = true;
 
-  const ICE_REGIONS = Object.freeze([
-    "Dataran Beiming",
-    "Puncak Xuefeng",
-    "Gunung Tianbing",
-    "Pulau Xuanshuang"
-  ]);
-  const ICE_CHANCE = 0.70;
-  const NORMAL_CHANCES = Object.freeze({ ice: 0.70, other: 0.30 });
-
+  const norm = value => String(value ?? "").normalize("NFKC").trim().toLocaleLowerCase();
+  function regions() { return window.BoundlessSpiritBeastTiers?.regions?.() || []; }
+  function catalog() { return window.BoundlessSpiritBeastTiers?.list?.() || []; }
   function normalizeRegion(region) {
-    return String(region ?? "").trim().toLocaleLowerCase();
+    const value = norm(region);
+    return regions().find(name => value === norm(name) || value.includes(norm(name))) || "";
+  }
+  function speciesAt(region) {
+    const location = normalizeRegion(region);
+    if (!location) return [];
+    return catalog().filter(beast => Array.isArray(beast.habitat) && beast.habitat.includes(location));
   }
   function isIceRegion(region) {
-    const value = normalizeRegion(region);
-    return ICE_REGIONS.some(name => {
-      const target = normalizeRegion(name);
-      return value === target || value.includes(target);
-    });
+    return speciesAt(region).some(beast => /ais|ice|frost|glacier/i.test(String(beast.element || "")));
   }
-  // Return the desired affinity bucket for one spawn roll.
   function rollBucket(region, random = Math.random) {
-    if (!isIceRegion(region)) return "other";
-    return random() < ICE_CHANCE ? "ice" : "other";
+    const beasts = speciesAt(region);
+    if (!beasts.length) return "other";
+    const iceCount = beasts.filter(beast => /ais|ice|frost|glacier/i.test(String(beast.element || ""))).length;
+    return random() < iceCount / beasts.length ? "ice" : "other";
   }
-  // Pick from caller-supplied affinities without forcing an ice result when no ice option exists.
   function chooseAttribute(region, attributes, random = Math.random) {
     const list = Array.isArray(attributes) ? attributes.filter(Boolean) : [];
     if (!list.length) return null;
-    if (!isIceRegion(region)) return list[Math.floor(random() * list.length)] ?? list[0];
-
-    const ice = list.filter(item => /冰|ais|ice|frost|glacier/i.test(String(
-      typeof item === "string" ? item : item?.attribute ?? item?.element ?? item?.name ?? ""
-    )));
-    const other = list.filter(item => !ice.includes(item));
-    if (!ice.length) return list[Math.floor(random() * list.length)] ?? list[0];
-    if (!other.length) return ice[Math.floor(random() * ice.length)] ?? ice[0];
-
-    const pool = random() < ICE_CHANCE ? ice : other;
-    return pool[Math.floor(random() * pool.length)] ?? pool[0];
+    const available = new Set(speciesAt(region).flatMap(beast =>
+      String(beast.element || "").split(/[\/·,]+/).map(value => norm(value))
+    ));
+    const matching = list.filter(item => {
+      const value = norm(typeof item === "string" ? item : item?.attribute ?? item?.element ?? item?.name ?? "");
+      return available.has(value) || [...available].some(attribute => value && (value.includes(attribute) || attribute.includes(value)));
+    });
+    const pool = matching.length ? matching : list;
+    return pool[Math.min(pool.length - 1, Math.floor(Math.max(0, Math.min(.999999, random())) * pool.length))] ?? pool[0];
   }
 
   window.BoundlessRegionalSpiritAttributes = Object.freeze({
-    version: "1.0.0",
-    iceRegions: ICE_REGIONS,
-    chances: NORMAL_CHANCES,
+    version: "8.9.8",
+    regions,
+    normalizeRegion,
+    speciesAt,
     isIceRegion,
     rollBucket,
     chooseAttribute
