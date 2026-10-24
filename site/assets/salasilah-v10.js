@@ -136,11 +136,11 @@
     }
     var rawMembers = safeArray(family.members);
     rawMembers.forEach(function (raw, index) { add(raw, "main", raw && raw.generation, raw && (raw.relation || raw.familyRole), "member-" + index); });
-    var grandparents = safeArray(family.grandparents);
-    var parents = safeArray(family.parents);
-    var auntsUncles = safeArray(family.auntsUncles);
-    var cousins = safeArray(family.cousins);
-    var siblings = safeArray(family.siblings);
+    var grandparents = safeArray(family.grandparents).filter(Boolean);
+    var parents = safeArray(family.parents).filter(Boolean);
+    var auntsUncles = safeArray(family.auntsUncles).filter(Boolean);
+    var cousins = safeArray(family.cousins).filter(Boolean);
+    var siblings = safeArray(family.siblings).filter(Boolean);
     grandparents.forEach(function (raw, index) { add(raw, "main", -2, raw && raw.relation, "grandparent-" + index); });
     parents.forEach(function (raw, index) { add(raw, "main", -1, raw && raw.relation, "parent-" + index); });
     auntsUncles.forEach(function (raw, index) { add(raw, "main", -1, raw && raw.relation, "aunt-uncle-" + index); });
