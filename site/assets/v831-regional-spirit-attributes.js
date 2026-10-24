@@ -10,7 +10,11 @@
   function regions() { return window.BoundlessSpiritBeastTiers?.regions?.() || []; }
   function catalog() { return window.BoundlessSpiritBeastTiers?.list?.() || []; }
   function normalizeRegion(region) {
-    const value = norm(region);
+    const raw = String(region ?? "").trim();
+    if (!raw || /^region_41_empty_sea(?:_|-|$)/i.test(raw) || /^sea_region_\d+/i.test(raw)) return "";
+    const id = raw.match(/^region_(\d{1,2})(?:_|-|$)/i);
+    if (id) return regions()[Number(id[1]) - 1] || "";
+    const value = norm(raw);
     return regions().find(name => value === norm(name) || value.includes(norm(name))) || "";
   }
   function speciesAt(region) {
