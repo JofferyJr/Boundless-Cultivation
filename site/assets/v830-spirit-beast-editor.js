@@ -61,7 +61,7 @@
     if (!panel) { panel = document.createElement("section"); panel.className = "bc-revamp-local-panel"; root.appendChild(panel); }
     panel.hidden = false;
     const engine = api();
-    const config = engine?.getConfig?.() || { enabled:true, encounterChance:.38, dailySearchLimit:3 };
+    const config = engine?.getConfig?.() || { enabled:true, encounterChance:.06 };
     const beasts = engine?.list?.() || window.BoundlessSpiritBeastTiers?.list?.() || [];
     const tiers = engine?.tiers?.() || TIERS;
     panel.innerHTML = `
@@ -73,11 +73,11 @@
         <div class="bse-box"><h3>Tetapan penemuan</h3>
           <label class="bse-check"><input name="enabled" type="checkbox" ${config.enabled ? "checked" : ""}> Aktifkan penemuan Haiwan Roh di wilayah</label>
           <div class="bse-grid" style="margin-top:12px">
-            <label>Peluang penemuan <strong data-chance>${Math.round(config.encounterChance*100)}%</strong><input name="chance" type="range" min="5" max="90" step="1" value="${Math.round(config.encounterChance*100)}"></label>
-            <label>Had pencarian setiap hari permainan<select name="limit">${[1,2,3,4,5,6,7,8,9,10].map(n=>'<option value="'+n+'" '+(Number(config.dailySearchLimit)===n?'selected':'')+'>'+n+' pencarian</option>').join("")}</select></label>
+            <label>Peluang asas penemuan <strong data-chance>${Math.round(config.encounterChance*100)}%</strong><input name="chance" type="range" min="1" max="50" step="1" value="${Math.round(config.encounterChance*100)}"></label>
+            <label>Peluang akhir<input value="Peluang asas + bahaya wilayah + Keberuntungan (maksimum 90%)" readonly></label>
             <label>Jumlah katalog<input value="${beasts.length} spesies · ${tiers.length} tingkatan" readonly></label>
           </div>
-          <p>Peluang penemuan mengawal sama ada sesuatu pencarian menghasilkan pertemuan. Pemilihan tingkatan menggunakan pemberat dalaman; spesies yang dipilih sentiasa ditapis berdasarkan habitat wilayah semasa.</p>
+          <p>Peluang asas digunakan oleh Ekspedisi Sarang sebenar. Bahaya wilayah dan Keberuntungan watak masih mempengaruhi peluang akhir. Pemilihan spesies sentiasa ditapis mengikut habitat dan tingkatan asal katalog.</p>
           <div class="bse-actions"><button type="button" data-save>Simpan tetapan</button><button type="button" class="secondary" data-reset>Reset tetapan asal</button></div>
           <p data-status role="status" aria-live="polite"></p>
         </div>
@@ -97,7 +97,7 @@
         currentApi.setConfig({
           enabled: editor.querySelector('[name="enabled"]').checked,
           encounterChance: Number(editor.querySelector('[name="chance"]').value)/100,
-          dailySearchLimit: Number(editor.querySelector('[name="limit"]').value)
+          
         });
         editor.querySelector("[data-status]").textContent = "Tetapan disimpan dan digunakan oleh sistem penemuan wilayah.";
       } catch (_) { editor.querySelector("[data-status]").textContent = "Tetapan gagal disimpan pada peranti ini."; }
@@ -106,11 +106,10 @@
       const currentApi = api();
       if (!currentApi?.setConfig) return;
       try {
-        const defaults = currentApi.setConfig({ enabled:true, encounterChance:.38, dailySearchLimit:3 });
+        const defaults = currentApi.setConfig({ enabled:true, encounterChance:.06 });
         editor.querySelector('[name="enabled"]').checked = defaults.enabled;
         editor.querySelector('[name="chance"]').value = String(Math.round(defaults.encounterChance*100));
         editor.querySelector("[data-chance]").textContent = Math.round(defaults.encounterChance*100)+"%";
-        editor.querySelector('[name="limit"]').value = String(defaults.dailySearchLimit);
         editor.querySelector("[data-status]").textContent = "Tetapan asal dipulihkan.";
       } catch (_) { editor.querySelector("[data-status]").textContent = "Reset gagal."; }
     });
