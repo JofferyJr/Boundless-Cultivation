@@ -598,6 +598,11 @@
       saveUi();
       render();
     }
+    /* Jalankan penyegerakan keluarga dan simulasi dunia ketika tab dipasang. */
+    syncChildren();
+    ensureSpouseFamily();
+    simulateWorldTime();
+    persistData(worldKey, data);
     root.addEventListener("click", handleClick);
     root.addEventListener("input", handleInput);
     root.addEventListener("change", handleChange);
