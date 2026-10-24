@@ -263,8 +263,9 @@
     try { localStorage.setItem(DATA_PREFIX + worldKey, JSON.stringify(data)); } catch (_) {}
     try {
       var save = readSave();
-      if (!save || !save.familyArchive) return;
-      var archive = save.familyArchive;
+      if (!save) return;
+      var archive = save.familyArchive && typeof save.familyArchive === "object" ? save.familyArchive : { members: [], children: [], history: [], relationships: [], marriages: [] };
+      save.familyArchiveCharacterKey = save.familyArchiveCharacterKey || worldKey;
       archive.salasilahV10 = data;
       if (event && event.id) {
         archive.history = safeArray(archive.history);
