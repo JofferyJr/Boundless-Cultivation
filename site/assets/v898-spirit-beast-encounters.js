@@ -188,6 +188,17 @@
       return trigger && /Haiwan Roh/i.test(trigger.textContent || "");
     }) || null;
   }
+  function renderKey() {
+    const save = readSave();
+    const region = currentLocation(save);
+    const state = readState(save).state;
+    const day = gameDay(save);
+    const used = Number(state.searches[normalize(region) + "|" + day]) || 0;
+    const config = readConfig();
+    return [characterScope(save), region, day, used, state.sightings.length, state.bestiary.length,
+      state.activeEncounter?.id || "", state.activeEncounter?.status || "", config.enabled,
+      config.encounterChance, config.dailySearchLimit].join("|");
+  }
   function render(root) {
     const save = readSave();
     const region = currentLocation(save);
@@ -204,15 +215,16 @@
       ${active ? '<div class="ber-encounter"><strong>Penemuan terkini: ' + esc(active.name) + '</strong><p>Tingkatan ' + esc(active.tier) + ' · Kelangkaan ' + esc(active.rarity) + ' · ' + esc(active.element) + '<br>Wilayah: ' + esc(active.region) + ' · Hari ' + active.day + '</p><div class="ber-actions"><button type="button" data-action="observe">Perhatikan</button><button type="button" class="secondary" data-action="record">Catat dalam Bestiary</button></div><p class="ber-status">' + (active.status === "recorded" ? "Spesies sudah direkodkan dalam Bestiary setempat." : active.status === "observed" ? "Pemerhatian disimpan." : "Haiwan ditemui; rekodkan pemerhatian atau masukkan spesies ke Bestiary.") + '</p></div>' : ""}
       <div class="ber-grid">${beasts.map(b => '<article class="ber-beast"><strong>' + esc(b.name) + '</strong><span>' + esc(b.tier) + ' · ' + esc(b.rarity) + '</span><span>' + esc(b.element) + '</span></article>').join("") || '<article class="ber-beast"><strong>Belum ada habitat</strong><span>Senarai ini menggunakan wilayah katalog rasmi sahaja.</span></article>'}</div>
       <div class="ber-history"><strong>Rekod setempat</strong><p>${current.sightings.length} penemuan · ${current.bestiary.length} spesies dalam Bestiary</p><ul>${current.sightings.slice(0,5).map(s => '<li>' + esc(s.name) + ' — ' + esc(s.region) + ' · Hari ' + s.day + ' · ' + esc(s.status) + '</li>').join("") || '<li>Belum ada penemuan direkodkan.</li>'}</ul></div>`;
+    root.dataset.renderKey = renderKey();
     root.querySelector("[data-search]")?.addEventListener("click", () => {
       const result = search(region);
-      const status = root.querySelector("[data-status]");
-      if (!result.ok) {
-        if (status) status.textContent = result.reason === "limit" ? "Had pencarian harian dicapai (" + result.used + "/" + result.limit + ")." : "Pencarian tidak dapat dijalankan: semak save, lokasi dan tetapan.";
-      } else if (!result.found) {
-        if (status) status.textContent = "Anda menjelajah " + region + ", tetapi tiada Haiwan Roh muncul kali ini. Pencarian " + result.used + "/" + result.limit + ".";
-      }
       render(root);
+      const status = root.querySelector("[data-status]");
+      if (!result.ok && status) {
+        status.textContent = result.reason === "limit" ? "Had pencarian harian dicapai (" + result.used + "/" + result.limit + ")." : "Pencarian tidak dapat dijalankan: semak save, lokasi dan tetapan.";
+      } else if (result.ok && !result.found && status) {
+        status.textContent = "Anda menjelajah " + region + ", tetapi tiada Haiwan Roh muncul kali ini. Pencarian " + result.used + "/" + result.limit + ".";
+      }
     });
     root.querySelector("[data-refresh]")?.addEventListener("click", () => render(root));
     root.querySelectorAll("[data-action]").forEach(button => button.addEventListener("click", () => {
@@ -232,8 +244,10 @@
       const legacyToolbar = panel.querySelector("#boundless-spirit-beasts-tools");
       if (legacyToolbar) legacyToolbar.insertAdjacentElement("beforebegin", root);
       else panel.prepend(root);
+      render(root);
+    } else if (root.dataset.renderKey !== renderKey()) {
+      render(root);
     }
-    render(root);
   }
   let queued = false;
   function schedule() {
