@@ -36,6 +36,8 @@
   function regionFromValue(value, regions) {
     const raw = String(value ?? "").trim();
     if (!raw) return "";
+    // The no-portal empty sea and separate sea-world regions are not the main-map Portal region.
+    if (/^region_41_empty_sea(?:_|-|$)/i.test(raw) || /^sea_region_\d+/i.test(raw)) return "";
     const n = norm(raw);
     const direct = regions.find(region => n === norm(region) || n.includes(norm(region)));
     if (direct) return direct;
