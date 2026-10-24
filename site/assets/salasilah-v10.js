@@ -147,7 +147,9 @@
     cousins.forEach(function (raw, index) { add(raw, "main", 0, raw && raw.relation, "cousin-" + index); });
     siblings.forEach(function (raw, index) { add(raw, "main", 0, raw && raw.relation, "sibling-" + index); });
     var player = add(family.player || { name: "Pemain", relation: "Watak utama", status: "Hidup" }, "main", 0, "Watak utama", "player");
-    var spousePerson = spouse ? add(spouse, "spouse", 0, "Pasangan", "spouse") : null;
+    player.surname = String(family.surname || player.surname || "Li");
+    var spouseRaw = spouse ? Object.assign({}, spouse, { id: spouse.id || ("spouse-" + hash(worldKey + "|" + spouse.name)) }) : null;
+    var spousePerson = spouseRaw ? add(spouseRaw, "spouse", 0, "Pasangan", "spouse") : null;
     safeArray(props.descendants).forEach(function (raw, index) {
       add(raw, "main", raw && raw.generation != null ? raw.generation : 1, raw && raw.origin === "Anak Angkat" ? "Anak angkat" : "Anak", "child-" + index);
     });
