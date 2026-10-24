@@ -138,7 +138,7 @@
     const visible = BEASTS.filter(b => {
       const haystack = [b.name,b.tier,b.rarity,b.element,...b.habitat].join(" ").toLocaleLowerCase();
       return (!search || haystack.includes(search)) && (tier === "all" || b.tier === tier) && (rarity === "all" || b.rarity === rarity);
-    });
+    }).sort((a, b) => TIERS.indexOf(a.tier) - TIERS.indexOf(b.tier) || a.id - b.id);
     grid.innerHTML = visible.map(b => `
       <article class="sbt-card">
         <div class="sbt-card-top"><span class="sbt-number">Spesies ${b.id.toString().padStart(2,"0")}</span><span class="sbt-tier-tag">${esc(b.tier)}</span></div>
