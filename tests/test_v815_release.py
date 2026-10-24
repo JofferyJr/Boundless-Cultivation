@@ -43,7 +43,7 @@ class V815ReleaseTests(unittest.TestCase):
         atlas = ROOT / 'site/game-assets/items/item-atlas-v1.webp'
         self.assertTrue(atlas.is_file(), atlas)
         self.assertGreater(atlas.stat().st_size, 5000)
-        self.assertIn(atlas.read_bytes()[:4], (b'RIFF', b'\\xff\\xd8\\xff\\xe0'))
+        self.assertIn(atlas.read_bytes()[:4], (b'RIFF', b'\xff\xd8\xff\xe0'))
         self.assertIn('/game-assets/items/item-atlas-v1.webp', self.bundle)
         self.assertIn('BC815Catalog=new Map(Gv.map', self.bundle)
 
