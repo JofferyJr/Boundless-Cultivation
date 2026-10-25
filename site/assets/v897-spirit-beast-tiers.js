@@ -1,4 +1,4 @@
-/* Boundless v8.9.7 — 35-species Spirit Beast tier catalogue.
+/* Boundless v8.9.7 — 37-species Spirit Beast tier catalogue.
  * Official classification: nine tiers only. Rarity remains an independent property.
  * Uses only the existing 41 map regions; this module does not create new regions.
  */
@@ -54,7 +54,9 @@
     {id:32,name:"Dream Eater",tier:"Ilahi",rarity:"Mitos",element:"Mimpi / Jiwa",habitat:["Lembah Bunga Bulan","Kepulauan Yuelan"]},
     {id:33,name:"Mountain Shaking Bear",tier:"Purba",rarity:"Langka",element:"Tanah / Kekuatan",habitat:["Puncak Xuefeng","Pergunungan Celestial Spine"]},
     {id:34,name:"Heavenly Jade Snake",tier:"Purba",rarity:"Sangat langka",element:"Ais / Racun",habitat:["Banjaran Xuanbing","Pulau Xuanshuang","Pulau Gunung Bingyao"]},
-    {id:35,name:"Golden Blood War Ape",tier:"Diraja",rarity:"Sangat langka",element:"Darah / Pertempuran",habitat:["Ngarai Chiyan","Pergunungan Celestial Spine"]}
+    {id:35,name:"Golden Blood War Ape",tier:"Diraja",rarity:"Sangat langka",element:"Darah / Pertempuran",habitat:["Ngarai Chiyan","Pergunungan Celestial Spine"]},
+    {id:36,name:"Serpent Aquarion",tier:"Spiritual",rarity:"Evolusi",element:"Air",habitat:["Lembah Tasik Qinghe","Lembah Sungai Qingluo","Oasis Luoshui","Kepulauan Mutiara"],evolution:{from:"Bluewater Serpent",stage:"Evolusi pertama",optional:true}},
+    {id:37,name:"Azure Tide Serpent",tier:"Spiritual",rarity:"Evolusi",element:"Air",habitat:["Lembah Tasik Qinghe","Lembah Sungai Qingluo","Oasis Luoshui","Kepulauan Mutiara"],evolution:{from:"Serpent Aquarion",stage:"Evolusi kedua · bentuk akhir laluan",optional:true}}
   ];
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const STYLE_ID = "boundless-spirit-beast-tiers-v897-style";
@@ -108,7 +110,7 @@
       root = document.createElement("section");
       root.id = PANEL_ID;
       root.innerHTML = `
-        <div class="sbt-head"><div><h2>Bestiari Haiwan Roh · 9 Tingkatan</h2><p>35 spesies tetap. Tingkatan asal menentukan kedudukan kuasa; kelangkaan ialah sifat berasingan. Individu boleh berkembang melalui evolusi.</p></div><div class="sbt-total"><strong data-total>35</strong> spesies</div></div>
+        <div class="sbt-head"><div><h2>Bestiari Haiwan Roh · 9 Tingkatan</h2><p>37 spesies berdaftar. Tingkatan asal menentukan kedudukan kuasa; kelangkaan ialah sifat berasingan. Individu boleh berkembang melalui evolusi.</p></div><div class="sbt-total"><strong data-total>37</strong> spesies</div></div>
         <div class="sbt-filters">
           <label class="sbt-search">Cari spesies<input type="search" data-search placeholder="Nama, elemen atau habitat…" autocomplete="off"></label>
           <label>Tingkatan<select data-tier><option value="all">Semua 9 tingkatan</option>${TIERS.map(t => '<option value="' + esc(t) + '">' + esc(t) + '</option>').join("")}</select></label>
@@ -143,12 +145,13 @@
       <article class="sbt-card">
         <div class="sbt-card-top"><span class="sbt-number">Spesies ${b.id.toString().padStart(2,"0")}</span><span class="sbt-tier-tag">${esc(b.tier)}</span></div>
         <h3>${esc(b.name)}</h3>
+        ${b.evolution ? '<p class="sbt-habitat"><strong>' + esc(b.evolution.stage) + ':</strong> ' + esc(b.evolution.from) + ' → ' + esc(b.name) + '. Evolusi pilihan sahaja; haiwan boleh kekal pada spesies asal dan tidak berevolusi secara automatik.</p>' : ''}
         <div class="sbt-meta"><span>Kelangkaan: ${esc(b.rarity)}</span><span>Elemen: ${esc(b.element)}</span></div>
         <p class="sbt-habitat"><strong>Habitat:</strong> ${b.habitat.map(esc).join(" · ")}</p>
       </article>`).join("");
     root.querySelectorAll("[data-tier-button]").forEach(button => button.setAttribute("aria-pressed", String(tier === button.dataset.tierButton)));
     root.querySelector("[data-total]").textContent = String(visible.length);
-    root.querySelector("[data-results]").textContent = "Memaparkan " + visible.length + " daripada 35 spesies. Wilayah habitat semuanya dipilih daripada 41 wilayah peta sedia ada.";
+    root.querySelector("[data-results]").textContent = "Memaparkan " + visible.length + " daripada 37 spesies. Wilayah habitat semuanya dipilih daripada 41 wilayah peta sedia ada.";
   }
   function scan() { document.querySelectorAll('[role="tabpanel"]').forEach(mount); }
   let queued = false;
