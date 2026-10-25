@@ -55,8 +55,8 @@
     {id:33,name:"Mountain Shaking Bear",tier:"Purba",rarity:"Langka",element:"Tanah / Kekuatan",habitat:["Puncak Xuefeng","Pergunungan Celestial Spine"]},
     {id:34,name:"Heavenly Jade Snake",tier:"Purba",rarity:"Sangat langka",element:"Ais / Racun",habitat:["Banjaran Xuanbing","Pulau Xuanshuang","Pulau Gunung Bingyao"]},
     {id:35,name:"Golden Blood War Ape",tier:"Diraja",rarity:"Sangat langka",element:"Darah / Pertempuran",habitat:["Ngarai Chiyan","Pergunungan Celestial Spine"]},
-    {id:36,name:"Serpent Aquarion",tier:"Spiritual",rarity:"Evolusi",element:"Air",habitat:["Lembah Tasik Qinghe","Lembah Sungai Qingluo","Oasis Luoshui","Kepulauan Mutiara"],evolution:{from:"Bluewater Serpent",stage:"Evolusi pertama",optional:true}},
-    {id:37,name:"Azure Tide Serpent",tier:"Spiritual",rarity:"Evolusi",element:"Air",habitat:["Lembah Tasik Qinghe","Lembah Sungai Qingluo","Oasis Luoshui","Kepulauan Mutiara"],evolution:{from:"Serpent Aquarion",stage:"Evolusi kedua · bentuk akhir laluan",optional:true}}
+    {id:36,name:"Serpent Aquarion",tier:"Bumi",rarity:"Evolusi",element:"Air",habitat:["Lembah Tasik Qinghe","Lembah Sungai Qingluo","Oasis Luoshui","Kepulauan Mutiara"],evolution:{from:"Bluewater Serpent",stage:"Evolusi pertama",optional:true}},
+    {id:37,name:"Azure Tide Serpent",tier:"Purba",rarity:"Evolusi",element:"Air",habitat:["Lembah Tasik Qinghe","Lembah Sungai Qingluo","Oasis Luoshui","Kepulauan Mutiara"],evolution:{from:"Serpent Aquarion",stage:"Evolusi kedua · bentuk akhir laluan",optional:true}}
   ];
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const STYLE_ID = "boundless-spirit-beast-tiers-v897-style";
