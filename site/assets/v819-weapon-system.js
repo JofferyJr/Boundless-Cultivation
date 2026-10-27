@@ -221,7 +221,7 @@ function mountInventoryWeaponMenu(){
 }
 function observeInventoryWeaponMenu(){
   let scheduled=false;
-  const mountAll=()=>{mountInventoryWeaponMenu();mountSectForgeEntry();mountMapForgeEntry();};
+  const mountAll=()=>{mountSectForgeEntry();mountMapForgeEntry();};
   const ensure=()=>{
     if(scheduled)return;
     scheduled=true;
