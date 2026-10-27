@@ -198,27 +198,6 @@ function mountMapForgeEntry(){
   button.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();open();});
   host.appendChild(button);return true;
 }
-function mountInventoryWeaponMenu(){
-  const sections=[...document.querySelectorAll(".equipment-section")];
-  const section=sections.find(el=>el.offsetParent!==null)||sections[0];
-  if(!section)return false;
-  if(section.querySelector(".boundless-weapon-menu-button"))return true;
-  const heading=section.querySelector(":scope > div:first-child");
-  const button=document.createElement("button");
-  button.type="button";
-  button.className="boundless-weapon-menu-button";
-  button.textContent="⚔️ Senjata & Tempa";
-  button.setAttribute("aria-label","Buka menu Senjata dan Tempa");
-  button.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();open();});
-  if(heading){
-    heading.style.display="flex";
-    heading.style.alignItems="center";
-    heading.style.justifyContent="space-between";
-    heading.style.gap="12px";
-    heading.appendChild(button);
-  }else section.prepend(button);
-  return true;
-}
 function observeInventoryWeaponMenu(){
   let scheduled=false;
   const mountAll=()=>{mountSectForgeEntry();mountMapForgeEntry();};
