@@ -15,7 +15,7 @@
     var out=document.getElementById("bc-startup-diagnostic-detail");
     out.textContent=title+"\n"+String(detail||"Tiada butiran tambahan").slice(0,7000);
   }
-  window.__BC_SHOW_RUNTIME_ERROR__=function(kind,message,stack){show("RALAT KOMPONEN REACT · "+kind,String(message||"Ralat tidak diketahui")+"\\n\\n"+String(stack||"Tiada component stack"));};
+  window.__BC_SHOW_RUNTIME_ERROR__=function(kind,error,stack){var detail="";try{if(error&&typeof error==="object"){detail=JSON.stringify(error,function(k,v){if(typeof v==="function")return "[Function]";if(v instanceof Error)return {name:v.name,message:v.message,stack:v.stack};return v;},2);if(!detail||detail==="{}")detail=String(error);var keys=Object.getOwnPropertyNames(error);detail+="\\nProperties: "+keys.join(", ");if(error.message)detail+="\\nmessage: "+error.message;if(error.digest)detail+="\\ndigest: "+error.digest;if(error.stack)detail+="\\nerror.stack: "+error.stack;}else{detail=String(error);}}catch(ex){detail=String(error)+"\\nSerializer: "+String(ex);}show("RALAT KOMPONEN REACT · "+kind,detail+"\\n\\nCOMPONENT STACK:\\n"+String(stack||"Tiada component stack"));};
   window.addEventListener("error",function(event){
     var target=event.target;
     if(target&&target!==window){
