@@ -15,6 +15,7 @@
     var out=document.getElementById("bc-startup-diagnostic-detail");
     out.textContent=title+"\n"+String(detail||"Tiada butiran tambahan").slice(0,7000);
   }
+  window.__BC_SHOW_RUNTIME_ERROR__=function(kind,message,stack){show("RALAT KOMPONEN REACT · "+kind,String(message||"Ralat tidak diketahui")+"\\n\\n"+String(stack||"Tiada component stack"));};
   window.addEventListener("error",function(event){
     var target=event.target;
     if(target&&target!==window){
