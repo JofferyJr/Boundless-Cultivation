@@ -29,6 +29,24 @@ test('diagnose Boundless lazy page module import', async ({ page }) => {
     });
   });
   await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
+  const dependencyImports = await page.evaluate(async () => {
+    const paths = [
+      '/Boundless-Cultivation/assets/rolldown-runtime-S-ySWqyJ.js?diagnostic-runtime',
+      '/Boundless-Cultivation/assets/framework-CXnKph_e.js?diagnostic-framework',
+      '/Boundless-Cultivation/assets/layout-segment-context-fHC_j0UX.js?diagnostic-layout'
+    ];
+    const results = [];
+    for (const path of paths) {
+      try {
+        const module = await import(path);
+        results.push({ path, ok: true, exports: Object.keys(module).slice(0, 8) });
+      } catch (error) {
+        results.push({ path, ok: false, name: error?.name, message: error?.message, stack: error?.stack });
+      }
+    }
+    return results;
+  });
+  console.log('[DIAG dependency-imports]', JSON.stringify(dependencyImports));
   const directImport = await page.evaluate(async () => {
     try {
       const module = await import('/Boundless-Cultivation/assets/page-B87MruAb.js?diagnostic-direct-import');
