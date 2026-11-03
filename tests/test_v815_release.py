@@ -36,7 +36,8 @@ class V815ReleaseTests(unittest.TestCase):
         self.assertIn('.map(BC815HydrateItem)', self.bundle)
         self.assertIn('bcArts=[...new Set([e.art,bcCanonical].filter(Boolean))]', self.bundle)
         self.assertIn('onError:()=>bcSetIndex(e=>e+1)', self.bundle)
-        self.assertIn('window.location.pathname.startsWith(`/Boundless-Cultivation`)', self.bundle)
+        self.assertIn('function wv(e){let r=String(e||``);', self.bundle)
+        self.assertIn('return r.startsWith(`/Boundless-Cultivation/`)?r:r.startsWith(`/`)?`/Boundless-Cultivation${r}`:r}', self.bundle)
         for marker in ['Ug=Hg(`herb`', 'Wg=Hg(`metal`', 'Kg=Hg(`portal`']: self.assertIn(marker, self.bundle)
 
     def test_canonical_inventory_atlas_exists(self):
