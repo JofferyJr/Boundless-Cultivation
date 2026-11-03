@@ -43,6 +43,50 @@ test('diagnose Boundless lazy page module import', async ({ page }) => {
     }
   });
   console.log('[DIAG parser-probe]', JSON.stringify(parserProbe));
+  const statementProbe = await page.evaluate(async () => {
+    const source = await (await fetch('/Boundless-Cultivation/assets/page-B87MruAb.js?statement-probe')).text();
+    let code = source.replace(/\\bimport\\s*\\{[^}]*\\}\\s*from\\s*["'][^"']+["']\\s*;?/g, '');
+    code = code.replace(/export\\s*\\{[\\s\\S]*?\\};?\\s*$/, '');
+    code = code.replace(/import\\.meta\\.url/g, '"https://example.invalid/module.js"');
+    const parts = [];
+    let start = 0, quote = '', escaped = false, lineComment = false, blockComment = false;
+    let paren = 0, bracket = 0, brace = 0, templateExpr = 0;
+    for (let i = 0; i < code.length; i++) {
+      const c = code[i], n = code[i + 1];
+      if (lineComment) { if (c === '\\n') lineComment = false; continue; }
+      if (blockComment) { if (c === '*' && n === '/') { blockComment = false; i++; } continue; }
+      if (quote) {
+        if (escaped) { escaped = false; continue; }
+        if (c === '\\\\') { escaped = true; continue; }
+        if (c === quote) quote = '';
+        continue;
+      }
+      if (c === '/' && n === '/') { lineComment = true; i++; continue; }
+      if (c === '/' && n === '*') { blockComment = true; i++; continue; }
+      if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
+      if (c === '(') paren++; else if (c === ')') paren--;
+      else if (c === '[') bracket++; else if (c === ']') bracket--;
+      else if (c === '{') brace++; else if (c === '}') brace--;
+      else if (c === ';' && paren === 0 && bracket === 0 && brace === 0) {
+        parts.push({ start, end: i + 1, code: code.slice(start, i + 1) });
+        start = i + 1;
+      }
+    }
+    if (start < code.length) parts.push({ start, end: code.length, code: code.slice(start) });
+    const failures = [];
+    for (const part of parts) {
+      if (!part.code.trim()) continue;
+      try { new Function(part.code); }
+      catch (error) {
+        failures.push({ offset: part.start, length: part.code.length, message: error.message,
+          snippet: part.code.slice(0, 500), tail: part.code.slice(-500) });
+        if (failures.length >= 5) break;
+      }
+    }
+    return { totalStatements: parts.length, failures };
+  });
+  console.log('[DIAG statement-probe]', JSON.stringify(statementProbe));
+
   const dependencyImports = await page.evaluate(async () => {
     const paths = [
       '/Boundless-Cultivation/assets/rolldown-runtime-S-ySWqyJ.js?diagnostic-runtime',
