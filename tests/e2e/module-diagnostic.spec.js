@@ -86,6 +86,35 @@ test('diagnose Boundless lazy page module import', async ({ page }) => {
     return { totalStatements: parts.length, failures };
   });
   console.log('[DIAG statement-probe]', JSON.stringify(statementProbe));
+  const declaratorProbe = await page.evaluate(async () => {
+    const source = await (await fetch('/Boundless-Cultivation/assets/page-B87MruAb.js?declarator-probe')).text();
+    let code = source.replace(/\\bimport\\s*\\{[^}]*\\}\\s*from\\s*["'][^"']+["']\\s*;?/g, '');
+    code = code.replace(/export\\s*\\{[\\s\\S]*?\\};?\\s*$/, '');
+    code = code.replace(/import\\.meta\\.url/g, '"https://example.invalid/module.js"');
+    const target = code.slice(339870, 361697).trim();
+    const declaration = target.replace(/^var\\s+/, '');
+    const parts = []; let start = 0, quote = '', escaped = false, line = false, block = false;
+    let p = 0, b = 0, c = 0;
+    for (let i = 0; i < declaration.length; i++) {
+      const x = declaration[i], n = declaration[i+1];
+      if (line) { if (x === '\\n') line = false; continue; }
+      if (block) { if (x === '*' && n === '/') { block = false; i++; } continue; }
+      if (quote) { if (escaped) { escaped = false; continue; } if (x === '\\\\') { escaped = true; continue; } if (x === quote) quote = ''; continue; }
+      if (x === '/' && n === '/') { line = true; i++; continue; }
+      if (x === '/' && n === '*') { block = true; i++; continue; }
+      if (x === '"' || x === "'" || x === '`') { quote = x; continue; }
+      if (x === '(') p++; else if (x === ')') p--;
+      else if (x === '[') b++; else if (x === ']') b--;
+      else if (x === '{') c++; else if (x === '}') c--;
+      else if (x === ',' && p === 0 && b === 0 && c === 0) { parts.push({start,end:i,code:declaration.slice(start,i)}); start=i+1; }
+    }
+    parts.push({start,end:declaration.length,code:declaration.slice(start)});
+    const results=[];
+    for (const part of parts) { try { new Function('var '+part.code); } catch(e) { results.push({offset:339870+part.start,length:part.code.length,message:e.message,snippet:part.code.slice(0,350),tail:part.code.slice(-350)}); } }
+    return {count:parts.length,failures:results.slice(0,10)};
+  });
+  console.log('[DIAG declarator-probe]', JSON.stringify(declaratorProbe));
+
 
   const dependencyImports = await page.evaluate(async () => {
     const paths = [
