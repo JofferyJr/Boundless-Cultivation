@@ -29,6 +29,20 @@ test('diagnose Boundless lazy page module import', async ({ page }) => {
     });
   });
   await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
+  const parserProbe = await page.evaluate(async () => {
+    const url = '/Boundless-Cultivation/assets/page-B87MruAb.js?parser-probe';
+    const source = await (await fetch(url)).text();
+    let script = source.replace(/^import[^;]+;\\s*/gm, '');
+    script = script.replace(/export\\s*\\{[\\s\\S]*?\\};?\\s*$/, '');
+    script = script.replace(/import\\.meta\\.url/g, '"https://example.invalid/module.js"');
+    try {
+      new Function(script);
+      return { ok: true, length: script.length };
+    } catch (error) {
+      return { ok: false, name: error.name, message: error.message, stack: error.stack, length: script.length };
+    }
+  });
+  console.log('[DIAG parser-probe]', JSON.stringify(parserProbe));
   const dependencyImports = await page.evaluate(async () => {
     const paths = [
       '/Boundless-Cultivation/assets/rolldown-runtime-S-ySWqyJ.js?diagnostic-runtime',
