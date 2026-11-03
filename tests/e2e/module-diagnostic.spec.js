@@ -33,8 +33,8 @@ test('diagnose Boundless lazy page module import', async ({ page }) => {
     const url = '/Boundless-Cultivation/assets/page-B87MruAb.js?parser-probe';
     const source = await (await fetch(url)).text();
     let script = source.replace(/\bimport\s*\{[^}]*\}\s*from\s*["'][^"']+["']\s*;?/g, '');
-    script = script.replace(/export\\s*\\{[\\s\\S]*?\\};?\\s*$/, '');
-    script = script.replace(/import\\.meta\\.url/g, '"https://example.invalid/module.js"');
+    script = script.replace(/export\s*\{[\s\S]*?\};?\s*$/, '');
+    script = script.replace(/import\.meta\.url/g, '"https://example.invalid/module.js"');
     try {
       new Function(script);
       return { ok: true, length: script.length };
