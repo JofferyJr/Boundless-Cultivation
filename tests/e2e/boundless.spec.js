@@ -25,6 +25,7 @@ test('standalone Boundless Cultivation 8.1.5 hydrates without SiteGPT', async ({
 
   await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(2500);
+  console.log('CLIENT_MAIN_HTML_BEGIN', await page.locator('main').evaluate(el => el.outerHTML), 'CLIENT_MAIN_HTML_END');
   console.log('HYDRATION_DIAGNOSTIC', JSON.stringify(await page.evaluate(() => ({
     hydratedAt: window.__VINEXT_HYDRATED_AT,
     root: window.__VINEXT_RSC_ROOT__ ? 'present' : 'missing',
