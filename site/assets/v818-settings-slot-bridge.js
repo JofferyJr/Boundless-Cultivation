@@ -29,5 +29,5 @@ function start(){
  window.__boundlessEnsureSettingsSlots=addAI;
  addAI();
 }
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+function afterReactHydration(callback){const check=()=>{const started=Number(window.__VINEXT_HYDRATED_AT||0);if(started>0&&performance.now()-started>=1500){requestAnimationFrame(()=>requestAnimationFrame(callback));return}window.setTimeout(check,50)};check()}afterReactHydration(start);
 })();
