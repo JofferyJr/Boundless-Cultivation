@@ -1,7 +1,11 @@
 const { test, expect } = require('@playwright/test');
 
 test('standalone Boundless Cultivation 8.1.5 hydrates without SiteGPT', async ({ page }) => {
-  page.on('pageerror', error => console.log('PAGEERROR', error.message, error.stack || ''));
+  const pageErrors = [];
+  page.on('pageerror', error => {
+    pageErrors.push(error.message);
+    console.log('PAGEERROR', error.message, error.stack || '');
+  });
   page.on('console', msg => { if (msg.type() === 'error') console.log('CONSOLE_ERROR', msg.text()); });
   const oldHostRequests = [];
   page.on('request', request => {
@@ -15,6 +19,9 @@ test('standalone Boundless Cultivation 8.1.5 hydrates without SiteGPT', async ({
   await expect(page).toHaveTitle(/Boundless Cultivation/i);
   await expect(page.getByText('Boundless Cultivation', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Versi 8.1.11').first()).toBeVisible();
+  await expect(page.locator('.bc-mode-choice')).toBeVisible();
+  await expect(page.locator('.bc-creation-shell > .dao-card').last()).toBeVisible();
+  expect(pageErrors).toEqual([]);
 
   const settings = page.getByRole('button', { name: 'Tetapan' }).first();
   await expect(settings).toBeVisible();
