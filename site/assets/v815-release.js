@@ -1,6 +1,7 @@
 const LABELS={family:"Keluarga",civilian:"Orang Awam",sect:"Sekte"};
 let activeMode=null;
 let lastTrigger=null;
+function afterReactHydration(callback){const check=()=>{const started=Number(window.__VINEXT_HYDRATED_AT||0);if(started>0&&performance.now()-started>=1500){requestAnimationFrame(()=>requestAnimationFrame(callback));return}window.setTimeout(check,50)};check()}
 function sourceGrid(mode){return mode==="player"?document.querySelector(".player-portrait-picker .player-portrait-options"):document.querySelector(".true-love-face-picker .true-love-face-grid");}
 function groupOf(button,mode){const text=(button.querySelector("small")?.textContent||"").toLowerCase();if(mode==="player"){if(text.includes("keluarga"))return "family";if(text.includes("sekte"))return "sect";return "civilian";}return text.includes("sekte")?"sect":"civilian";}
 function selectedLabel(grid){const selected=grid?.querySelector('[aria-checked="true"],.selected');return selected?.querySelector("b")?.textContent?.trim()||"Muka semasa";}
@@ -50,7 +51,7 @@ function boot(){
     setTimeout(refreshSummaries,50);
   },true);
 }
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
+afterReactHydration(boot);
 
 /* Boundless staged restoration · Stage 1
  * Transparent runtime corrections only. No asset deletion or opaque payloads.
@@ -96,8 +97,4 @@ function bcStage1Boot() {
   }).observe(document.documentElement, { childList: true, subtree: true });
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", bcStage1Boot, { once: true });
-} else {
-  bcStage1Boot();
-}
+afterReactHydration(bcStage1Boot);
