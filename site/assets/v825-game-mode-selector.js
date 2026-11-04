@@ -53,7 +53,9 @@ const buttons=[...box.querySelectorAll("[data-game-mode]")],status=box.querySele
 let current="singleplayer";try{const saved=localStorage.getItem(KEY);if(saved==="singleplayer"||saved==="multiplayer")current=saved}catch(_){}
 function choose(mode){current=mode;try{localStorage.setItem(KEY,mode)}catch(_){}box.dataset.gameMode=mode;if(serverRow)serverRow.hidden=mode!=="multiplayer";buttons.forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.gameMode===mode)));status.textContent=mode==="singleplayer"?"Dipilih: Singleplayer. Pilihan disimpan pada peranti ini.":"Dipilih: Multiplayer. Tab Multiplayer akan tersedia di dalam dunia permainan.";window.__boundlessGameMode=mode;/* Mode selection is a preference only on character creation. Do not broadcast a live-session event here: the multiplayer social layer must mount only after the character enters the world. */}
 buttons.forEach(b=>b.addEventListener("click",()=>choose(b.dataset.gameMode)));choose(current);document.documentElement.classList.add("bc-layout-ready");return true}
+function afterReactHydration(callback){const check=()=>{const started=Number(window.__VINEXT_HYDRATED_AT||0);if(started>0&&performance.now()-started>=1500){requestAnimationFrame(()=>requestAnimationFrame(callback));return}window.setTimeout(check,50)};check()}
 function boot(){
+ afterReactHydration(()=>{
   let queued=false;
   const ensure=()=>{
     queued=false;
@@ -80,6 +82,7 @@ function boot(){
   ensure();
   /* React hydration can replace server-rendered nodes after first mount. Keep
      observing for the page lifetime so the selector is restored, not lost. */
+ });
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
 })();
