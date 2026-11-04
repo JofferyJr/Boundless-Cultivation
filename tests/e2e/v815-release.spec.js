@@ -2,12 +2,12 @@ const { test, expect } = require('@playwright/test');
 
 async function noHorizontalOverflow(page) { return page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth); }
 
-test('v8.1.5 talents, True Love and portrait paper remain responsive', async ({ page }) => {
+test('current character creation talents, True Love and portrait paper remain responsive', async ({ page }) => {
   page.on('pageerror', error => console.log('PAGEERROR', error.message, error.stack || ''));
   page.on('console', msg => { if (msg.type() === 'error') console.log('CONSOLE_ERROR', msg.text()); });
   await page.setViewportSize({ width: 1366, height: 900 });
-  await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
-  await expect(page.getByText('Versi 8.1.5').first()).toBeVisible();
+  await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByText('Versi 8.1.11').first()).toBeVisible();
   const creationShellWidth = await page.locator('.bc-creation-shell').evaluate(el => el.getBoundingClientRect().width);
   expect(creationShellWidth).toBeGreaterThan(1200);
   expect(await noHorizontalOverflow(page)).toBe(true);
@@ -82,11 +82,11 @@ test('v8.1.5 talents, True Love and portrait paper remain responsive', async ({ 
 });
 
 test('built-in background music asset and settings option are available', async ({ page, request }) => {
-  const response = await request.get('/Cultivation/assets/music/ni-tian-xing-loop.ogg');
+  const response = await request.get('/Boundless-Cultivation/assets/music/ni-tian-xing-loop.ogg');
   expect(response.ok()).toBe(true);
   expect((await response.body()).length).toBeGreaterThan(5000);
 
-  await page.goto('/Cultivation/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Tetapan' }).first().click();
   const settings = page.getByRole('dialog');
   await settings.getByRole('tab', { name: /Permainan/ }).click();
