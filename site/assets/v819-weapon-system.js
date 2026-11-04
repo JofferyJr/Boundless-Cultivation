@@ -217,5 +217,5 @@ function observeInventoryWeaponMenu(){
 window.__boundlessOpenWeaponForge=open;
 window.__boundlessWeaponState=()=>state;
 window.__boundlessWeaponSystem={version:VERSION,open,forge,save};
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>{build();observeInventoryWeaponMenu();},{once:true});else{build();observeInventoryWeaponMenu();}
+function afterReactHydration(callback){const check=()=>{const started=Number(window.__VINEXT_HYDRATED_AT||0);if(started>0&&performance.now()-started>=1500){requestAnimationFrame(()=>requestAnimationFrame(callback));return}window.setTimeout(check,50)};check()}afterReactHydration(()=>{build();observeInventoryWeaponMenu();});
 })();
