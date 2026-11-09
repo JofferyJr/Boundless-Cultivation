@@ -2,7 +2,7 @@ name: Verify migrated Boundless Cultivation
 
 on:
   push:
-    branches: ["migration/sitegpt-standalone", "main", "feature/boundless-v815", "feature/boundless-v815-release"]
+    branches: ["migration/sitegpt-standalone", "main", "feature/boundless-v815", "feature/boundless-v815-release", "refactor/modular-architecture"]
   pull_request:
     branches: ["main"]
 
@@ -28,8 +28,13 @@ jobs:
         run: |
           node --check site/assets/page-B87MruAb.js
           node --check site/assets/v815-release.js
+          node --check site/modules/core/event-bus.js
+          node --check site/modules/core/module-registry.js
+          node --check site/modules/persistence/save-adapter.js
+          node --check site/modules/spirit-beasts/catalogue.js
+          node --check site/modules/spirit-beasts/index.js
       - name: Save manager unit tests
-        run: node --test tests/save-manager.test.mjs
+        run: node --test tests/save-manager.test.mjs tests/modular-runtime.test.mjs
       - name: Install browser test dependencies
         run: npm install
       - name: Install Chromium
