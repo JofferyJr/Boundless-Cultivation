@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"economy",dependencies:["inventory","world"],events:["economy:transaction"]})})(window);
