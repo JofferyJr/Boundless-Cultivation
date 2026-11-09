@@ -5,7 +5,8 @@ test('Petak Penerokaan requires Peta Kecil and the top button', async ({ page })
   await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
 
   await expect(page).toHaveTitle(/Boundless Cultivation/i);
-  await expect(page.locator('#bc-nested-grid-v822')).toHaveCount(1);
+  // The nested grid is created only after a real local-region tile is selected.
+  await expect(page.locator('#bc-nested-grid-v822')).toHaveCount(0);
 
   await page.evaluate(() => {
     const switcher = document.createElement('div');
