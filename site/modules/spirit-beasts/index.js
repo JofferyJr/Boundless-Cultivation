@@ -35,7 +35,4 @@
     validate: () => catalogue.validate()
   });
   host.spiritBeasts.domain = api;
-  if (host.registry && !host.registry.list().some(item => item.id === "spirit-beasts")) {
-    host.registry.register({ id: "spirit-beasts", version: "1.0.0", dependencies: [], init() {} });
-  }
 })(window);
