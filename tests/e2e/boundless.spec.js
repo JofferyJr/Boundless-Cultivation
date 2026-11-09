@@ -48,7 +48,7 @@ test('standalone Boundless Cultivation 8.1.5 hydrates without SiteGPT', async ({
   const settingsDialog = page.getByRole('dialog');
   await expect(settingsDialog).toBeVisible();
   await expect(page.getByRole('button', { name: 'Simpan & Export' })).toHaveCount(0);
-  await settingsDialog.getByRole('tab', { name: /Permainan/ }).click();
+  await settingsDialog.locator('#bc-settings-revamp [data-action="game"]').click();
   await expect(settingsDialog.locator('#bc-save-manager-panel')).toBeVisible();
   await expect(settingsDialog.locator('#bc-save-manager-panel')).toContainText('Simpan & Export');
 
