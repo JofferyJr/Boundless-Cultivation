@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"spirit-beasts",dependencies:["world","character","inventory","persistence"],events:["spirit-beast:discovered","spirit-beast:owned","spirit-beast:trained","spirit-beast:evolved"]})})(window);
