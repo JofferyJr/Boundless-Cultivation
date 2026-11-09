@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"npc",dependencies:["world","character"],events:["npc:updated"]})})(window);
