@@ -54,7 +54,7 @@ test("Spirit Beast domain resolves the optional two-step serpent evolution path"
   load("spirit-beasts/index.js", window);
   const domain = window.BoundlessModules.spiritBeasts.domain;
   assert.deepEqual(
-    domain.evolutionPath(37).map(beast => beast.name),
+    JSON.parse(JSON.stringify(domain.evolutionPath(37).map(beast => beast.name))),
     ["Bluewater Serpent", "Serpent Aquarion", "Azure Tide Serpent"]
   );
   assert.equal(domain.listByTier("Suci").length > 0, true);
@@ -82,6 +82,6 @@ test("persistence adapter writes module namespaces without losing legacy save fi
   assert.equal(saved.name, "Li Yun");
   assert.equal(saved.spiritBeasts[0].id, 1);
   assert.equal(saved.inventory[0].id, "DAN-001");
-  assert.deepEqual(persistence.readModule("spirit-beasts"), { selected: 1, bonds: [] });
+  assert.deepEqual(JSON.parse(JSON.stringify(persistence.readModule("spirit-beasts"))), { selected: 1, bonds: [] });
   assert.equal(saved._moduleSchemaVersion, 2);
 });
