@@ -19,7 +19,7 @@ test('save manager lives inside Settings and supports slots, export and import',
   await page.getByRole('button', { name: 'Tetapan' }).first().click();
 
   const settings = page.getByRole('dialog');
-  await settings.getByRole('tab', { name: /Permainan/ }).click();
+  await settings.locator('#bc-settings-revamp [data-action="game"]').click();
 
   const panel = settings.locator('#bc-save-manager-panel');
   await expect(panel).toBeVisible();
@@ -89,7 +89,7 @@ test('loading a slot restores the saved active tab and map view', async ({ page 
 
   await page.getByRole('button', { name: 'Tetapan' }).first().click();
   const settings = page.getByRole('dialog');
-  await settings.getByRole('tab', { name: /Permainan/ }).click();
+  await settings.locator('#bc-settings-revamp [data-action="game"]').click();
   const panel = settings.locator('#bc-save-manager-panel');
   await panel.getByRole('button', { name: 'Simpan ke Slot 1' }).click();
   await page.keyboard.press('Escape');
