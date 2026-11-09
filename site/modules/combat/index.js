@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"combat",dependencies:["character","cultivation","inventory","spirit-beasts"],events:["combat:started","combat:ended"]})})(window);
