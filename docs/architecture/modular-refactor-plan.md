@@ -51,10 +51,13 @@ This branch is a safe refactoring workspace. The production runtime on `main` re
 - The repository has no original `src/` tree or usable build pipeline in `package.json`.
 - `site/assets/page-B87MruAb.js` is the bundled application runtime, not an isolated system file.
 - `site/assets/index-Cyw089Xg.js` dynamically loads the main page bundle.
-- Spirit Beast features are split between the main bundle and legacy extension scripts. The official 37-species catalogue currently lives in `v897-spirit-beast-tiers.js`; other scripts provide encounter, editor, wildlife bridge and detail-popup behaviour.
+- Spirit Beast features are split between the main bundle and legacy extension scripts. The canonical 37-species catalogue now lives in `site/modules/spirit-beasts/catalogue.js`; `v897-spirit-beast-tiers.js` consumes that API instead of maintaining a second species/region/tier dataset. Encounter, editor, wildlife bridge and detail-popup behaviour remain in their existing compatibility scripts.
 - The HTML metadata still mentions 35 Bestiary creatures in one embedded description despite the 37-entry catalogue.
 - There are 38 beast asset directories. The additional Chinese-named ice-deer folder is not in the official 37-entry catalogue and must be audited as an unclassified asset, not silently deleted.
 
 ## Current implementation boundary
 
-The event bus and registry are foundational scaffolding only. They are not yet connected to the live page. No existing game behaviour, bundle, save field, asset or extension script has been changed or removed.
+- The canonical Spirit Beast catalogue is loaded before the tier UI script by `site/index.html` on this branch. The tier UI now reads its nine tiers, 41 regions and 37 species from that module.
+- The old duplicate catalogue block (about 6.5 KB) has been removed from `v897-spirit-beast-tiers.js`; its UI/rendering logic remains in place.
+- The encounter, ownership, training, evolution, contract and Bestiary logic inside the compiled main bundle has not yet been extracted. Existing global bridges and extension scripts remain in place.
+- No old save fields, game assets or legacy runtime files have been deleted. The live `main` branch is unchanged; this integration exists only on `refactor/modular-architecture`.
