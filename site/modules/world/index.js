@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"world",dependencies:["persistence"],events:["world:time-advanced","world:region-changed"]})})(window);
