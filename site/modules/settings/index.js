@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"settings",dependencies:["persistence"],events:["settings:changed"]})})(window);
