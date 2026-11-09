@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"inventory",dependencies:["character","persistence"],events:["inventory:item-added","inventory:item-removed","inventory:equipment-changed"]})})(window);
