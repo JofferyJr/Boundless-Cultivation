@@ -49,6 +49,17 @@ test("Spirit Beast catalogue preserves all 37 species, nine tiers and 41 regions
   assert.equal(catalogue.atRegion("Portal Dunia Laut").some(beast => beast.id === 16), true);
 });
 
+test("Spirit Beast tier UI consumes the canonical module without a duplicate species list", () => {
+  const tiersUi = fs.readFileSync(new URL("../site/assets/v897-spirit-beast-tiers.js", import.meta.url), "utf8");
+  const html = fs.readFileSync(new URL("../site/index.html", import.meta.url), "utf8");
+  assert.match(tiersUi, /window\.BoundlessModules\?\.spiritBeasts\?\.catalogue/);
+  assert.doesNotMatch(tiersUi, /const BEASTS\s*=\s*\[/);
+  const catalogueTag = html.indexOf("/modules/spirit-beasts/catalogue.js");
+  const tiersTag = html.indexOf("/assets/v897-spirit-beast-tiers.js");
+  assert.ok(catalogueTag >= 0, "canonical catalogue script must be loaded");
+  assert.ok(tiersTag > catalogueTag, "canonical catalogue must load before the tier UI");
+});
+
 test("Spirit Beast domain resolves the optional two-step serpent evolution path", () => {
   const window = load("spirit-beasts/catalogue.js");
   load("spirit-beasts/index.js", window);
