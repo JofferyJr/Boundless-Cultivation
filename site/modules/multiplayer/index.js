@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"multiplayer",dependencies:["character","family","sect","inventory","economy"],events:["multiplayer:presence-changed"]})})(window);
