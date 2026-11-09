@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"cultivation",dependencies:["character","world"],events:["cultivation:advanced"]})})(window);
