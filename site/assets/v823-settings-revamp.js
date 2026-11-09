@@ -66,7 +66,8 @@ function showContent(scope,root,value){
   const list=panels(scope);
   const triggerList=[...scope.querySelectorAll(".bc-settings-tabs button,.bc-settings-tabs [role=tab]")];
   const tabIndex=trigger?triggerList.indexOf(trigger):-1;
-  let target=list.find(p=>p.dataset.value===value)||null;
+  let target=value==="game"?($("#bc-music-manager-mount",scope)?.closest("[role=tabpanel]")||$("#bc-save-manager-mount",scope)?.closest("[role=tabpanel]")):null;
+  target=target||list.find(p=>p.dataset.value===value)||null;
   if(!target&&trigger?.getAttribute("aria-controls"))target=list.find(p=>p.id===trigger.getAttribute("aria-controls"))||null;
   if(!target&&trigger?.id)target=list.find(p=>p.getAttribute("aria-labelledby")===trigger.id)||null;
   if(!target)target=list.find(p=>p.dataset.state==="active"||p.getAttribute("data-state")==="active")||null;
