@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"ui",dependencies:["character","world","inventory","settings"],events:["ui:navigate"]})})(window);
