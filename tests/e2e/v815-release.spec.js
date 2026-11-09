@@ -60,7 +60,7 @@ test('current character creation talents, True Love and portrait paper remain re
   await expect(paper).toBeVisible();
   expect(await noHorizontalOverflow(page)).toBe(true);
   let columns = await paper.locator('.portrait-paper-grid').first().evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
-  expect(columns).toBe(6);
+  expect(columns).toBe(7);
   await page.setViewportSize({ width: 800, height: 900 });
   columns = await paper.locator('.portrait-paper-grid').first().evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean).length);
   expect(columns).toBe(4);
@@ -89,7 +89,7 @@ test('built-in background music asset and settings option are available', async 
   await page.goto('/Boundless-Cultivation/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Tetapan' }).first().click();
   const settings = page.getByRole('dialog');
-  await settings.getByRole('tab', { name: /Permainan/ }).click();
+  await settings.locator('#bc-settings-revamp [data-action="game"]').click();
   const select = settings.locator('#bc-music-select');
   await expect(select).toBeVisible();
   await expect(select.locator('option[value="builtin"]')).toContainText('Ni Tian Xing');
