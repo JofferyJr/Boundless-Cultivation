@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"sect",dependencies:["character","npc","economy","world"],events:["sect:membership-changed"]})})(window);
