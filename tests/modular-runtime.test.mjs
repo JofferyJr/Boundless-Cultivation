@@ -49,6 +49,37 @@ test("Spirit Beast catalogue preserves all 37 species, nine tiers and 41 regions
   assert.equal(catalogue.atRegion("Portal Dunia Laut").some(beast => beast.id === 16), true);
 });
 
+test("full modular foundation registers every domain and its dependencies", () => {
+  const window = { dispatchEvent() {} };
+  const files = [
+    "core/event-bus.js", "core/module-registry.js", "core/contracts.js", "core/domain-module.js",
+    "persistence/save-adapter.js", "persistence/index.js",
+    "world/index.js", "character/index.js", "cultivation/index.js", "npc/index.js",
+    "family/index.js", "economy/index.js", "sect/index.js", "inventory/index.js",
+    "spirit-beasts/catalogue.js", "spirit-beasts/index.js", "spirit-beasts/module.js",
+    "combat/index.js", "multiplayer/index.js", "settings/index.js", "ui/index.js", "bootstrap.js"
+  ];
+  const context = {
+    window, console, Map, Set, Object, Array, String, Number, JSON, TypeError, Error, RangeError,
+    CustomEvent: function(type, options) { this.type = type; this.detail = options?.detail; }
+  };
+  for (const file of files) {
+    vm.runInNewContext(fs.readFileSync(new URL(file, root), "utf8"), context, { filename: file });
+  }
+  const host = window.BoundlessModules;
+  const report = host.architecture.report();
+  for (const id of host.contracts.domains) {
+    assert.ok(host.domains[id], "domain contract missing: " + id);
+    assert.ok(report.registered.includes(id), "registry entry missing: " + id);
+  }
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(host.registry.list().find(x => x.id === "spirit-beasts").dependencies)),
+    ["world", "character", "inventory", "persistence"]
+  );
+  assert.equal(report.legacyRuntime, "active");
+  assert.equal(report.migration, "not-started");
+});
+
 test("Spirit Beast tier UI consumes the canonical module without a duplicate species list", () => {
   const tiersUi = fs.readFileSync(new URL("../site/assets/v897-spirit-beast-tiers.js", import.meta.url), "utf8");
   const html = fs.readFileSync(new URL("../site/index.html", import.meta.url), "utf8");
