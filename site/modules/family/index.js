@@ -1,0 +1,1 @@
+(function(w){"use strict";w.BoundlessModules.defineDomain({id:"family",dependencies:["character","npc","world"],events:["family:relationship-changed"]})})(window);
